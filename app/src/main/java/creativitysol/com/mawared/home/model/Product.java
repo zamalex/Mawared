@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class Product {
 
+    public int qty=0;
     @SerializedName("available")
     private Long mAvailable;
     @SerializedName("has_offer")
