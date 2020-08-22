@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,9 +22,11 @@ import com.jaiselrahman.hintspinner.HintSpinnerAdapter;
 
 import java.util.ArrayList;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 import creativitysol.com.mawared.home.model.Product;
+import creativitysol.com.mawared.mycart.MyCartFragment;
 
 
 public class HomeFragment extends Fragment {
@@ -33,7 +36,8 @@ public class HomeFragment extends Fragment {
     HomeViewModel viewModel;
     HomeAdapter adapter;
     Spinner spinner;
-   ArrayList<String> cities = new ArrayList<>();
+    ImageView go_cart;
+   ArrayList<String> cities;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,7 +52,8 @@ public class HomeFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.home_p_rv);
         spinner = v.findViewById(R.id.city_spinner);
-
+        go_cart = v.findViewById(R.id.go_cart);
+        cities = new ArrayList<>();
         cities.add("الرياض");
         cities.add("تبوك");
         cities.add("جدة");
@@ -59,11 +64,32 @@ public class HomeFragment extends Fragment {
         viewModel.result.observe(getActivity(), new Observer<HomeProductModel>() {
             @Override
             public void onChanged(HomeProductModel homeProductModel) {
-                adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
-                Toast.makeText(getActivity(), ""+homeProductModel.getProducts().size(), Toast.LENGTH_SHORT).show();
+                if (isAdded()){
+                    adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+
+                }
+            }
+        });
+
+        go_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new MyCartFragment());
             }
         });
 
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((MainActivity)getActivity()).bottomNavVisibility(true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((MainActivity)getActivity()).bottomNavVisibility(false);
     }
 }
