@@ -81,7 +81,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     @Override
     public int getItemCount() {
 
-        return 5;
+        return 3;
     }
 
     class Holder extends RecyclerView.ViewHolder {
