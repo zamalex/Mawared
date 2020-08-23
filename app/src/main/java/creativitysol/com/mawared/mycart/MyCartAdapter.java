@@ -18,12 +18,19 @@ import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.Product;
+import io.paperdb.Paper;
 
 
 public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
 
     ArrayList<Product> products = new ArrayList<>();
+
+    sumListener sumListener;
+
+    public MyCartAdapter(MyCartAdapter.sumListener sumListener) {
+        this.sumListener = sumListener;
+    }
 
     @NonNull
     @Override
@@ -35,42 +42,68 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
-    /*    final Product product = products.get(position);
-        holder.price.setText(product.getPrice()+" "+"ر.س");
+        final Product product = products.get(position);
+        holder.price.setText(product.getPrice() + " " + "ر.س");
         holder.name.setText(product.getTitle());
-        holder.total_qty.setText(product.qty+"");
+        holder.total_qty.setText(product.qty + "");
 
+        sumListener.doSum(calculateTotal());
 
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 products.get(position).qty++;
-                holder.total_qty.setText(products.get(position).qty+"");
+                holder.total_qty.setText(products.get(position).qty + "");
                 notifyDataSetChanged();
+
+                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (product.getId() == arrayList.get(i).getId()) {
+                        arrayList.get(i).qty++;
+                    }
+                }
+
+
+                Paper.book().write("cart", arrayList);
+                sumListener.doSum(calculateTotal());
+
+
             }
         });
+
+
         holder.decrease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 products.get(position).qty--;
-                if (products.get(position).qty!=0){
+                if (products.get(position).qty != 0) {
 
-                    holder.total_qty.setText(products.get(position).qty+"");
+                    holder.total_qty.setText(products.get(position).qty + "");
+                    notifyDataSetChanged();
+                } else {
+                    products.remove(position);
                     notifyDataSetChanged();
                 }
-                else {
-                    notifyDataSetChanged();
+
+                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (product.getId() == arrayList.get(i).getId()) {
+                        if (arrayList.get(i).qty > 0)
+                            arrayList.get(i).qty--;
+                        else if (arrayList.get(i).qty==0)
+                            arrayList.remove(i);
+                    }
                 }
+
+                sumListener.doSum(calculateTotal());
+                Paper.book().write("cart", arrayList);
             }
         });
 
-
-
-
         Picasso.get().load(product.getImg()).fit().into(holder.img);
-        Log.d("imgg",product.getImg());
-*/
+        Log.d("imgg", product.getImg());
+
     }
 
     public void setProducts(ArrayList<Product> products) {
@@ -81,14 +114,16 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     @Override
     public int getItemCount() {
 
-        return 3;
+
+        return products.size();
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView name,price,total_qty;
+        TextView name, price, total_qty;
         ImageView img;
-        ImageButton increase,decrease;
+        ImageButton increase, decrease;
         LinearLayout quantityLayout;
+
         public Holder(@NonNull View itemView) {
             super(itemView);
 
@@ -102,7 +137,16 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         }
     }
 
-    public interface addListener{
-        void onAddClick(int pos,Product product);
+    Long calculateTotal(){
+        Long sum=0l;
+
+        for (Product p : products){
+            sum += (p.qty * Long.parseLong(p.getPrice()));
+        }
+
+        return sum;
+    }
+    public interface sumListener {
+        void doSum(Long sum);
     }
 }

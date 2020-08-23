@@ -112,7 +112,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="24dp"
                     android:fontFamily="@font/urwbold"
                     android:text="14.70"
                     android:textColor="#0D2142"
@@ -149,6 +149,35 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/product_img" />
+
+                <ImageView
+                    android:visibility="visible"
+                    android:id="@+id/off_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="62dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_offer"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginRight="16dp" />
+
+                <TextView
+
+                    android:id="@+id/txt_offer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:fontFamily="@font/urwbold"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/off_img"
+                    app:layout_constraintEnd_toEndOf="@+id/off_img"
+                    app:layout_constraintStart_toStartOf="@+id/off_img"
+                    app:layout_constraintTop_toTopOf="@+id/off_img" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
