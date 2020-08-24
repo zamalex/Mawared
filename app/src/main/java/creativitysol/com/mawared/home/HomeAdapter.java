@@ -125,6 +125,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
         }
 
+        holder.offer_txt.setText("");
         if (product.getOffer().isEmpty()) {
             holder.offer_txt.setVisibility(View.GONE);
             holder.offer_img.setVisibility(View.GONE);

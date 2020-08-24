@@ -10,13 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.Product;
+import creativitysol.com.mawared.sendorder.SendOrdersFragment;
 import io.paperdb.Paper;
 
 
@@ -28,7 +31,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
     TextView total_sum;
     MyCartAdapter adapter;
-
+    Button next;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
         cartRv = v.findViewById(R.id.cart_rv);
         total_sum = v.findViewById(R.id.total_sum);
+        next = v.findViewById(R.id.btn_next);
 
         cartRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -60,6 +64,14 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         Paper.book().write("cart", arrayList);
 
         adapter.setProducts(arrayList);
+
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new SendOrdersFragment());
+            }
+        });
 
         return v;
     }

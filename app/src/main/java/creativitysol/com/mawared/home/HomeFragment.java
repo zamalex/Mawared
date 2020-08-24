@@ -92,6 +92,7 @@ public class HomeFragment extends Fragment {
                 flipper_layout.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
                 flipper_layout.setIndicatorSelectedColor(Color.WHITE);
                 flipper_layout.setIndicatorUnselectedColor(Color.GRAY);
+                flipper_layout.setIndicatorVisibility(true);
             }
         });
 
