@@ -23,7 +23,10 @@
 
     <style name="AppModalStyle"
         parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/sheetradius</item>
+        <item name="android:background">@drawable/bottom_sheet_bg</item>
+
     </style>
+
+
 
 </resources>
