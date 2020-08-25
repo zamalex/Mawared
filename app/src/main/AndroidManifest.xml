@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -15,6 +17,9 @@
 
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCglRzKOTMf7aCPOuitRIO5ngHzM6dtvjI" />
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".SplashActivity">
             <intent-filter>

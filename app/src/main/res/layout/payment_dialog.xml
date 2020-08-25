@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_bg"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_weight="3"
+            android:fontFamily="@font/urwbold"
+            android:gravity="right"
+            android:text="آلية السداد"
+            android:textColor="#0D2142"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/xx" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/radius_et"
+        android:drawableRight="@drawable/car"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/urwbold"
+        android:gravity="right"
+        android:padding="10dp"
+        android:text="الدفع عن الإستلام"
+        android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/radius_et"
+        android:drawableRight="@drawable/dollar"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/urwbold"
+        android:gravity="right"
+        android:padding="10dp"
+        android:text="تحويل بنكي"
+        android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/radius_et"
+        android:drawableRight="@drawable/ppay"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/urwbold"
+        android:gravity="right"
+        android:padding="10dp"
+        android:text="بطاقة مدى / visa"
+        android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+</LinearLayout>

@@ -47,7 +47,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout3"
+                android:id="@+id/show_products"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -129,7 +129,7 @@
                 android:background="@drawable/radius_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+                app:layout_constraintTop_toBottomOf="@+id/show_products">
 
                 <ImageView
                     android:id="@+id/imageView6"
@@ -272,7 +272,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout33"
+                android:id="@+id/add_payment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -342,7 +342,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout33">
+                app:layout_constraintTop_toBottomOf="@+id/add_payment">
 
                 <ImageView
                     android:id="@+id/imageView333"
@@ -387,7 +387,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout32"
+                android:id="@+id/show_products2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -465,7 +465,7 @@
                 android:layout_marginTop="16dp"
                 android:src="@drawable/info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout32" />
+                app:layout_constraintTop_toBottomOf="@+id/show_products2" />
 
             <TextView
                 android:id="@+id/textView7"
