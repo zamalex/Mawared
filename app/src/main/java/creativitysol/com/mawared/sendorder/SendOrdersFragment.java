@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -34,6 +35,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import creativitysol.com.mawared.MainActivity;
+import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
 
 
@@ -44,15 +47,18 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
     Dialog addCoponDialog,timeDialog;
 
-    RecyclerView address_rv,products_rv;
+    RecyclerView address_rv,products_rv,banks_rv;
 
-    BottomSheetDialog address_dialog,map_dailog,payDialog,ordersDialog;
+    BottomSheetDialog address_dialog,map_dailog,payDialog,ordersDialog,confirmDialog;
 
     AddressAdapter adapter;
     SentOrdersAdapter ordersAdapter;
+    BankAdapter bankAdapter;
 
     MapView mapView;
     GoogleMap map;
+
+    Button snd_order,bank_transfer;
 
     ImageView show_map,dismiss_map;
 
@@ -69,6 +75,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
         adapter = new AddressAdapter();
         ordersAdapter = new SentOrdersAdapter();
+        bankAdapter = new BankAdapter();
 
         addCoponDialog.setContentView(R.layout.copon_dialog);
         timeDialog.setContentView(R.layout.time_dialog);
@@ -76,20 +83,28 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         map_dailog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
         payDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
         ordersDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
+        confirmDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
 
         payDialog.setContentView(R.layout.payment_dialog);
+        confirmDialog.setContentView(R.layout.confirm_dialog);
         map_dailog.setContentView(R.layout.map_dialog);
         map_dailog.setCancelable(false);
 
         address_dialog.setContentView(R.layout.address_dialog);
         ordersDialog.setContentView(R.layout.products_dialog);
 
+        bank_transfer = payDialog.findViewById(R.id.bank_transfer);
+
         address_rv = address_dialog.findViewById(R.id.address_rv);
+        banks_rv = confirmDialog.findViewById(R.id.banks_rv);
 
         products_rv = ordersDialog.findViewById(R.id.products_rv);
 
         products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         products_rv.setAdapter(ordersAdapter);
+
+        banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
+        banks_rv.setAdapter(bankAdapter);
 
         show_map = address_dialog.findViewById(R.id.show_map);
         address_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -113,6 +128,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         add_address = v.findViewById(R.id.add_address);
         add_payment = v.findViewById(R.id.add_payment);
         show_products = v.findViewById(R.id.show_products);
+        snd_order = v.findViewById(R.id.snd_order);
+
+
+
+        snd_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
+            }
+        });
 
 
         show_products.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +186,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 map_dailog.dismiss();
+            }
+        });
+
+
+        bank_transfer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmDialog.show();
             }
         });
 
@@ -226,6 +259,21 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         });
 
         map_dailog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                setupFullHeight(bottomSheet);
+                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+
+        confirmDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
 

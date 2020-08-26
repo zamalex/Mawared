@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView app:cardCornerRadius="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_margin="8dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="142dp"
+        android:layout_height="66dp"
+        android:src="@android:drawable/ic_menu_always_landscape_portrait"
+        android:background="@drawable/round_bank"
+        />
+</androidx.cardview.widget.CardView>
