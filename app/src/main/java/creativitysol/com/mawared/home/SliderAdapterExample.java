@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -51,8 +52,14 @@ public class SliderAdapterExample extends
         String sliderItem = mSliderItems.get(position);
 
 
-        if (sliderItem!=null&&!sliderItem.isEmpty())
-            Picasso.get().load(sliderItem).fit().centerCrop().into(viewHolder.img);
+        if (sliderItem!=null&&!sliderItem.isEmpty()){
+            Glide
+                    .with(context)
+                    .load(sliderItem)
+                    .fitCenter()
+                    .into(viewHolder.img);
+        }
+            //Picasso.get().load(sliderItem).fit().centerCrop().into(viewHolder.img);
 
 
 
