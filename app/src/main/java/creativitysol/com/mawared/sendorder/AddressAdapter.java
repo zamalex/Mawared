@@ -3,6 +3,7 @@ package creativitysol.com.mawared.sendorder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
@@ -12,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
-import creativitysol.com.mawared.home.model.Product;
-
+import creativitysol.com.mawared.sendorder.model.CustomerShippingAddress;
 
 
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> {
 
 
-    ArrayList<Product> products = new ArrayList<>();
+    ArrayList<CustomerShippingAddress> addresses = new ArrayList<>();
 
 
 
@@ -35,11 +35,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
     @Override
     public void onBindViewHolder(@NonNull final AddressAdapter.Holder holder, final int position) {
 
+        holder.addrss_tv.setText(addresses.get(position).getAddress());
 
     }
 
-    public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+    public void setAddresses(ArrayList<CustomerShippingAddress> addresses) {
+        this.addresses = addresses;
         notifyDataSetChanged();
     }
 
@@ -47,13 +48,15 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
     public int getItemCount() {
 
 
-        return 2;
+        return addresses.size();
     }
 
     class Holder extends RecyclerView.ViewHolder {
 
+        TextView addrss_tv;
         public Holder(@NonNull View itemView) {
             super(itemView);
+            addrss_tv = itemView.findViewById(R.id.addrss_tv);
 
         }
     }

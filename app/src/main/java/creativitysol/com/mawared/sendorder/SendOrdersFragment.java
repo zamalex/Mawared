@@ -13,6 +13,8 @@ import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,13 +37,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
+
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.sendorder.model.AddressModel;
+import creativitysol.com.mawared.sendorder.model.Bank;
+import creativitysol.com.mawared.sendorder.model.BanksModel;
+import creativitysol.com.mawared.sendorder.model.CustomerShippingAddress;
+import io.paperdb.Paper;
 
 
 public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
+
+    SendOrderViewModel viewModel;
 
     View v;
 
@@ -62,6 +73,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
     ImageView show_map,dismiss_map;
 
+    String token="";
+
     ConstraintLayout add_copon,add_time,add_address,add_payment,show_products;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +82,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
 
         v=inflater.inflate(R.layout.fragment_send_orders, container, false);
+
+
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
+        token = Paper.book().read("token");
+
+        if (!token.isEmpty())
+            viewModel.getAddresses("Bearer "+token);
+
+        viewModel.getBanks();
+
 
         addCoponDialog = new Dialog(getActivity());
         timeDialog = new Dialog(getActivity());
@@ -130,7 +153,24 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         show_products = v.findViewById(R.id.show_products);
         snd_order = v.findViewById(R.id.snd_order);
 
+        viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
+            @Override
+            public void onChanged(BanksModel banksModel) {
+                if (banksModel.getStatus()==200)
+                    bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
+            }
+        });
 
+
+
+        viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
+            @Override
+            public void onChanged(AddressModel addressModel) {
+                if (addressModel.getStatus()==200){
+                    adapter.setAddresses((ArrayList<CustomerShippingAddress>) addressModel.getCustomerShippingAddresses());
+                }
+            }
+        });
 
         snd_order.setOnClickListener(new View.OnClickListener() {
             @Override

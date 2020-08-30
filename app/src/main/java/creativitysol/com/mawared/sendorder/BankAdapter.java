@@ -11,12 +11,13 @@ import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.Product;
+import creativitysol.com.mawared.sendorder.model.Bank;
 
 
 public class BankAdapter extends RecyclerView.Adapter<BankAdapter.Holder> {
 
 
-    ArrayList<Product> products = new ArrayList<>();
+    ArrayList<Bank> banks = new ArrayList<>();
 
 
 
@@ -35,8 +36,8 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.Holder> {
 
     }
 
-    public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+    public void setBanks(ArrayList<Bank> banks) {
+        this.banks = banks;
         notifyDataSetChanged();
     }
 
@@ -44,7 +45,7 @@ public class BankAdapter extends RecyclerView.Adapter<BankAdapter.Holder> {
     public int getItemCount() {
 
 
-        return 5;
+        return banks.size();
     }
 
     class Holder extends RecyclerView.ViewHolder {
