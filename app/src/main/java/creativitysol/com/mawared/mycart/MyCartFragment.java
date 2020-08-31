@@ -69,6 +69,8 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainActivity)getActivity()).showDialog(true);
+
                 ((MainActivity)getActivity()).fragmentStack.push(new SendOrdersFragment());
             }
         });

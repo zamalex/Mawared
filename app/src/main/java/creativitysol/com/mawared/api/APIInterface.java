@@ -3,9 +3,11 @@ package creativitysol.com.mawared.api;
 
 import com.google.gson.JsonObject;
 
+import creativitysol.com.mawared.about.model.SocialsModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 
 import creativitysol.com.mawared.home.model.HomeSliderModel;
+import creativitysol.com.mawared.home.model.MiniModel;
 import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
@@ -35,11 +37,16 @@ public interface APIInterface {
     @GET("payment/banks")
     Call<BanksModel> getBanks();
 
+    @GET("settings/orders/min-amount")
+    Call<MiniModel> getMinmum();
+
+
+    @GET("settings/socials")
+    Call<SocialsModel> getSocials();
+
 
     @POST("login")
     Call<LoginResponse> login(@Body JsonObject jsonObject);
-
-
 
 
 }

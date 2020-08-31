@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 import creativitysol.com.mawared.home.model.HomeSliderModel;
+import creativitysol.com.mawared.home.model.MiniModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,6 +17,7 @@ public class HomeViewModel extends ViewModel {
 
     MutableLiveData<HomeProductModel> result = new MutableLiveData<>();
     MutableLiveData<HomeSliderModel> slider = new MutableLiveData<>();
+    MutableLiveData<MiniModel> minimum = new MutableLiveData<>();
 
     void getHomeProducts() {
         RetrofitClient.getApiInterface().getHomeProducts().enqueue(new Callback<HomeProductModel>() {
@@ -48,4 +50,22 @@ public class HomeViewModel extends ViewModel {
             }
         });
     }
+
+    void getMin() {
+        RetrofitClient.getApiInterface().getMinmum().enqueue(new Callback<MiniModel>() {
+            @Override
+            public void onResponse(Call<MiniModel> call, Response<MiniModel> response) {
+                minimum.setValue(response.body());
+                Log.d("rere", "done");
+            }
+
+            @Override
+            public void onFailure(Call<MiniModel> call, Throwable t) {
+                Log.d("rere", t.getMessage());
+
+            }
+        });
+    }
+
+
 }

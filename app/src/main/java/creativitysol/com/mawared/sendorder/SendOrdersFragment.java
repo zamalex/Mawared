@@ -90,6 +90,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         if (!token.isEmpty())
             viewModel.getAddresses("Bearer "+token);
 
+
+
         viewModel.getBanks();
 
 
@@ -156,6 +158,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
             @Override
             public void onChanged(BanksModel banksModel) {
+                ((MainActivity)getActivity()).showDialog(false);
+
                 if (banksModel.getStatus()==200)
                     bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
             }
@@ -166,6 +170,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
             @Override
             public void onChanged(AddressModel addressModel) {
+                ((MainActivity)getActivity()).showDialog(false);
+
                 if (addressModel.getStatus()==200){
                     adapter.setAddresses((ArrayList<CustomerShippingAddress>) addressModel.getCustomerShippingAddresses());
                 }
