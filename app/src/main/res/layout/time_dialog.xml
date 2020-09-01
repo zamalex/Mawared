@@ -45,9 +45,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
+    <Button
         android:id="@+id/day_spinner"
         android:layout_width="0dp"
+        android:gravity="right|center_vertical"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
@@ -55,7 +56,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/custom_spinner"
-
+        android:textColor="@color/darkgrey"
+        android:text=""
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

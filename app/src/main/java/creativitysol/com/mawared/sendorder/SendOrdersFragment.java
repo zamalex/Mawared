@@ -1,6 +1,7 @@
 package creativitysol.com.mawared.sendorder;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -18,14 +19,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,17 +42,32 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.Bank;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.CustomerShippingAddress;
+import creativitysol.com.mawared.sendorder.model.Time;
+import creativitysol.com.mawared.sendorder.model.TimesModel;
 import io.paperdb.Paper;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
@@ -56,11 +77,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
     View v;
 
-    Dialog addCoponDialog,timeDialog;
+    Dialog addCoponDialog, timeDialog;
+    RecyclerView address_rv, products_rv, banks_rv;
 
-    RecyclerView address_rv,products_rv,banks_rv;
-
-    BottomSheetDialog address_dialog,map_dailog,payDialog,ordersDialog,confirmDialog;
+    BottomSheetDialog address_dialog, map_dailog, payDialog, ordersDialog, confirmDialog;
 
     AddressAdapter adapter;
     SentOrdersAdapter ordersAdapter;
@@ -69,27 +89,28 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     GoogleMap map;
 
-    Button snd_order,bank_transfer;
+    Button snd_order, bank_transfer;
 
-    ImageView show_map,dismiss_map;
+    ImageView show_map, dismiss_map;
 
-    String token="";
+    String token = "";
+    Spinner time_spinner;
+    Button day_spinner;
+    ConstraintLayout add_copon, add_time, add_address, add_payment, show_products;
 
-    ConstraintLayout add_copon,add_time,add_address,add_payment,show_products;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        v=inflater.inflate(R.layout.fragment_send_orders, container, false);
+        v = inflater.inflate(R.layout.fragment_send_orders, container, false);
 
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
         token = Paper.book().read("token");
 
         if (!token.isEmpty())
-            viewModel.getAddresses("Bearer "+token);
-
+            viewModel.getAddresses("Bearer " + token);
 
 
         viewModel.getBanks();
@@ -104,11 +125,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
 
         addCoponDialog.setContentView(R.layout.copon_dialog);
         timeDialog.setContentView(R.layout.time_dialog);
-        address_dialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
-        map_dailog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
-        payDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
-        ordersDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
-        confirmDialog = new BottomSheetDialog(getActivity(),R.style.AppBottomSheetDialogTheme);
+        address_dialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+        map_dailog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+        payDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+        ordersDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+        confirmDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
 
         payDialog.setContentView(R.layout.payment_dialog);
         confirmDialog.setContentView(R.layout.confirm_dialog);
@@ -118,17 +139,19 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         address_dialog.setContentView(R.layout.address_dialog);
         ordersDialog.setContentView(R.layout.products_dialog);
 
+        day_spinner = timeDialog.findViewById(R.id.day_spinner);
         bank_transfer = payDialog.findViewById(R.id.bank_transfer);
 
         address_rv = address_dialog.findViewById(R.id.address_rv);
         banks_rv = confirmDialog.findViewById(R.id.banks_rv);
 
+        time_spinner = timeDialog.findViewById(R.id.time_spinner);
         products_rv = ordersDialog.findViewById(R.id.products_rv);
 
         products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         products_rv.setAdapter(ordersAdapter);
 
-        banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
+        banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         banks_rv.setAdapter(bankAdapter);
 
         show_map = address_dialog.findViewById(R.id.show_map);
@@ -158,21 +181,20 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
             @Override
             public void onChanged(BanksModel banksModel) {
-                ((MainActivity)getActivity()).showDialog(false);
+                ((MainActivity) getActivity()).showDialog(false);
 
-                if (banksModel.getStatus()==200)
+                if (banksModel.getStatus() == 200)
                     bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
             }
         });
 
 
-
         viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
             @Override
             public void onChanged(AddressModel addressModel) {
-                ((MainActivity)getActivity()).showDialog(false);
+                ((MainActivity) getActivity()).showDialog(false);
 
-                if (addressModel.getStatus()==200){
+                if (addressModel.getStatus() == 200) {
                     adapter.setAddresses((ArrayList<CustomerShippingAddress>) addressModel.getCustomerShippingAddresses());
                 }
             }
@@ -181,203 +203,312 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         snd_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
+                // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
+
+                Map<String, RequestBody> requestBodyMap = new HashMap<>();
+
+                RequestBody delivery_type = RequestBody.create(MediaType.parse("text/plain"), "personal");
+                RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), "2020-09-01");
+                RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), "12:00:00");
+                RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), "15:00:00");
+                RequestBody address = RequestBody.create(MediaType.parse("text/plain"), "ada");
+                RequestBody payment_method = RequestBody.create(MediaType.parse("text/plain"), "visa");
+                RequestBody lat = RequestBody.create(MediaType.parse("text/plain"), "24.17750185783278");
+                RequestBody lng = RequestBody.create(MediaType.parse("text/plain"), "47.29694739189757");
+
+
+                requestBodyMap.put("delivery_type", delivery_type);
+                requestBodyMap.put("delivery_date", delivery_date);
+                requestBodyMap.put("delivery_start_time", delivery_start_time);
+                requestBodyMap.put("delivery_end_time", delivery_end_time);
+                requestBodyMap.put("address", address);
+                requestBodyMap.put("payment_method", payment_method);
+                requestBodyMap.put("lat", lat);
+                requestBodyMap.put("lng", lng);
+
+                RequestBody id1 = RequestBody.create(MediaType.parse("text/plain"), "10");
+                RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), "10");
+                RequestBody id2 = RequestBody.create(MediaType.parse("text/plain"), "12");
+                RequestBody quantity2 = RequestBody.create(MediaType.parse("text/plain"), "10");
+
+                requestBodyMap.put("products[0][id]", id1);
+                requestBodyMap.put("products[0][quantity]", quantity1);
+
+                requestBodyMap.put("products[1][id]", id2);
+                requestBodyMap.put("products[1][quantity]", quantity2);
+
+
+                String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk4ODc1NjM1LCJleHAiOjE1OTk0ODA0MzUsIm5iZiI6MTU5ODg3NTYzNSwianRpIjoicGY2WER3azhuWVhPeVRHMiJ9.MVOfr3r2d_IlX4IxlThRuC847_DomNrVeT7gUBk6oB8";
+
+
+                RetrofitClient.getApiInterface().sendOrder(requestBodyMap, token).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d("resooo", response.message());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("resooo", t.getMessage());
+                    }
+                });
             }
         });
 
 
-        show_products.setOnClickListener(new View.OnClickListener() {
+        viewModel.times.observe(getActivity(), new Observer<TimesModel>() {
+            @Override
+            public void onChanged(TimesModel timesModel) {
+                if (isAdded()){
+                    ((MainActivity) getActivity()).showDialog(false);
+                    if (timesModel.getSuccess()){
+                        ArrayList<String> times = new ArrayList<>();
+                        for (Time t : timesModel.getTimes())
+                            times.add(t.getName());
+                        ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, times);
+                        time_spinner.setAdapter(aarrdapter);
+                    }
+                }
+            }
+        });
+
+        day_spinner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final Calendar newCalendar = Calendar.getInstance();
+                DatePickerDialog StartTime = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year, monthOfYear, dayOfMonth);
+
+                        day_spinner.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
+                        JsonObject jsonObject = new JsonObject();
+                        String month = (monthOfYear+1)+"";
+                        String day = dayOfMonth+"";
+                        if (month.length()==1)
+                            month = "0"+month;
+                        if (day.length()==1)
+                            day = "0"+day;
+                        ((MainActivity) getActivity()).showDialog(true);
+
+                        jsonObject.addProperty("delivery_date",year+"-"+month+"-"+day);
+                        viewModel.getTimes(jsonObject,"Bearer "+Paper.book().read("token").toString());
+                    }
+
+                }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+                StartTime.show();
+                }
+            });
+
+        show_products.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 ordersDialog.show();
             }
-        });
+            });
 
-        add_copon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        add_copon.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 addCoponDialog.show();
             }
-        });
+            });
 
-        add_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        add_time.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 timeDialog.show();
             }
-        });
+            });
 
-        add_address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        add_address.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 address_dialog.show();
             }
-        });
+            });
 
-        add_payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        add_payment.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 payDialog.show();
             }
-        });
+            });
 
-        show_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        show_map.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 map_dailog.show();
             }
-        });
+            });
 
-        dismiss_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        dismiss_map.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 map_dailog.dismiss();
             }
-        });
+            });
 
 
-        bank_transfer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        bank_transfer.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 confirmDialog.show();
             }
-        });
+            });
 
-       setDialogsFullScreen();
+            setDialogsFullScreen();
 
 
         return v;
-    }
+        }
 
-    private void setAlertDialogs() {
-        Window window1 = addCoponDialog.getWindow();
-        Window window2 = timeDialog.getWindow();
-        Window window3 = payDialog.getWindow();
-        window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        window2.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    }
+        private void setAlertDialogs () {
+            Window window1 = addCoponDialog.getWindow();
+            Window window2 = timeDialog.getWindow();
+            Window window3 = payDialog.getWindow();
+            window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window2.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
 
-    private void setDialogsFullScreen() {
-        address_dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+        private void setDialogsFullScreen () {
+            address_dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
 
-                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
-                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
-                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+                    BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                    // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                    FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
 
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                setupFullHeight(bottomSheet);
-                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                    setupFullHeight(bottomSheet);
+                    bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
 
-        ordersDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+            ordersDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
 
-                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
-                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
-                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+                    BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                    // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                    FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
 
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                setupFullHeight(bottomSheet);
-                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                    setupFullHeight(bottomSheet);
+                    bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
 
-        payDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+            payDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
 
-                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
-                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
-                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+                    BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                    // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                    FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
 
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                setupFullHeight(bottomSheet);
-                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                    setupFullHeight(bottomSheet);
+                    bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
 
-        map_dailog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+            map_dailog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
 
-                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
-                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
-                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+                    BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                    // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                    FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
 
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                setupFullHeight(bottomSheet);
-                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                    setupFullHeight(bottomSheet);
+                    bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
 
-        confirmDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+            confirmDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
 
-                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
-                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
-                FrameLayout bottomSheet =  dialogc.findViewById(R.id.design_bottom_sheet);
+                    BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                    // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                    FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
 
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                setupFullHeight(bottomSheet);
-                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
-    }
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                    setupFullHeight(bottomSheet);
+                    bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
+        }
 
-    private void setupFullHeight(View bottomSheet) {
-        ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        bottomSheet.setLayoutParams(layoutParams);
-    }
+        private void setupFullHeight (View bottomSheet){
+            ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+            bottomSheet.setLayoutParams(layoutParams);
+        }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.getUiSettings().setMyLocationButtonEnabled(true);
+        @Override
+        public void onMapReady (GoogleMap googleMap){
+            map = googleMap;
+            map.getUiSettings().setMyLocationButtonEnabled(true);
 //        map.setMyLocationEnabled(true);
 
 
-        // Updates the location and zoom of the MapView
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 15);
-        map.animateCamera(cameraUpdate);
-      //  map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(43.1, -87.9)));
+            // Updates the location and zoom of the MapView
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 15);
+            map.animateCamera(cameraUpdate);
+            //  map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(43.1, -87.9)));
+
+        }
+
+        @Override
+        public void onResume () {
+            mapView.onResume();
+            super.onResume();
+        }
+
+
+        @Override
+        public void onPause () {
+            super.onPause();
+            mapView.onPause();
+        }
+
+        @Override
+        public void onDestroy () {
+            super.onDestroy();
+            mapView.onDestroy();
+        }
+
+        @Override
+        public void onLowMemory () {
+            super.onLowMemory();
+            mapView.onLowMemory();
+        }
 
     }
-
-    @Override
-    public void onResume() {
-        mapView.onResume();
-        super.onResume();
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-}
