@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import java.util.Map;
 
 import creativitysol.com.mawared.about.model.SocialsModel;
+import creativitysol.com.mawared.home.model.CitiesModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 
 import creativitysol.com.mawared.home.model.HomeSliderModel;
@@ -25,6 +26,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 
 
 public interface APIInterface {
@@ -46,6 +48,12 @@ public interface APIInterface {
 
     @GET("settings/orders/min-amount")
     Call<MiniModel> getMinmum();
+
+    @GET("cities")
+    Call<CitiesModel> getCities();
+
+    @GET("products/{id}")
+    Call<HomeProductModel> filterByCity(@Path("id")String id);
 
 
     @GET("settings/socials")

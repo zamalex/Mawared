@@ -32,6 +32,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/p_deliver"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp"
@@ -46,7 +47,7 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/bank_transfer"
+        android:id="@+id/p_bank"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp"
@@ -61,6 +62,7 @@
         android:textSize="18sp" />
 
     <Button
+        android:id="@+id/p_visa"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp"

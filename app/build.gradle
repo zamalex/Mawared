@@ -70,6 +70,9 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'cc.cloudist.acplibrary:library:1.2.1'
+    implementation 'io.nlopez.smartlocation:library:3.3.3'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
 
 

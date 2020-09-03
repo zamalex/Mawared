@@ -14,6 +14,7 @@ import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.JsonObject;
@@ -60,6 +63,8 @@ import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.CustomerShippingAddress;
 import creativitysol.com.mawared.sendorder.model.Time;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
 import io.paperdb.Paper;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -70,7 +75,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
+public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, AddressAdapter.AddressInterface {
 
 
     SendOrderViewModel viewModel;
@@ -89,14 +94,18 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     GoogleMap map;
 
-    Button snd_order, bank_transfer;
+    Button snd_order, p_bank,p_deliver,p_visa;
 
     ImageView show_map, dismiss_map;
+
+    TextView selected_address,selected_address_type,selected_payment,selected_copon,selected_date;
 
     String token = "";
     Spinner time_spinner;
     Button day_spinner;
     ConstraintLayout add_copon, add_time, add_address, add_payment, show_products;
+
+    MutableLiveData<String> paymentMethod = new MutableLiveData<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,6 +113,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
 
         v = inflater.inflate(R.layout.fragment_send_orders, container, false);
+
+        selected_address = v.findViewById(R.id.selected_address);
+        selected_address_type = v.findViewById(R.id.selected_address_type);
+        selected_copon = v.findViewById(R.id.selected_copon);
+        selected_date = v.findViewById(R.id.selected_date);
+        selected_payment = v.findViewById(R.id.selected_payment);
+
 
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
@@ -119,7 +135,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         addCoponDialog = new Dialog(getActivity());
         timeDialog = new Dialog(getActivity());
 
-        adapter = new AddressAdapter();
+        adapter = new AddressAdapter(this);
         ordersAdapter = new SentOrdersAdapter();
         bankAdapter = new BankAdapter();
 
@@ -140,7 +156,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         ordersDialog.setContentView(R.layout.products_dialog);
 
         day_spinner = timeDialog.findViewById(R.id.day_spinner);
-        bank_transfer = payDialog.findViewById(R.id.bank_transfer);
+
+        p_bank = payDialog.findViewById(R.id.p_bank);
+        p_deliver = payDialog.findViewById(R.id.p_deliver);
+        p_visa = payDialog.findViewById(R.id.p_visa);
 
         address_rv = address_dialog.findViewById(R.id.address_rv);
         banks_rv = confirmDialog.findViewById(R.id.banks_rv);
@@ -256,6 +275,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
         });
 
 
+
         viewModel.times.observe(getActivity(), new Observer<TimesModel>() {
             @Override
             public void onChanged(TimesModel timesModel) {
@@ -351,6 +371,33 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
             {
                 @Override
                 public void onClick (View v){
+                    ((MainActivity)getActivity()).showDialog(true);
+                    SmartLocation.with(getActivity()).location()
+                            .oneFix()
+                            .start(new OnLocationUpdatedListener() {
+                                @Override
+                                public void onLocationUpdated(Location location) {
+
+
+                                        ((MainActivity)getActivity()).showDialog(false);
+
+                                        Toast.makeText(getActivity(), "loc is "+location.getLatitude(), Toast.LENGTH_LONG).show();
+                                        map.clear();
+
+                                        MarkerOptions mp = new MarkerOptions();
+
+                                        mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
+
+                                        mp.title("my position");
+
+                                        map.addMarker(mp);
+
+                                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                                new LatLng(location.getLatitude(), location.getLongitude()), 16));
+
+
+                                }
+                            });
                 map_dailog.show();
             }
             });
@@ -365,15 +412,37 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
             });
 
 
-        bank_transfer.setOnClickListener(new View.OnClickListener()
+        p_bank.setOnClickListener(new View.OnClickListener()
 
             {
                 @Override
                 public void onClick (View v){
+                    paymentMethod.setValue("تحويل بنكي");
                 confirmDialog.show();
             }
             });
+        p_visa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentMethod.setValue("بطاقة مدى / visa");
 
+            }
+        });
+
+        p_deliver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentMethod.setValue("الدفع عن الإستلام");
+                payDialog.dismiss();
+            }
+        });
+
+        paymentMethod.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                selected_payment.setText(s);
+            }
+        });
             setDialogsFullScreen();
 
 
@@ -511,4 +580,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback {
             mapView.onLowMemory();
         }
 
+    @Override
+    public void setAddress(String type, String address) {
+        address_dialog.dismiss();
+        selected_address.setText(address);
     }
+}

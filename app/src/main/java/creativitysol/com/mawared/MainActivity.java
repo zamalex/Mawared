@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         dialog = new ACProgressFlower.Builder(this)
                 .direction(ACProgressConstant.DIRECT_CLOCKWISE)
                 .themeColor(Color.WHITE)
-                .text(getString(R.string.app_name))
                 .fadeColor(Color.DKGRAY).build();
 
         navigationView = findViewById(R.id.navigation);
@@ -87,9 +86,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showDialog(Boolean show) {
-        if (show)
-            dialog.show();
-        else dialog.dismiss();
+        if (dialog == null) {
+            dialog = new ACProgressFlower.Builder(this)
+                    .direction(ACProgressConstant.DIRECT_CLOCKWISE)
+                    .themeColor(Color.WHITE)
+                    .fadeColor(Color.DKGRAY).build();
+        }
+        if (show) {
+            if (!dialog.isShowing())
+                dialog.show();
+        } else {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
     }
 
 }
