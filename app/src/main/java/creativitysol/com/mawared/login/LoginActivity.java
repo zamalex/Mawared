@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.forgot.ForgotPasswordActivity;
 import creativitysol.com.mawared.login.model.LoginResponse;
 import io.paperdb.Paper;
 
@@ -27,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText pass_et;
 
     Button login;
+
+    TextView forgot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         pass_et = findViewById(R.id.pass_et);
 
         login = findViewById(R.id.login_btn);
+        forgot = findViewById(R.id.forgot);
 
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +66,14 @@ public class LoginActivity extends AppCompatActivity {
                 jsonObject.addProperty("country_code", "SA");
 
                 viewModel.login(jsonObject);
+            }
+        });
+
+
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             }
         });
 

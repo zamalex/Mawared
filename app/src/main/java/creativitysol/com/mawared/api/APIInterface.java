@@ -63,6 +63,9 @@ public interface APIInterface {
     @POST("login")
     Call<LoginResponse> login(@Body JsonObject jsonObject);
 
+    @POST("password/forget")
+    Call<ResponseBody> forgotPass(@Body JsonObject jsonObject);
+
     @POST("deliver-time/available-times")
     Call<TimesModel> getTimes(@Body JsonObject jsonObject,@Header("Authorization") String topen);
 
