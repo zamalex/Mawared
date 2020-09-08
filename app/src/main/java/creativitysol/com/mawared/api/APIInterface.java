@@ -11,7 +11,9 @@ import creativitysol.com.mawared.home.model.HomeProductModel;
 
 import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
+import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.mycart.model.CardModel;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
@@ -27,6 +29,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 
 public interface APIInterface {
@@ -74,6 +77,14 @@ public interface APIInterface {
     Call<ResponseBody> sendOrder(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
+    @POST("carts/add")
+    Call<AddCardModel> addToCard(@Query("product_id")String product_id, @Query("amount")String amount, @Query("device_id")String device_id, @Query("cart_id")String cart_id, @Query("math_type")String math_type);
+
+    @POST("carts/{id}/remove")
+    Call<ResponseBody> removeFromCard(@Path("id")String id);
+
+    @GET("carts/{card_id}/items")
+    Call<CardModel> getCard(@Path("card_id")String card_id);
 
 
 

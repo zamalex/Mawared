@@ -1,52 +1,61 @@
 
-package creativitysol.com.mawared.home.model;
+package creativitysol.com.mawared.mycart.model;
 
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class Product {
-
     public int qty=0;
     @SerializedName("available")
-    private Long mAvailable;
+    private String mAvailable;
+    @SerializedName("created_at")
+    private String mCreatedAt;
     @SerializedName("has_offer")
-    private Long mHasOffer;
+    private String mHasOffer;
     @SerializedName("id")
     private Long mId;
-    @SerializedName("img")
-    private String mImg;
     @SerializedName("offer")
     private String mOffer;
+    @SerializedName("offer_percentage")
+    private String mOfferPercentage;
     @SerializedName("offer_price")
     private String mOfferPrice;
+    @SerializedName("photo")
+    private String mPhoto;
     @SerializedName("price")
     private String mPrice;
+    @SerializedName("Price_with_vat")
+    private Double mPriceWithVat;
     @SerializedName("quantity")
-    private Long mQuantity;
+    private String mQuantity;
     @SerializedName("sku")
     private String mSku;
     @SerializedName("title")
     private String mTitle;
-    @SerializedName("vat")
-    private String mVat;
-    @SerializedName("Price_with_vat")
-    private Double Price_with_vat;
-    @SerializedName("photo")
-    private String photo;
+    @SerializedName("updated_at")
+    private String mUpdatedAt;
 
-    public Long getAvailable() {
+    public String getAvailable() {
         return mAvailable;
     }
 
-    public void setAvailable(Long available) {
+    public void setAvailable(String available) {
         mAvailable = available;
     }
 
-    public Long getHasOffer() {
+    public String getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        mCreatedAt = createdAt;
+    }
+
+    public String getHasOffer() {
         return mHasOffer;
     }
 
-    public void setHasOffer(Long hasOffer) {
+    public void setHasOffer(String hasOffer) {
         mHasOffer = hasOffer;
     }
 
@@ -58,20 +67,20 @@ public class Product {
         mId = id;
     }
 
-    public String getImg() {
-        return mImg;
-    }
-
-    public void setImg(String img) {
-        mImg = img;
-    }
-
     public String getOffer() {
         return mOffer;
     }
 
     public void setOffer(String offer) {
         mOffer = offer;
+    }
+
+    public String getOfferPercentage() {
+        return mOfferPercentage;
+    }
+
+    public void setOfferPercentage(String offerPercentage) {
+        mOfferPercentage = offerPercentage;
     }
 
     public String getOfferPrice() {
@@ -82,6 +91,14 @@ public class Product {
         mOfferPrice = offerPrice;
     }
 
+    public String getPhoto() {
+        return mPhoto;
+    }
+
+    public void setPhoto(String photo) {
+        mPhoto = photo;
+    }
+
     public String getPrice() {
         return mPrice;
     }
@@ -90,11 +107,19 @@ public class Product {
         mPrice = price;
     }
 
-    public Long getQuantity() {
+    public Double getPriceWithVat() {
+        return mPriceWithVat;
+    }
+
+    public void setPriceWithVat(Double priceWithVat) {
+        mPriceWithVat = priceWithVat;
+    }
+
+    public String getQuantity() {
         return mQuantity;
     }
 
-    public void setQuantity(Long quantity) {
+    public void setQuantity(String quantity) {
         mQuantity = quantity;
     }
 
@@ -114,27 +139,12 @@ public class Product {
         mTitle = title;
     }
 
-    public String getVat() {
-        return mVat;
+    public String getUpdatedAt() {
+        return mUpdatedAt;
     }
 
-    public void setVat(String vat) {
-        mVat = vat;
+    public void setUpdatedAt(String updatedAt) {
+        mUpdatedAt = updatedAt;
     }
 
-    public Double getPrice_with_vat() {
-        return Price_with_vat;
-    }
-
-    public void setPrice_with_vat(Double price_with_vat) {
-        Price_with_vat = price_with_vat;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
 }

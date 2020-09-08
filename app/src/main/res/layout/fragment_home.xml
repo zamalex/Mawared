@@ -44,6 +44,19 @@
             app:layout_constraintTop_toTopOf="@+id/textView"
             android:layout_marginLeft="24dp" />
 
+        <ProgressBar
+            android:id="@+id/progressBar_cyclic"
+            android:visibility="gone"
+
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:minWidth="40dp" />
         <ImageView
             android:id="@+id/go_cart"
             android:layout_width="wrap_content"

@@ -34,6 +34,8 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<HomeProductModel> call, Throwable t) {
                 Log.d("rere2", t.getMessage());
+                filteredProducts.setValue(null);
+
 
             }
         });
@@ -50,6 +52,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<HomeProductModel> call, Throwable t) {
                 Log.d("rere", t.getMessage());
+                result.setValue(null);
 
             }
         });
@@ -67,6 +70,8 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<HomeSliderModel> call, Throwable t) {
                 Log.d("rere", t.getMessage());
+                slider.setValue(null);
+
 
             }
         });
@@ -83,6 +88,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<MiniModel> call, Throwable t) {
                 Log.d("rere", t.getMessage());
+                minimum.setValue(null);
 
             }
         });
@@ -99,6 +105,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<CitiesModel> call, Throwable t) {
                 Log.d("rere", t.getMessage());
+                cities.setValue(null);
 
             }
         });

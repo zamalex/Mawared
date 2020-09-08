@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -18,18 +19,23 @@ import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.Product;
+import creativitysol.com.mawared.mycart.model.CardModel;
+import creativitysol.com.mawared.mycart.model.Item;
 import io.paperdb.Paper;
 
 
 public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
 
-    ArrayList<Product> products = new ArrayList<>();
+    ArrayList<Item> products = new ArrayList<>();
 
     sumListener sumListener;
+    UpdateListener updateListener;
 
-    public MyCartAdapter(MyCartAdapter.sumListener sumListener) {
+
+    public MyCartAdapter(MyCartAdapter.sumListener sumListener, UpdateListener updateListener) {
         this.sumListener = sumListener;
+        this.updateListener = updateListener;
     }
 
     @NonNull
@@ -42,30 +48,33 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
-        final Product product = products.get(position);
-        holder.price.setText(product.getPrice() + " " + "ر.س");
-        holder.name.setText(product.getTitle());
-        holder.total_qty.setText(product.qty + "");
+
+        holder.price.setText(products.get(position).getProduct().getPrice() + " " + "ر.س");
+        holder.name.setText(products.get(position).getProduct().getTitle());
+        holder.total_qty.setText(products.get(position).getAmount() + "");
+
+        if (Integer.parseInt(products.get(position).getAmount())>5){
+            holder.offerCard.setVisibility(View.VISIBLE);
+        }else
+            holder.offerCard.setVisibility(View.GONE);
 
         sumListener.doSum(calculateTotal());
+
+
+        products.get(position).getProduct().qty = Integer.parseInt(products.get(position).getAmount());
 
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                products.get(position).qty++;
-                holder.total_qty.setText(products.get(position).qty + "");
-                notifyDataSetChanged();
+                products.get(position).getProduct().qty++;
+                holder.total_qty.setText(products.get(position).getProduct().qty + "");
 
-                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (product.getId() == arrayList.get(i).getId()) {
-                        arrayList.get(i).qty++;
-                    }
-                }
-
-
-                Paper.book().write("cart", arrayList);
+                int amount = Integer.parseInt(products.get(position).getAmount());
+                products.get(position).setAmount((amount+1)+"");
                 sumListener.doSum(calculateTotal());
+                updateListener.increase(products.get(position), products.get(position).getProduct().qty);
+
+                notifyDataSetChanged();
 
 
             }
@@ -76,37 +85,34 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             @Override
             public void onClick(View v) {
 
-                products.get(position).qty--;
-                if (products.get(position).qty != 0) {
 
-                    holder.total_qty.setText(products.get(position).qty + "");
+
+                int amount = Integer.parseInt(products.get(position).getAmount());
+                products.get(position).setAmount((amount-1)+"");
+                products.get(position).getProduct().setQuantity(amount+"");
+
+                if (products.get(position).getProduct().qty != 1) {
+
+                    holder.total_qty.setText(products.get(position).getProduct().qty + "");
+                    updateListener.decrease(products.get(position), products.get(position).getProduct().qty);
+
                     notifyDataSetChanged();
                 } else {
-                    products.remove(position);
+                    updateListener.decrease(products.get(position),0);
                     notifyDataSetChanged();
                 }
 
-                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (product.getId() == arrayList.get(i).getId()) {
-                        if (arrayList.get(i).qty > 0)
-                            arrayList.get(i).qty--;
-                        else if (arrayList.get(i).qty==0)
-                            arrayList.remove(i);
-                    }
-                }
+
 
                 sumListener.doSum(calculateTotal());
-                Paper.book().write("cart", arrayList);
             }
         });
 
-        Picasso.get().load(product.getImg()).fit().into(holder.img);
-        Log.d("imgg", product.getImg());
+        // Picasso.get().load(item.getProduct().getPhoto()).fit().into(holder.img);
 
     }
 
-    public void setProducts(ArrayList<Product> products) {
+    public void setProducts(ArrayList<Item> products) {
         this.products = products;
         notifyDataSetChanged();
     }
@@ -123,7 +129,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         ImageView img;
         ImageButton increase, decrease;
         LinearLayout quantityLayout;
-
+        CardView offerCard;
         public Holder(@NonNull View itemView) {
             super(itemView);
 
@@ -134,19 +140,29 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             total_qty = itemView.findViewById(R.id.total_qty);
             increase = itemView.findViewById(R.id.increase);
             decrease = itemView.findViewById(R.id.decrease);
+            offerCard = itemView.findViewById(R.id.cardView2);
         }
     }
 
-    Long calculateTotal(){
-        Long sum=0l;
+    Double calculateTotal() {
+        Double sum =0.0 ;
 
-        for (Product p : products){
-            sum += (p.qty * Long.parseLong(p.getPrice()));
+        for (Item p : products) {
+            sum += (Double.parseDouble(p.getAmount()) * Double.parseDouble(p.getProduct().getPrice()));
         }
 
         return sum;
     }
+
     public interface sumListener {
-        void doSum(Long sum);
+        void doSum(Double sum);
+    }
+
+    public interface UpdateListener {
+
+        void increase(Item item, int qty);
+
+        void decrease(Item item, int qty);
+
     }
 }

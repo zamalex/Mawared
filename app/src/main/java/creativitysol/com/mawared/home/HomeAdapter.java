@@ -25,6 +25,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
 
     ArrayList<Product> products = new ArrayList<>();
+    addListener listener;
+
+    public HomeAdapter(addListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -37,29 +42,18 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull final Holder holder, final int position) {
         final Product product = products.get(position);
-        holder.price.setText(product.getPrice() + " " + "ر.س");
+        Double p = Double.parseDouble(product.getPrice())+(Double.parseDouble(product.getVat())/100* Double.parseDouble(product.getPrice()));
+
+        holder.price.setText(p + " " + "ر.س");
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
-
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 products.get(position).qty++;
                 notifyDataSetChanged();
-                boolean isfound = false;
-                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (product.getId() == arrayList.get(i).getId()) {
-                        arrayList.get(i).qty++;
-                        isfound = true;
-                    }
-                }
-                if (!isfound)
-                    arrayList.add(product);
 
-                Paper.book().write("cart", arrayList);
-
-
+                listener.onAddClick(position,product);
             }
         });
 
@@ -70,18 +64,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
                 holder.total_qty.setText(products.get(position).qty + "");
                 notifyDataSetChanged();
 
-                boolean isfound = false;
-                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (product.getId() == arrayList.get(i).getId()) {
-                        arrayList.get(i).qty++;
-                        isfound = true;
-                    }
-                }
-                if (!isfound)
-                    arrayList.add(product);
+                notifyDataSetChanged();
 
-                Paper.book().write("cart", arrayList);
+                listener.onAddClick(position,product);
 
             }
         });
@@ -100,18 +85,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
                     notifyDataSetChanged();
                 }
 
-                ArrayList<Product> arrayList = Paper.book().read("cart", new ArrayList<Product>());
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (product.getId() == arrayList.get(i).getId()) {
-                        if (arrayList.get(i).qty > 0)
-                            arrayList.get(i).qty--;
-                        else if (arrayList.get(i).qty == 0)
-                            arrayList.remove(i);
-                    }
-                }
+                listener.onDecreaseClick(position,product);
 
-
-                Paper.book().write("cart", arrayList);
             }
         });
 
@@ -191,5 +166,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
     public interface addListener {
         void onAddClick(int pos, Product product);
+        void onDecreaseClick(int pos, Product product);
+
+
+
     }
 }

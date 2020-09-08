@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,15 +37,18 @@ import creativitysol.com.mawared.home.model.HomeProductModel;
 import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
 import creativitysol.com.mawared.home.model.Product;
+import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
+import creativitysol.com.mawared.mycart.CartViewModel;
 import creativitysol.com.mawared.mycart.MyCartFragment;
 import io.paperdb.Paper;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
     View v;
     RecyclerView recyclerView;
     HomeViewModel viewModel;
+    CartViewModel cartViewModel;
     HomeAdapter adapter;
     Spinner spinner;
     ImageView go_cart;
@@ -53,15 +57,17 @@ public class HomeFragment extends Fragment {
     ArrayList<String> cityIds;
     MutableLiveData<Integer> card_size = new MutableLiveData<>();
     TextView card_txt;
+    ProgressBar progressBar_cyclic;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_home, container, false);
-        adapter = new HomeAdapter();
+        adapter = new HomeAdapter(this);
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
+        cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
 
         ((MainActivity) getActivity()).showDialog(true);
@@ -74,6 +80,7 @@ public class HomeFragment extends Fragment {
         viewModel.getHomeSlider();
         recyclerView = v.findViewById(R.id.home_p_rv);
         spinner = v.findViewById(R.id.city_spinner);
+        progressBar_cyclic = v.findViewById(R.id.progressBar_cyclic);
         card_txt = v.findViewById(R.id.card_txt);
         go_cart = v.findViewById(R.id.go_cart);
         flipper_layout = v.findViewById(R.id.flipper_layout);
@@ -189,7 +196,11 @@ public class HomeFragment extends Fragment {
         go_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).fragmentStack.push(new MyCartFragment());
+                long cid = Paper.book().read("cid", 0l);
+                if (cid == 0) {
+                    Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
+                } else
+                    ((MainActivity) getActivity()).fragmentStack.push(new MyCartFragment());
             }
         });
 
@@ -198,7 +209,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(CitiesModel citiesModel) {
                 if (isAdded()) {
-                    if (citiesModel!=null){
+                    if (citiesModel != null) {
                         if (citiesModel.getStatusCode() == 200) {
                             for (Datum d : citiesModel.getData()) {
                                 cities.add(d.getName());
@@ -215,6 +226,15 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        cartViewModel.addResponse.observe(getActivity(), new Observer<AddCardModel>() {
+            @Override
+            public void onChanged(AddCardModel addCardModel) {
+                if (isAdded()) {
+                    showCard(true);
+                    Paper.book().write("cid", addCardModel.getData().getCartId());
+                }
+            }
+        });
 
         return v;
     }
@@ -229,5 +249,30 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
         ((MainActivity) getActivity()).bottomNavVisibility(false);
+    }
+
+    @Override
+    public void onAddClick(int pos, Product product) {
+        showCard(false);
+        Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
+        cartViewModel.addToCard(product.getId() + "", "1", null, "1","plus");
+    }
+
+    @Override
+    public void onDecreaseClick(int pos, Product product) {
+        Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
+        cartViewModel.addToCard(product.getId() + "", "1", null, "1","minus");
+
+
+    }
+
+    void showCard(boolean b){
+        if (!b){
+            go_cart.setVisibility(View.INVISIBLE);
+            progressBar_cyclic.setVisibility(View.VISIBLE);
+        }else {
+            progressBar_cyclic.setVisibility(View.INVISIBLE);
+            go_cart.setVisibility(View.VISIBLE);
+        }
     }
 }
