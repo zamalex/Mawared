@@ -2,6 +2,7 @@ package creativitysol.com.mawared;
 
 
 import com.onesignal.OneSignal;
+import com.yariksoffice.lingver.Lingver;
 
 import io.paperdb.Paper;
 
@@ -10,6 +11,8 @@ public class MyApp extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Lingver.init(this);
+        Lingver.getInstance().setLocale(this, "ar");
 
         Paper.init(this);
 

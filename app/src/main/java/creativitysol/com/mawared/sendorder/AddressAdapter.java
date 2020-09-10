@@ -55,6 +55,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
     public int getItemCount() {
 
 
+        if (addresses==null)
+            return 0;
         return addresses.size();
     }
 

@@ -1,5 +1,6 @@
 package creativitysol.com.mawared.mycart;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                 .inflate(R.layout.item_my_card, parent, false);
         return new MyCartAdapter.Holder(itemView);
     }
-
+    long mLastClickTime = 0;
     @Override
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
 
@@ -53,9 +54,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         holder.name.setText(products.get(position).getProduct().getTitle());
         holder.total_qty.setText(products.get(position).getAmount() + "");
 
-        if (Integer.parseInt(products.get(position).getAmount()) > 5) {
-            holder.offerCard.setVisibility(View.VISIBLE);
-        } else
+
+
             holder.offerCard.setVisibility(View.GONE);
 
         sumListener.doSum(calculateTotal());
@@ -63,9 +63,15 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
         products.get(position).getProduct().qty = Integer.parseInt(products.get(position).getAmount());
 
+
+
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+               if (((MyCartFragment)updateListener).isLoading)
+                   return;
+
                 products.get(position).getProduct().qty++;
                 holder.total_qty.setText(products.get(position).getProduct().qty + "");
 
@@ -84,6 +90,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         holder.decrease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (((MyCartFragment)updateListener).isLoading)
+                    return;
 
 
                 int amount = Integer.parseInt(products.get(position).getAmount());
@@ -107,7 +115,28 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             }
         });
 
-         Picasso.get().load(products.get(position).getProduct().getPhoto()).fit().into(holder.img);
+        Picasso.get().load(products.get(position).getProduct().getPhoto()).fit().into(holder.img);
+
+        String c = "\\u002B";
+
+        if (products.get(position).getProduct().getOffer() != null)
+            if (!products.get(position).getProduct().getOffer().isEmpty()) {
+                String o = products.get(position).getProduct().getOffer().replace(" ", "");
+                String[] parts = o.split(c);
+                int part1 = Integer.parseInt(parts[0]);
+                int part2 = Integer.parseInt(parts[1]);
+                Log.d("oof", part1 + "   " + part2);
+
+                if (Integer.parseInt(products.get(position).getAmount()) >= part1) {
+                    holder.offerCard.setVisibility(View.VISIBLE);
+
+                    int q = Integer.parseInt(products.get(position).getAmount())/part1*part2;
+                    holder.offer_qty.setText(" الكمية "+q);
+                } else
+                    holder.offerCard.setVisibility(View.GONE);
+
+            }
+
 
     }
 
@@ -124,7 +153,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView name, price, total_qty;
+        TextView name, price, total_qty,offer_qty;
         ImageView img;
         ImageButton increase, decrease;
         LinearLayout quantityLayout;
@@ -141,6 +170,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             increase = itemView.findViewById(R.id.increase);
             decrease = itemView.findViewById(R.id.decrease);
             offerCard = itemView.findViewById(R.id.cardView2);
+            offer_qty = itemView.findViewById(R.id.offer_qty);
         }
     }
 

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
 
-public class MyCartFragment extends Fragment implements MyCartAdapter.sumListener,MyCartAdapter.UpdateListener{
+public class MyCartFragment extends Fragment implements MyCartAdapter.sumListener, MyCartAdapter.UpdateListener {
 
 
     RecyclerView cartRv;
@@ -41,16 +42,20 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     TextView total_sum;
     MyCartAdapter adapter;
     CircularProgressButton next;
+    ImageView back;
     long cid;
+
+    public boolean isLoading = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_my_cart, container, false);
-
+        back = v.findViewById(R.id.imageView);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
-        adapter = new MyCartAdapter(this,this);
+        adapter = new MyCartAdapter(this, this);
 
         cartRv = v.findViewById(R.id.cart_rv);
         total_sum = v.findViewById(R.id.total_sum);
@@ -63,17 +68,17 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
 
         cid = Paper.book().read("cid");
-       // ((MainActivity)getActivity()).showDialog(true);
+        // ((MainActivity)getActivity()).showDialog(true);
         next.startAnimation();
-        viewModel.getCard(cid+"");
-
-
+        viewModel.getCard(cid + "");
 
 
         viewModel.cardModelMutableLiveData.observe(getActivity(), new Observer<CardModel>() {
             @Override
             public void onChanged(CardModel cardModel) {
-              //  ((MainActivity)getActivity()).showDialog(false);
+                //  ((MainActivity)getActivity()).showDialog(false);
+                isLoading = false;
+
                 next.revertAnimation();
                 next.setBackgroundResource(R.drawable.next_radius);
 
@@ -85,7 +90,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         viewModel.addResponse.observe(getActivity(), new Observer<AddCardModel>() {
             @Override
             public void onChanged(AddCardModel responseBody) {
-                viewModel.getCard(cid+"");
+                viewModel.getCard(cid + "");
 
             }
         });
@@ -93,7 +98,8 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         viewModel.removeResponse.observe(getActivity(), new Observer<ResponseBody>() {
             @Override
             public void onChanged(ResponseBody responseBody) {
-                viewModel.getCard(cid+"");
+
+                viewModel.getCard(cid + "");
             }
         });
 
@@ -101,12 +107,11 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (viewModel.cardModelMutableLiveData.getValue().getData().getItems().size()==0)
-                {
+                if (viewModel.cardModelMutableLiveData.getValue().getData().getItems().size() == 0) {
                     Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                ((MainActivity)getActivity()).showDialog(true);
+                ((MainActivity) getActivity()).showDialog(true);
 
                 SendOrdersFragment sendOrdersFragment = new SendOrdersFragment();
 
@@ -114,34 +119,44 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 b.putParcelableArrayList("clist", (ArrayList<? extends Parcelable>) viewModel.cardModelMutableLiveData.getValue().getData().getItems());
                 sendOrdersFragment.setArguments(b);
 
-                ((MainActivity)getActivity()).fragmentStack.push(sendOrdersFragment);
+                ((MainActivity) getActivity()).fragmentStack.push(sendOrdersFragment);
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).onBackPressed();
 
+            }
+        });
 
         return v;
     }
 
     @Override
     public void doSum(Double sum) {
-        total_sum.setText((Double)(Math.round(sum * 100) / 100.00)+" ر.س");
+        total_sum.setText((Double) (Math.round(sum * 100) / 100.00) + " ر.س");
+
     }
 
     @Override
     public void increase(Item item, int qty) {
         next.startAnimation();
-        viewModel.addToCard(item.getProductId()+"","1",null,cid+"","plus");
+        isLoading = true;
+        viewModel.addToCard(item.getProductId() + "", "1", null, cid + "", "plus");
 
     }
 
     @Override
     public void decrease(Item item, int qty) {
+        isLoading = true;
+
         next.startAnimation();
-        if (qty==0)
+        if (qty == 0)
             viewModel.removeFromCard(item.getId().toString());
         else
-             viewModel.addToCard(item.getProductId()+"","1",null,cid+"","minus");
+            viewModel.addToCard(item.getProductId() + "", "1", null, cid + "", "minus");
 
     }
 }

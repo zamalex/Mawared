@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.JsonObject;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -105,18 +111,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     String token = "";
     Spinner time_spinner;
     Button day_spinner;
+    ProgressBar mapprogressBar;
     ConstraintLayout add_copon, add_time, add_address, add_payment, show_products;
 
     MutableLiveData<String> paymentMethod = new MutableLiveData<>();
 
     ArrayList<Item> items = new ArrayList<>();
 
+    ImageView back;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         v = inflater.inflate(R.layout.fragment_send_orders, container, false);
+
+        back = v.findViewById(R.id.imageView);
 
         selected_address = v.findViewById(R.id.selected_address);
         selected_address_type = v.findViewById(R.id.selected_address_type);
@@ -131,6 +141,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         if (!token.isEmpty())
             viewModel.getAddresses("Bearer " + token);
 
+       // Toast.makeText(getActivity(),token+ "", Toast.LENGTH_SHORT).show();
 
         viewModel.getBanks();
 
@@ -143,7 +154,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         bankAdapter = new BankAdapter();
 
         addCoponDialog.setContentView(R.layout.copon_dialog);
+
+        addCoponDialog.findViewById(R.id.xcopon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCoponDialog.dismiss();
+            }
+        });
+
+
         timeDialog.setContentView(R.layout.time_dialog);
+        timeDialog.findViewById(R.id.xtime).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog.dismiss();
+            }
+        });
         address_dialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
         map_dailog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
         payDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
@@ -151,12 +177,30 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         confirmDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
 
         payDialog.setContentView(R.layout.payment_dialog);
+        payDialog.findViewById(R.id.xpay).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                payDialog.dismiss();
+            }
+        });
         confirmDialog.setContentView(R.layout.confirm_dialog);
         map_dailog.setContentView(R.layout.map_dialog);
         map_dailog.setCancelable(false);
 
         address_dialog.setContentView(R.layout.address_dialog);
+        address_dialog.findViewById(R.id.xaddress).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                address_dialog.dismiss();
+            }
+        });
         ordersDialog.setContentView(R.layout.products_dialog);
+        ordersDialog.findViewById(R.id.xorder).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ordersDialog.dismiss();
+            }
+        });
 
         day_spinner = timeDialog.findViewById(R.id.day_spinner);
 
@@ -190,6 +234,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         address_rv.setAdapter(adapter);
 
         mapView = map_dailog.findViewById(R.id.mapview);
+        mapprogressBar = map_dailog.findViewById(R.id.mapprogressBar);
         dismiss_map = map_dailog.findViewById(R.id.dismiss_map);
         mapView.onCreate(savedInstanceState);
 
@@ -333,6 +378,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 }
             });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).onBackPressed();
+            }
+        });
         show_products.setOnClickListener(new View.OnClickListener()
 
             {
@@ -383,34 +434,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             {
                 @Override
                 public void onClick (View v){
-                    ((MainActivity)getActivity()).showDialog(true);
-                    SmartLocation.with(getActivity()).location()
-                            .oneFix()
-                            .start(new OnLocationUpdatedListener() {
-                                @Override
-                                public void onLocationUpdated(Location location) {
 
-
-                                        ((MainActivity)getActivity()).showDialog(false);
-
-                                        Toast.makeText(getActivity(), "loc is "+location.getLatitude(), Toast.LENGTH_LONG).show();
-                                        map.clear();
-
-                                        MarkerOptions mp = new MarkerOptions();
-
-                                        mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
-
-                                        mp.title("my position");
-
-                                        map.addMarker(mp);
-
-                                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                                new LatLng(location.getLatitude(), location.getLongitude()), 16));
-
-
-                                }
-                            });
-                map_dailog.show();
+                    checkLocPermission();
             }
             });
 
@@ -607,4 +632,62 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         address_dialog.dismiss();
         selected_address.setText(address);
     }
+
+    void checkLocPermission(){
+        Dexter.withContext(getActivity())
+                .withPermissions(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            mapprogressBar.setVisibility(View.VISIBLE);
+                            SmartLocation.with(getActivity()).location()
+                                    //.oneFix()
+                                    .start(new OnLocationUpdatedListener() {
+                                        @Override
+                                        public void onLocationUpdated(Location location) {
+
+
+                                            mapprogressBar.setVisibility(View.GONE);
+                                            Toast.makeText(getActivity(), "loc is "+location.getLatitude(), Toast.LENGTH_LONG).show();
+                                            map.clear();
+
+                                            MarkerOptions mp = new MarkerOptions();
+
+                                            mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
+
+                                            mp.title("my position");
+
+                                            map.addMarker(mp);
+
+                                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                                    new LatLng(location.getLatitude(), location.getLongitude()), 16));
+
+
+                                        }
+                                    });
+                            map_dailog.show();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+
+
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+
 }

@@ -104,6 +104,8 @@ dependencies {
 
     implementation 'br.com.simplepass:loading-button-android:2.2.0'
    // implementation 'com.samigehi:loadingview:1.1'
+    implementation 'com.karumi:dexter:6.2.1'
+    implementation "com.github.YarikSOffice:lingver:1.2.2"
 
 
 }
