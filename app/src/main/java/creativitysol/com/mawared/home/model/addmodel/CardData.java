@@ -15,6 +15,12 @@ public class CardData {
     @SerializedName("message")
     private String mMessage;
 
+    @SerializedName("items_count")
+    private int items_count;
+
+    @SerializedName("items_sum_final_prices")
+    private double items_sum_final_prices;
+
     public Long getCartId() {
         return mCartId;
     }
@@ -47,4 +53,19 @@ public class CardData {
         mMessage = message;
     }
 
+    public int getItems_count() {
+        return items_count;
+    }
+
+    public void setItems_count(int items_count) {
+        this.items_count = items_count;
+    }
+
+    public double getItems_sum_final_prices() {
+        return items_sum_final_prices;
+    }
+
+    public void setItems_sum_final_prices(double items_sum_final_prices) {
+        this.items_sum_final_prices = items_sum_final_prices;
+    }
 }

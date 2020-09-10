@@ -57,6 +57,7 @@ import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.api.RetrofitClient;
+import creativitysol.com.mawared.mycart.model.Item;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.Bank;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
@@ -98,6 +99,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     ImageView show_map, dismiss_map;
 
+    TextView orders_total_dialog_txt;
     TextView selected_address,selected_address_type,selected_payment,selected_copon,selected_date;
 
     String token = "";
@@ -106,6 +108,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     ConstraintLayout add_copon, add_time, add_address, add_payment, show_products;
 
     MutableLiveData<String> paymentMethod = new MutableLiveData<>();
+
+    ArrayList<Item> items = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,9 +125,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         selected_payment = v.findViewById(R.id.selected_payment);
 
 
-
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
-        token = Paper.book().read("token");
+        token = Paper.book().read("token","");
 
         if (!token.isEmpty())
             viewModel.getAddresses("Bearer " + token);
@@ -166,9 +169,18 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         time_spinner = timeDialog.findViewById(R.id.time_spinner);
         products_rv = ordersDialog.findViewById(R.id.products_rv);
+        orders_total_dialog_txt = ordersDialog.findViewById(R.id.orders_total);
 
         products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         products_rv.setAdapter(ordersAdapter);
+
+        if (getArguments()!=null){
+            items = getArguments().getParcelableArrayList("clist");
+            ordersAdapter.setProducts(items);
+
+            orders_total_dialog_txt.setText((Double)(Math.round(calculateTotal(items) * 100) / 100.00)+" ر.س ");
+        }
+
 
         banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         banks_rv.setAdapter(bankAdapter);
@@ -448,6 +460,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         return v;
         }
+
+    Double calculateTotal(ArrayList<Item>products) {
+        Double sum = 0.0;
+
+        for (Item p : products) {
+            sum += (Double.parseDouble(p.getAmount()) * (p.getProduct().getPriceWithVat()));
+        }
+
+        return sum;
+    }
 
         private void setAlertDialogs () {
             Window window1 = addCoponDialog.getWindow();

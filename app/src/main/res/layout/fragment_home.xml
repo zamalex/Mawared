@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EAEEF4"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.HomeFragment"
-    app:layoutDescription="@xml/fragment_home_scene">
+    app:layoutDescription="@xml/fragment_home_scene"
+    tools:context=".home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
         android:id="@+id/cout"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
@@ -25,59 +26,60 @@
             android:layout_marginRight="16dp"
             android:fontFamily="@font/urwheavy"
             android:text="المدينة"
-            android:textSize="16sp"
             android:textColor="#0D2142"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:padding="10dp"
-            android:layout_width="110dp"
             android:id="@+id/city_spinner"
-            android:background="@drawable/custom_spinner"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:background="@drawable/custom_spinner"
+            android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toTopOf="@+id/textView"
-            android:layout_marginLeft="24dp" />
+            app:layout_constraintTop_toTopOf="@+id/textView" />
 
         <ProgressBar
             android:id="@+id/progressBar_cyclic"
-            android:visibility="gone"
+            android:layout_width="wrap_content"
 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:minWidth="40dp" />
+            app:layout_constraintTop_toTopOf="@+id/textView" />
+
         <ImageView
             android:id="@+id/go_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:tint="#4F6478"
+            android:layout_marginRight="16dp"
             android:src="@drawable/cart"
+            android:tint="#4F6478"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView"
-            android:layout_marginRight="16dp" />
+            app:layout_constraintTop_toTopOf="@+id/textView" />
 
         <TextView
             android:id="@+id/card_txt"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:visibility="gone"
             android:background="@drawable/card_bg"
             android:gravity="center"
             android:text="0"
             android:textColor="@color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/go_cart"
             app:layout_constraintEnd_toStartOf="@+id/go_cart"
             app:layout_constraintStart_toStartOf="@+id/go_cart"
@@ -118,10 +120,52 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/card_linear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cout" />
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/card_linear"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/next_radius"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:paddingTop="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/urwbold"
+            android:gravity="right|bottom"
+            android:text="عرض السلة"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/linear_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/urwbold"
+            android:gravity="left|bottom"
+            android:text="0 ر.س"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

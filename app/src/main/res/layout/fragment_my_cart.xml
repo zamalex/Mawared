@@ -62,6 +62,8 @@
             android:background="@drawable/next_radius"
             android:fontFamily="@font/urwbold"
             android:text="التالي"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="5dp"
             android:textColor="@color/white"
             android:textSize="18sp"
 
@@ -97,7 +99,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/urosemi"
-            android:text="55.24 ر.س"
+            android:text="0 ر.س"
             android:textColor="#0D2142"
             android:textSize="30dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -120,15 +120,15 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 555) {
             if (resultCode != RESULT_OK) {
-                Toast.makeText(this, "updated "+resultCode, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "updated " + resultCode, Toast.LENGTH_SHORT).show();
                 // If the update is cancelled or fails,
                 // you can request to start the update again.
-            }else  if (resultCode != RESULT_CANCELED) {
-                Toast.makeText(this, "canceled "+resultCode, Toast.LENGTH_SHORT).show();
+            } else if (resultCode != RESULT_CANCELED) {
+                Toast.makeText(this, "canceled " + resultCode, Toast.LENGTH_SHORT).show();
                 // If the update is cancelled or fails,
                 // you can request to start the update again.
-            }else  if (resultCode != ActivityResult.RESULT_IN_APP_UPDATE_FAILED) {
-                Toast.makeText(this, "failed "+resultCode, Toast.LENGTH_SHORT).show();
+            } else if (resultCode != ActivityResult.RESULT_IN_APP_UPDATE_FAILED) {
+                Toast.makeText(this, "failed " + resultCode, Toast.LENGTH_SHORT).show();
                 // If the update is cancelled or fails,
                 // you can request to start the update again.
             }
@@ -149,14 +149,17 @@ public class MainActivity extends AppCompatActivity {
                     .themeColor(Color.WHITE)
                     .fadeColor(Color.DKGRAY).build();
         }
-        if (show) {
-            if (!dialog.isShowing())
-                dialog.show();
-        } else {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
+
+            if (show) {
+                if (!dialog.isShowing())
+                    dialog.show();
+            } else {
+                if (dialog.isShowing()) {
+                    dialog.cancel();
+                }
             }
-        }
+
+
     }
 
 }

@@ -49,12 +49,12 @@
         android:text="المجموع الكلي"
         android:textColor="#0D2142"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView13"
+        app:layout_constraintEnd_toStartOf="@+id/orders_total"
         app:layout_constraintTop_toBottomOf="@+id/products_rv"
         android:layout_marginRight="16dp" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/orders_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

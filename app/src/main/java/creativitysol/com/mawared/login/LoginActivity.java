@@ -36,11 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String token = Paper.book().read("token", "none");
-        if (!token.equals("none")) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            LoginActivity.this.finish();
-        }
+
 
         setContentView(R.layout.activity_login);
 

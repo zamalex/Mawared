@@ -10,6 +10,7 @@ import creativitysol.com.mawared.home.model.CitiesModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -111,5 +112,19 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
+    void bindUserCard(String card_id,String user_id) {
+        RetrofitClient.getApiInterface().bindUserCard(card_id,user_id).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+
+            }
+        });
+    }
 
 }

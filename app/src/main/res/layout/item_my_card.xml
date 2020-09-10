@@ -41,16 +41,15 @@
             <TextView
                 android:id="@+id/total_qty"
                 android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
 
+                android:gravity="bottom|center_horizontal"
                 android:layout_weight="1"
                 android:background="@drawable/add_bg"
                 android:fontFamily="@font/urwbold"
-                android:gravity="center"
-                android:padding="10dp"
                 android:text="1"
-
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:textColor="@color/white"
                 android:textSize="22sp" />
 
@@ -63,7 +62,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/add_bg"
                 android:padding="10dp"
-                android:src="@drawable/icoplus" />
+                android:src="@drawable/plus" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

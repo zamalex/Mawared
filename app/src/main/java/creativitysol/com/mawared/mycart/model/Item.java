@@ -1,10 +1,14 @@
 
 package creativitysol.com.mawared.mycart.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
+
 @SuppressWarnings("unused")
-public class Item implements Cloneable{
+public class Item implements Parcelable {
 
     @SerializedName("amount")
     private String mAmount;
@@ -22,6 +26,32 @@ public class Item implements Cloneable{
     private String mStatus;
     @SerializedName("updated_at")
     private String mUpdatedAt;
+
+    protected Item(Parcel in) {
+        mAmount = in.readString();
+        mCartId = in.readString();
+        mCreatedAt = in.readString();
+        if (in.readByte() == 0) {
+            mId = null;
+        } else {
+            mId = in.readLong();
+        }
+        mProductId = in.readString();
+        mStatus = in.readString();
+        mUpdatedAt = in.readString();
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     public String getAmount() {
         return mAmount;
@@ -87,8 +117,24 @@ public class Item implements Cloneable{
         mUpdatedAt = updatedAt;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mAmount);
+        dest.writeString(mCartId);
+        dest.writeString(mCreatedAt);
+        if (mId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mId);
+        }
+        dest.writeString(mProductId);
+        dest.writeString(mStatus);
+        dest.writeString(mUpdatedAt);
+    }
 }

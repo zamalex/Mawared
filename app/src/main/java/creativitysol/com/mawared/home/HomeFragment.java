@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
 import creativitysol.com.mawared.home.model.Product;
 import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
+import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.mycart.CartViewModel;
 import creativitysol.com.mawared.mycart.MyCartFragment;
 import io.paperdb.Paper;
@@ -56,8 +58,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     ArrayList<String> cities;
     ArrayList<String> cityIds;
     MutableLiveData<Integer> card_size = new MutableLiveData<>();
-    TextView card_txt;
+    TextView card_txt,linear_txt;
     ProgressBar progressBar_cyclic;
+    LinearLayout card_linear;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,8 +72,12 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
         cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
+        LoginResponse loginResponse = Paper.book().read("login",null);
+        Long card_id = Paper.book().read("cid",0l);
 
-        ((MainActivity) getActivity()).showDialog(true);
+        if (loginResponse!=null&&card_id!=0)
+            viewModel.bindUserCard(card_id.toString(),loginResponse.getUser().getId().toString());
+
         viewModel.getMin();
         viewModel.getCities();
         viewModel.getHomeProducts();
@@ -80,6 +87,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         viewModel.getHomeSlider();
         recyclerView = v.findViewById(R.id.home_p_rv);
         spinner = v.findViewById(R.id.city_spinner);
+        card_linear = v.findViewById(R.id.card_linear);
+        linear_txt = v.findViewById(R.id.linear_txt);
         progressBar_cyclic = v.findViewById(R.id.progressBar_cyclic);
         card_txt = v.findViewById(R.id.card_txt);
         go_cart = v.findViewById(R.id.go_cart);
@@ -143,7 +152,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             @Override
             public void onChanged(MiniModel miniModel) {
 
-                ((MainActivity) getActivity()).showDialog(false);
 
                 if (miniModel != null) {
                     if (miniModel.getStatus() == 200) {
@@ -205,6 +213,18 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         });
 
 
+        card_linear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long cid = Paper.book().read("cid", 0l);
+                if (cid == 0) {
+                    Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
+                } else
+                    ((MainActivity) getActivity()).fragmentStack.push(new MyCartFragment());
+            }
+        });
+
+
         viewModel.cities.observe(getActivity(), new Observer<CitiesModel>() {
             @Override
             public void onChanged(CitiesModel citiesModel) {
@@ -231,6 +251,14 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             public void onChanged(AddCardModel addCardModel) {
                 if (isAdded()) {
                     showCard(true);
+                    card_size.setValue(addCardModel.getData().getItems_count());
+                    if (addCardModel.getData().getItems_count()>0){
+                        card_linear.setVisibility(View.VISIBLE);
+                        linear_txt.setText(addCardModel.getData().getItems_sum_final_prices()+" ر.س ");
+                    }
+                    else
+                        card_linear.setVisibility(View.GONE);
+
                     Paper.book().write("cid", addCardModel.getData().getCartId());
                 }
             }
@@ -254,13 +282,13 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     @Override
     public void onAddClick(int pos, Product product) {
         showCard(false);
-        Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
         cartViewModel.addToCard(product.getId() + "", "1", null, "1","plus");
     }
 
     @Override
     public void onDecreaseClick(int pos, Product product) {
-        Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
         cartViewModel.addToCard(product.getId() + "", "1", null, "1","minus");
 
 

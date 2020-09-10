@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +55,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         cartRv = v.findViewById(R.id.cart_rv);
         total_sum = v.findViewById(R.id.total_sum);
         next = v.findViewById(R.id.btn_next);
+        next.setBackgroundResource(R.drawable.next_radius);
 
         cartRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -72,7 +75,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             public void onChanged(CardModel cardModel) {
               //  ((MainActivity)getActivity()).showDialog(false);
                 next.revertAnimation();
-
+                next.setBackgroundResource(R.drawable.next_radius);
 
                 adapter.setProducts((ArrayList<Item>) cardModel.getData().getItems());
 
@@ -98,9 +101,20 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (viewModel.cardModelMutableLiveData.getValue().getData().getItems().size()==0)
+                {
+                    Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ((MainActivity)getActivity()).showDialog(true);
 
-                ((MainActivity)getActivity()).fragmentStack.push(new SendOrdersFragment());
+                SendOrdersFragment sendOrdersFragment = new SendOrdersFragment();
+
+                Bundle b = new Bundle();
+                b.putParcelableArrayList("clist", (ArrayList<? extends Parcelable>) viewModel.cardModelMutableLiveData.getValue().getData().getItems());
+                sendOrdersFragment.setArguments(b);
+
+                ((MainActivity)getActivity()).fragmentStack.push(sendOrdersFragment);
             }
         });
 
@@ -111,7 +125,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
     @Override
     public void doSum(Double sum) {
-        total_sum.setText(sum+" ر.س");
+        total_sum.setText((Double)(Math.round(sum * 100) / 100.00)+" ر.س");
     }
 
     @Override

@@ -83,6 +83,9 @@ public interface APIInterface {
     @POST("carts/{id}/remove")
     Call<ResponseBody> removeFromCard(@Path("id")String id);
 
+    @POST("carts/{cart_id}/user/{user_id}/update")
+    Call<ResponseBody> bindUserCard(@Path("cart_id")String cart_id,@Path("user_id")String user_id);
+
     @GET("carts/{card_id}/items")
     Call<CardModel> getCard(@Path("card_id")String card_id);
 
