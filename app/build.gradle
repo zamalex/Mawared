@@ -108,4 +108,10 @@ dependencies {
     implementation "com.github.YarikSOffice:lingver:1.2.2"
 
 
+
+    implementation 'com.poovam:pin-edittext-field:1.2.3'
+
+    implementation 'com.android.support:design:29.0.3'
+
+
 }

@@ -42,12 +42,12 @@ public class AboutAdapter extends RecyclerView.Adapter<AboutAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull final AboutAdapter.Holder holder, final int position) {
-        if (position==0)
+       if (position==0)
            holder.img.setImageResource(R.drawable.twitter);
         else if (position==1)
             holder.img.setImageResource(R.drawable.insta);
         else if (position==2)
-            holder.img.setImageResource(R.drawable.whats);
+            holder.img.setImageResource(R.drawable.rnap);
         else if (position==3)
             holder.img.setImageResource(R.drawable.snap);
 

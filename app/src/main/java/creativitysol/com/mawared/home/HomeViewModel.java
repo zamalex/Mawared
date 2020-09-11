@@ -96,7 +96,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     void getCities() {
-        RetrofitClient.getApiInterface().getCities().enqueue(new Callback<CitiesModel>() {
+        RetrofitClient.getApiInterface().getMCities().enqueue(new Callback<CitiesModel>() {
             @Override
             public void onResponse(Call<CitiesModel> call, Response<CitiesModel> response) {
                 cities.setValue(response.body());

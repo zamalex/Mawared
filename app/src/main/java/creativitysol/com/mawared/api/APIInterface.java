@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import java.util.Map;
 
 import creativitysol.com.mawared.about.model.SocialsModel;
+import creativitysol.com.mawared.cities.Cities;
+import creativitysol.com.mawared.contactus.model.ContactUsResponse;
 import creativitysol.com.mawared.home.model.CitiesModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 
@@ -14,6 +16,12 @@ import creativitysol.com.mawared.home.model.MiniModel;
 import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
 import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.mycart.model.CardModel;
+import creativitysol.com.mawared.notification.model.Notification;
+import creativitysol.com.mawared.orderdetails.model.OrderDetails;
+import creativitysol.com.mawared.orders.model.AllOrder;
+import creativitysol.com.mawared.register.model.RegisterBody;
+import creativitysol.com.mawared.registeration.model.LoginRegistration;
+import creativitysol.com.mawared.registeration.terms.model.Terms;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
@@ -38,6 +46,35 @@ public interface APIInterface {
     @GET("products")
     Call<HomeProductModel> getHomeProducts();
 
+    @GET("orders")
+    Call<AllOrder> getAllOrders(@Query("page") int pageNumber, @Header("Authorization") String token);
+
+    @GET("orders")
+    Call<AllOrder> searchOrder(@Query("q") int pageNumber, @Header("Authorization") String token);
+
+    @GET("orders/{orderId}/details")
+    Call<OrderDetails> getOrderDetails(@Path("orderId") int id, @Header("Authorization") String token);
+
+    @GET("notifications")
+    Call<Notification> getNotification(@Query("page") int pageNumber, @Header("Authorization") String token);
+
+    @POST("contact-us")
+    Call<ContactUsResponse> getFromContact(@Query("title") String messageTitle, @Query("info") String messagesContent, @Header("Authorization") String token);
+
+    @POST("register/check-mobile")
+    Call<LoginRegistration> checkMobile(@Body JsonObject mobileNumber);
+
+    @POST("register/verify")
+    Call<ResponseBody> verifyCode(@Body JsonObject verifyCode);
+
+    @GET("cities")
+    Call<Cities> getCities();
+
+    @POST("register/profile")
+    Call<ResponseBody> registerNewAccount(@Body RegisterBody registerBody);
+
+    @GET("points/terms")
+    Call<Terms> getTermsPoints(@Header("Authorization") String token);
 
     @GET("settings/slider")
     Call<HomeSliderModel> getHomeSlider();
@@ -53,7 +90,7 @@ public interface APIInterface {
     Call<MiniModel> getMinmum();
 
     @GET("cities")
-    Call<CitiesModel> getCities();
+    Call<CitiesModel> getMCities();
 
     @GET("products/{id}")
     Call<HomeProductModel> filterByCity(@Path("id")String id);

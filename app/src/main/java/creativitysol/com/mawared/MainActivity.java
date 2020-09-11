@@ -29,6 +29,8 @@ import cc.cloudist.acplibrary.ACProgressFlower;
 import creativitysol.com.mawared.about.AboutMawaredFragment;
 import creativitysol.com.mawared.helpers.FragmentStack;
 import creativitysol.com.mawared.home.HomeFragment;
+import creativitysol.com.mawared.orders.OrderFragment;
+import creativitysol.com.mawared.settings.SettingsFragment;
 import creativitysol.com.mawared.support.SupportFragment;
 import creativitysol.com.mawared.support.chat.ChatFragment;
 
@@ -98,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 else if (item.getItemId() == R.id.support)
                     fragmentStack.replace(supportFragment);
                 else if (item.getItemId() == R.id.settings)
-                    fragmentStack.replace(aboutMawaredFragment);
-                // else if (item.getItemId() == R.id.orders)
-                //fragmentStack.replace(chatFragment);
+                    fragmentStack.replace(new SettingsFragment());
+                 else if (item.getItemId() == R.id.orders)
+                fragmentStack.replace(new OrderFragment());
 
                 return true;
             }
