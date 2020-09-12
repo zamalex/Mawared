@@ -64,6 +64,7 @@ import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.mycart.model.Item;
+import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.Bank;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
@@ -105,7 +106,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     ImageView show_map, dismiss_map;
 
-    TextView orders_total_dialog_txt;
+    TextView orders_total_dialog_txt,terms_txt;
     TextView selected_address,selected_address_type,selected_payment,selected_copon,selected_date;
 
     String token = "";
@@ -127,6 +128,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         v = inflater.inflate(R.layout.fragment_send_orders, container, false);
 
         back = v.findViewById(R.id.imageView);
+        terms_txt = v.findViewById(R.id.terms_txt);
 
         selected_address = v.findViewById(R.id.selected_address);
         selected_address_type = v.findViewById(R.id.selected_address_type);
@@ -346,6 +348,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                         time_spinner.setAdapter(aarrdapter);
                     }
                 }
+            }
+        });
+
+        terms_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
+
+                termsBottomSheet.show(getActivity().getSupportFragmentManager(),"tag");
             }
         });
 

@@ -14,6 +14,23 @@ public class RegisterBody {
     @SerializedName("city_id")
     String city_id;
 
+    @SerializedName("country_code")
+    String country_code;
+
+    @SerializedName("password_confirmation")
+    String password_confirmation;
+
+
+    @SerializedName("name")
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public RegisterBody() {
     }
@@ -64,5 +81,21 @@ public class RegisterBody {
 
     public void setCity_id(String city_id) {
         this.city_id = city_id;
+    }
+
+    public String getCountry_code() {
+        return country_code;
+    }
+
+    public void setCountry_code(String country_code) {
+        this.country_code = country_code;
+    }
+
+    public String getPassword_confirmation() {
+        return password_confirmation;
+    }
+
+    public void setPassword_confirmation(String password_confirmation) {
+        this.password_confirmation = password_confirmation;
     }
 }

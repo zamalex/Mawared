@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.cities.Cities;
 import creativitysol.com.mawared.register.model.RegisterBody;
+import creativitysol.com.mawared.register.model.RegisterModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,7 +15,7 @@ import retrofit2.Retrofit;
 
 public class RegisterViewModel extends ViewModel {
     MutableLiveData<Cities> citiesMutableLiveData;
-    MutableLiveData<ResponseBody> registerMutableLiveData;
+    MutableLiveData<RegisterModel> registerMutableLiveData;
     public MutableLiveData<Cities> getGetCities(){
         citiesMutableLiveData = new MutableLiveData<>();
         RetrofitClient.getApiInterface().getCities().enqueue(new Callback<Cities>() {
@@ -30,18 +31,19 @@ public class RegisterViewModel extends ViewModel {
         });
         return citiesMutableLiveData;
     }
-    public MutableLiveData<ResponseBody> setNewAccount(RegisterBody registerBody){
+    public MutableLiveData<RegisterModel> setNewAccount(RegisterBody registerBody){
         registerMutableLiveData = new MutableLiveData<>();
-        RetrofitClient.getApiInterface().registerNewAccount(registerBody).enqueue(new Callback<ResponseBody>() {
+        RetrofitClient.getApiInterface().registerNewAccount(registerBody).enqueue(new Callback<RegisterModel>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<RegisterModel> call, Response<RegisterModel> response) {
                 if(response.code() == 200) {
                     registerMutableLiveData.postValue(response.body());
-                }
+                }else registerMutableLiveData.postValue(null);
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<RegisterModel> call, Throwable t) {
+                registerMutableLiveData.postValue(null);
 
             }
         });

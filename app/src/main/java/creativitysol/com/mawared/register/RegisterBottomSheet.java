@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,9 @@ import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.cities.Cities;
 import creativitysol.com.mawared.helpers.CustomeSpinnerAdapter;
+import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.register.model.RegisterBody;
+import creativitysol.com.mawared.register.model.RegisterModel;
 import okhttp3.ResponseBody;
 
 public class RegisterBottomSheet extends BottomSheetDialogFragment {
@@ -50,8 +54,11 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
     CustomeSpinnerAdapter adapter;
     String selectedCityName;
     String selectedCityId;
+    String code;
     RegisterBody registerBody;
     EditText et_regiFullName,et_emailAddress,et_regiPassword;
+
+    KProgressHUD load;
 
     @Nullable
     @Override
@@ -66,6 +73,15 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
                 getContext().getResources().getDisplayMetrics());
 
         View view = inflater.inflate(R.layout.register_bottom_sheet,container,false);
+
+        load = KProgressHUD.create(getActivity())
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
+
+
         cityNameList = new ArrayList<>();
         cityIdLis = new ArrayList<>();
         registerBody = new RegisterBody();
@@ -117,19 +133,31 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
                 if (et_emailAddress.getText().toString() != null && et_regiFullName.getText().toString() != null && et_regiPassword.getText().toString() != null) {
                     String mobileNumber = getActivity().getSharedPreferences("mwared", Context.MODE_PRIVATE).getString("mobNum", "");
                     registerBody.setCity_id(selectedCityId);
-                    registerBody.setCode("1234");
+                    registerBody.setCode(code);
                     registerBody.setEmail(et_emailAddress.getText().toString());
                     registerBody.setPassword(et_regiPassword.getText().toString());
                     registerBody.setMobile(mobileNumber);
-                    registerViewModel.setNewAccount(registerBody).observe(getActivity(), new Observer<ResponseBody>() {
+                    registerBody.setCountry_code("sa");
+                    registerBody.setPassword_confirmation(et_regiPassword.getText().toString());
+                    registerBody.setName(et_regiFullName.getText().toString());
+
+                    load.show();
+                    registerViewModel.setNewAccount(registerBody).observe(getActivity(), new Observer<RegisterModel>() {
                         @Override
-                        public void onChanged(ResponseBody responseBody) {
+                        public void onChanged(RegisterModel responseBody) {
                            // Log.e("happen", responseBody.toString() );
+                            load.dismiss();
+                            if (responseBody!=null){
+                                Toast.makeText(getActivity(), responseBody.getMessage().getDescription(), Toast.LENGTH_SHORT).show();
+                                if (responseBody.getStatus()==200){
+                                    Intent mainIntent = new Intent(getActivity(), LoginActivity.class);
+                                    startActivity(mainIntent);
+                                    dialog.dismiss();
+                                }
+                            }
                         }
                     });
-                    Intent mainIntent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(mainIntent);
-                    dialog.dismiss();
+
                 }
             }
         });
@@ -171,4 +199,7 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
         return displayMetrics.heightPixels;
     }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

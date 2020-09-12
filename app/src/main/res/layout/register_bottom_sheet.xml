@@ -185,7 +185,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:id="@+id/btn_confirmTerms"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
         android:layout_marginEnd="50dp"
@@ -202,6 +202,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="4dp"
             android:text="تأكيد"
+            android:fontFamily="@font/urwbold"
             android:textSize="18sp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

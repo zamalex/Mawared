@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.HtmlCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,6 +34,7 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
     TextView tv_termsTitle, tv_termsContent;
     TermsViewModel termsViewModel;
 
+    ConstraintLayout btn_confirmTerms;
 
     @Nullable
     @Override
@@ -43,6 +45,7 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
         getContext().getResources().updateConfiguration(config,
                 getContext().getResources().getDisplayMetrics());
         tv_termsTitle = view.findViewById(R.id.tv_termsTitle);
+        btn_confirmTerms = view.findViewById(R.id.btn_confirmTerms);
         tv_termsContent = view.findViewById(R.id.tv_termsContent);
         termsViewModel = new ViewModelProvider(this).get(TermsViewModel.class);
         termsViewModel.getTermsAndConditions("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk4ODIzMDExLCJleHAiOjE1OTk0Mjc4MTEsIm5iZiI6MTU5ODgyMzAxMSwianRpIjoiVGpBYTRHRnk4UUJjYURLbCJ9.SsbMQcp3lV8kUPmRyC5g1oTJStskrlwj4URiXfJ8oIo")
@@ -59,6 +62,13 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
 
                 });
 
+
+        btn_confirmTerms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
         return view;
     }

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import java.util.Map;
 
 import creativitysol.com.mawared.about.model.SocialsModel;
+import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.cities.Cities;
 import creativitysol.com.mawared.contactus.model.ContactUsResponse;
 import creativitysol.com.mawared.home.model.CitiesModel;
@@ -20,6 +21,7 @@ import creativitysol.com.mawared.notification.model.Notification;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
 import creativitysol.com.mawared.orders.model.AllOrder;
 import creativitysol.com.mawared.register.model.RegisterBody;
+import creativitysol.com.mawared.register.model.RegisterModel;
 import creativitysol.com.mawared.registeration.model.LoginRegistration;
 import creativitysol.com.mawared.registeration.terms.model.Terms;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
@@ -65,13 +67,13 @@ public interface APIInterface {
     Call<LoginRegistration> checkMobile(@Body JsonObject mobileNumber);
 
     @POST("register/verify")
-    Call<ResponseBody> verifyCode(@Body JsonObject verifyCode);
+    Call<ActivationiModel> verifyCode(@Body JsonObject verifyCode);
 
     @GET("cities")
     Call<Cities> getCities();
 
     @POST("register/profile")
-    Call<ResponseBody> registerNewAccount(@Body RegisterBody registerBody);
+    Call<RegisterModel> registerNewAccount(@Body RegisterBody registerBody);
 
     @GET("points/terms")
     Call<Terms> getTermsPoints(@Header("Authorization") String token);

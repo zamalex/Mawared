@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String token = Paper.book().read("token", "none");
-                if (token.equals("none")) {
+                if (!token.equals("none")) {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     SplashActivity.this.finish();
                 }

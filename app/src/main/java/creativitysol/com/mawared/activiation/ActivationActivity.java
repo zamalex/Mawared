@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.poovam.pinedittextfield.PinField;
 import com.poovam.pinedittextfield.SquarePinField;
 
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.register.RegisterBottomSheet;
 import okhttp3.ResponseBody;
 
@@ -30,6 +32,8 @@ public class ActivationActivity extends AppCompatActivity {
     TextView tv_mobileNumber;
     SquarePinField sq_verification;
     ActivationViewModel activationViewModel;
+
+    KProgressHUD dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +50,23 @@ public class ActivationActivity extends AppCompatActivity {
         tv_mobileNumber = findViewById(R.id.tv_mobileNumber);
         sq_verification = findViewById(R.id.sq_verification);
         tv_mobileNumber.setText(phoneNumber+"+");
+
+        dialog = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
+
+
         activationViewModel = new ViewModelProvider(this).get(ActivationViewModel.class);
 
         btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
 
-                registerBottomSheet.show(getSupportFragmentManager(),"tag");
+
             }
         });
         sq_verification.setOnTextCompleteListener(new PinField.OnTextCompleteListener() {
@@ -64,11 +76,21 @@ public class ActivationActivity extends AppCompatActivity {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("mobile",phoneNumber);
                 jsonObject.addProperty("code",codeVerification);
-                activationViewModel.verifyMobile(jsonObject).observe(ActivationActivity.this, new Observer<ResponseBody>() {
+                dialog.show();
+                activationViewModel.verifyMobile(jsonObject).observe(ActivationActivity.this, new Observer<ActivationiModel>() {
                     @Override
-                    public void onChanged(ResponseBody responseBody) {
+                    public void onChanged(ActivationiModel responseBody) {
+                        dialog.dismiss();
                         if(responseBody != null){
-                            Toast.makeText(getApplicationContext(),"zz",Toast.LENGTH_LONG).show();
+                            if (responseBody.getStatus()==200){
+                                Toast.makeText(getApplicationContext(),responseBody.getMessage().getDescription(),Toast.LENGTH_LONG).show();
+                                RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
+
+                                registerBottomSheet.setCode(codeVerification);
+
+                                registerBottomSheet.show(getSupportFragmentManager(),"tag");
+
+                            }
                         }
 
                     }

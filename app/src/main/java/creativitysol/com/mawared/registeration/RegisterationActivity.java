@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,8 @@ public class RegisterationActivity extends AppCompatActivity {
     ConstraintLayout btn_login;
     RegisterationViewModel registerationViewModel;
     String phoneNumber;
+    KProgressHUD dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,15 @@ public class RegisterationActivity extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
         tv_conditions.setPaintFlags(tv_conditions.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
+
+        dialog = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
+
+
         tv_conditions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +75,8 @@ public class RegisterationActivity extends AppCompatActivity {
             }
         });
 
+
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,11 +84,13 @@ public class RegisterationActivity extends AppCompatActivity {
                 JsonObject jObj = new JsonObject();
 
                     jObj.addProperty("mobile",phoneNumber);
+                    dialog.show();
                     registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
                         @Override
                         public void onChanged(LoginRegistration loginRegistration) {
+                            dialog.dismiss();
                             if (loginRegistration != null) {
-                                if (loginRegistration.getData().getExists() == true) {
+                                if (loginRegistration.getStatus() == 200) {
                                     getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum",phoneNumber).commit();
                                     Intent activationIntent = new Intent(RegisterationActivity.this,
                                             ActivationActivity.class);
