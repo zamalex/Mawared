@@ -17,6 +17,9 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="60dp"
         android:text="رمز التحقيق"
+        android:textSize="22sp"
+        android:fontFamily="@font/urwbold"
+        android:textColor="#0D2142"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,6 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
+        android:fontFamily="@font/urosemi"
+        android:textColor="#7B92A5"
+        android:textSize="15sp"
         android:layout_marginTop="8dp"
         android:text=" يرجى اضافة رمز التحقيق المرسل الى رقم الجوال"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +45,9 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="8dp"
         android:text="+966512345678"
+        android:fontFamily="@font/urosemi"
+        android:textSize="24sp"
+        android:textColor="#7B92A5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 

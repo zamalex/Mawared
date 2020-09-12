@@ -104,6 +104,7 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/button_bg"
         android:text="إرسال"
+        android:gravity="bottom|center_horizontal"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:fontFamily="@font/urwbold"

@@ -65,6 +65,7 @@
         android:background="@drawable/button_bg"
         android:fontFamily="@font/urwbold"
         android:text="قائمة طلباتي"
+        android:gravity="center_horizontal|bottom"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

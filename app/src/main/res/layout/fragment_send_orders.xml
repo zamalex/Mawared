@@ -685,10 +685,11 @@
             android:id="@+id/snd_order"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:gravity="center"
+            android:gravity="center_horizontal|bottom"
             android:textSize="18sp"
             android:textColor="@color/white"
             android:text="ارسال الطلب"
+
             android:fontFamily="@font/urwbold"
             android:background="@drawable/next_radius"
             android:layout_margin="16dp"/>

@@ -35,6 +35,7 @@
             android:layout_marginBottom="8dp"
             android:background="@null"
             android:ems="15"
+            android:fontFamily="@font/urosemi"
             android:hint="عنوان الرسالة"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,12 +59,13 @@
         android:id="@+id/tv_ContactUsTitel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:fontFamily="@font/urwbold"
         android:text="تواصل معنا"
-        app:layout_constraintStart_toEndOf="@+id/iv_backCBtn"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_backCBtnFromContactUs"
+        app:layout_constraintTop_toTopOf="@+id/iv_backCBtnFromContactUs" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,6 +105,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
+        android:fontFamily="@font/urosemi"
+
         android:layout_marginBottom="16dp"
         android:background="@drawable/register_edittext_bg"
         app:layout_constraintBottom_toTopOf="@+id/btn_sendMsg"
@@ -122,6 +126,8 @@
             android:background="@null"
             android:ems="15"
             android:hint="الرسالة"
+            android:fontFamily="@font/urosemi"
+
             android:inputType="textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

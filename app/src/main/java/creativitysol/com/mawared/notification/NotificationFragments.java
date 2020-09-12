@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.helpers.FragmentStack;
 import creativitysol.com.mawared.notification.model.Notification;
@@ -41,9 +42,13 @@ public class NotificationFragments extends Fragment {
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
         rv_notifications.setLayoutManager(gridLayoutManager);
 
+        ((MainActivity)getActivity()).showDialog(true);
+
         notificationViewModel.getAllNotification(pageNumber).observe(getActivity(), new Observer<Notification>() {
             @Override
             public void onChanged(Notification notification) {
+                ((MainActivity)getActivity()).showDialog(false);
+
                 notificationsAdapter = new NotificationsAdapter(notification.getNotifications_messages());
                 rv_notifications.setAdapter(notificationsAdapter);
             }

@@ -55,9 +55,12 @@ public class OrderFragment extends Fragment implements OrderClickListener {
         rv_orders.setLayoutManager(gridLayoutManager);
         ordersAdapter = new OrdersAdapter(this);
 
+        ((MainActivity)getActivity()).showDialog(true);
         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
             @Override
             public void onChanged(AllOrder allOrder) {
+                ((MainActivity)getActivity()).showDialog(false);
+
                 if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
                     ordersAdapter.setList(allOrder.getOrders());

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.helpers.FragmentStack;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
@@ -53,9 +54,14 @@ public class OrderDetailsFragment extends Fragment {
         orderId = getActivity().getSharedPreferences("mwared", Context.MODE_PRIVATE).getInt("orderId",0);
 
         orderDetailsViewModel = new ViewModelProvider(OrderDetailsFragment.this).get(OrderDetailsViewModel.class);
+
+        ((MainActivity)getActivity()).showDialog(true);
+
         orderDetailsViewModel.getOrderDetails(orderId).observe(getActivity(), new Observer<OrderDetails>() {
             @Override
             public void onChanged(OrderDetails orderDetails) {
+                ((MainActivity)getActivity()).showDialog(false);
+
                 if(orderDetails != null) {
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());
                     rv_productDetails.setAdapter(orderDetailsAdapter);

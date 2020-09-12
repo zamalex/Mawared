@@ -83,6 +83,7 @@
         android:background="@drawable/next_radius"
         android:fontFamily="@font/urwbold"
         android:text="تأكيد"
+        android:gravity="bottom|center_horizontal"
         android:textColor="@color/white"
         android:textSize="18sp" />
 

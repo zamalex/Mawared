@@ -25,10 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="41dp"
         android:text="التنبيهات"
+        android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/iv_btnBack"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/iv_btnBack" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_notifications"

@@ -21,6 +21,7 @@ import com.google.android.play.core.install.model.ActivityResult;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.Locale;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public FragmentStack fragmentStack;
     BottomNavigationView navigationView;
 
-    ACProgressFlower dialog;
+    KProgressHUD dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +76,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        dialog = new ACProgressFlower.Builder(this)
-                .direction(ACProgressConstant.DIRECT_CLOCKWISE)
-                .themeColor(Color.WHITE)
-                .fadeColor(Color.DKGRAY).build();
+        dialog = KProgressHUD.create(MainActivity.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
+
 
         navigationView = findViewById(R.id.navigation);
 
@@ -140,10 +144,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void showDialog(Boolean show) {
         if (dialog == null) {
-            dialog = new ACProgressFlower.Builder(this)
-                    .direction(ACProgressConstant.DIRECT_CLOCKWISE)
-                    .themeColor(Color.WHITE)
-                    .fadeColor(Color.DKGRAY).build();
+            dialog = KProgressHUD.create(MainActivity.this)
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                    .setCancellable(true)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f);
         }
 
             if (show) {
@@ -151,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.show();
             } else {
                 if (dialog.isShowing()) {
-                    dialog.cancel();
+                    dialog.dismiss();
                 }
             }
 

@@ -93,6 +93,7 @@
         android:background="@drawable/button_bg"
         android:fontFamily="@font/urwbold"
         android:text="تأكيد"
+        android:gravity="bottom|center_horizontal"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
