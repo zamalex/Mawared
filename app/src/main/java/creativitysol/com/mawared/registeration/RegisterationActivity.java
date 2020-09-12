@@ -5,22 +5,33 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Paint;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Locale;
 
 import creativitysol.com.mawared.R;
@@ -28,6 +39,8 @@ import creativitysol.com.mawared.activiation.ActivationActivity;
 import creativitysol.com.mawared.register.RegisterBottomSheet;
 import creativitysol.com.mawared.registeration.model.LoginRegistration;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
@@ -57,6 +70,7 @@ public class RegisterationActivity extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
         tv_conditions.setPaintFlags(tv_conditions.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
+        checkSmsPermission();
 
         dialog = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -104,5 +118,35 @@ public class RegisterationActivity extends AppCompatActivity {
                     });
             }
         });
+    }
+
+    void checkSmsPermission(){
+        Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_SMS)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                           // Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+
+
+                    }
+                })
+                .onSameThread()
+                .check();
     }
 }
