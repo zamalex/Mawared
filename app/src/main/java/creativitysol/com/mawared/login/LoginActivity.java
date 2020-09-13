@@ -21,7 +21,9 @@ import cc.cloudist.acplibrary.ACProgressFlower;
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.forgot.ForgotPasswordActivity;
+import creativitysol.com.mawared.home.HomeViewModel;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
 import creativitysol.com.mawared.registeration.RegisterationActivity;
 import io.paperdb.Paper;
 
@@ -29,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
     LoginViewModel viewModel;
+    HomeViewModel homeViewModel;
+
 
     EditText phone_et;
 
@@ -36,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Button login;
 
-    TextView forgot,go_register;
+    TextView forgot, go_register;
 
     KProgressHUD dialog;
 
@@ -46,11 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
         setContentView(R.layout.activity_login);
 
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()).create(LoginViewModel.class);
+        homeViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()).create(HomeViewModel.class);
 
 
         phone_et = findViewById(R.id.phone_et);
@@ -97,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             }
         });
 
@@ -106,21 +110,42 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onChanged(LoginResponse loginResponse) {
                 dialog.dismiss();
-                if (loginResponse!=null){
+                if (loginResponse != null) {
                     if (loginResponse.getStatus() == 200) {
                         Paper.book().write("token", loginResponse.getUser().getToken());
                         Paper.book().write("login", loginResponse);
-
+                        // viewModel.checkUserCart(loginResponse.getUser().getId().toString());
+                        String cid = Paper.book().read("cid", null);
+                        if (cid != null)
+                            homeViewModel.bindUserCard(cid, loginResponse.getUser().getId().toString());
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         LoginActivity.this.finish();
+
                     }
-                }else {
+                } else {
                     Toast.makeText(LoginActivity.this, "البيانات التي ادخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
+
+       /* viewModel.checkCardModelMutableLiveData.observe(this, new Observer<CheckCardModel>() {
+            @Override
+            public void onChanged(CheckCardModel checkCardModel) {
+                dialog.dismiss();
+
+
+                if (checkCardModel!=null){
+                    if (checkCardModel.getStatus()==200){
+                        Paper.book().write("cid",checkCardModel.getData().getCartId());
+                    }
+                }
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                LoginActivity.this.finish();
+            }
+        });
+*/
 
     }
 }

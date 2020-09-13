@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -14,15 +16,15 @@ import retrofit2.Response;
 public class LoginViewModel extends ViewModel {
 
     MutableLiveData<LoginResponse> loginResponse = new MutableLiveData<>();
-    void login(JsonObject jsonObject){
+
+    void login(JsonObject jsonObject) {
 
         RetrofitClient.getApiInterface().login(jsonObject).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     loginResponse.setValue(response.body());
-                }
-                else loginResponse.setValue(null);
+                } else loginResponse.setValue(null);
             }
 
             @Override
@@ -32,5 +34,7 @@ public class LoginViewModel extends ViewModel {
         });
 
     }
+
+
 
 }

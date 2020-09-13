@@ -32,8 +32,8 @@ public class CartViewModel extends ViewModel {
     }
 
 
-    public void removeFromCard(String id) {
-        RetrofitClient.getApiInterface().removeFromCard(id).enqueue(new Callback<ResponseBody>() {
+    public void removeFromCard(String cid,String pid) {
+        RetrofitClient.getApiInterface().removeFromCard(cid,pid).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 removeResponse.setValue(response.body());

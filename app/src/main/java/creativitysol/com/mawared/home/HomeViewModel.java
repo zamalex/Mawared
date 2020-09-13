@@ -10,6 +10,7 @@ import creativitysol.com.mawared.home.model.CitiesModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
+import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -112,7 +113,7 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    void bindUserCard(String card_id,String user_id) {
+    public  void bindUserCard(String card_id,String user_id) {
         RetrofitClient.getApiInterface().bindUserCard(card_id,user_id).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -125,6 +126,27 @@ public class HomeViewModel extends ViewModel {
 
             }
         });
+    }
+
+    MutableLiveData<CheckCardModel> checkCardModelMutableLiveData = new MutableLiveData<>();
+
+    void checkUserCart(String user_id) {
+
+        RetrofitClient.getApiInterface().checkUserCard(user_id).enqueue(new Callback<CheckCardModel>() {
+            @Override
+            public void onResponse(Call<CheckCardModel> call, Response<CheckCardModel> response) {
+                if (response.isSuccessful()) {
+                    checkCardModelMutableLiveData.setValue(response.body());
+                } else checkCardModelMutableLiveData.setValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<CheckCardModel> call, Throwable t) {
+                checkCardModelMutableLiveData.setValue(null);
+
+            }
+        });
+
     }
 
 }

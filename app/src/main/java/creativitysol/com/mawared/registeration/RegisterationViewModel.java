@@ -29,6 +29,7 @@ public class RegisterationViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<LoginRegistration> call, Throwable t) {
+                responseBodyMutableLiveData.postValue(null);
 
             }
         });

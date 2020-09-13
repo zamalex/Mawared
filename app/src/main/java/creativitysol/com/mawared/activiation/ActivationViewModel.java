@@ -16,7 +16,8 @@ import retrofit2.Response;
 public class ActivationViewModel extends ViewModel {
     APIInterface apiInterface;
     MutableLiveData<ActivationiModel> responseBodyMutableLiveData = new MutableLiveData<>();
-    public MutableLiveData<ActivationiModel> verifyMobile(JsonObject verifyMobile){
+
+    public MutableLiveData<ActivationiModel> verifyMobile(JsonObject verifyMobile) {
         responseBodyMutableLiveData = new MutableLiveData<>();
         RetrofitClient.getApiInterface().verifyCode(verifyMobile).enqueue(new Callback<ActivationiModel>() {
             @Override
@@ -26,6 +27,7 @@ public class ActivationViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<ActivationiModel> call, Throwable t) {
+                responseBodyMutableLiveData.setValue(null);
 
             }
         });

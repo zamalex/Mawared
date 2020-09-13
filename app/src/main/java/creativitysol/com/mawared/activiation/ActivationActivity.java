@@ -105,25 +105,27 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                             if (responseBody.getStatus() == 200) {
                                 Toast.makeText(getApplicationContext(), responseBody.getMessage().getDescription(), Toast.LENGTH_LONG).show();
 
-                                if (type.equals("forgot")){
-                                    Intent intent = new Intent(ActivationActivity.this, ResetPassActivity.class);
-                                    intent.putExtra("mobNo",phoneNumber);
-                                    intent.putExtra("code",codeVerification);
-                                    startActivity(intent);
-                                    ActivationActivity.this.finish();
-
-
-                                }else {
+                                if (type == null) {
                                     RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
 
                                     registerBottomSheet.setCode(codeVerification);
 
                                     registerBottomSheet.show(getSupportFragmentManager(), "tag");
+                                } else if (type.equals("forgot")) {
+                                    Intent intent = new Intent(ActivationActivity.this, ResetPassActivity.class);
+                                    intent.putExtra("mobNo", phoneNumber);
+                                    intent.putExtra("code", codeVerification);
+                                    startActivity(intent);
+                                    ActivationActivity.this.finish();
+
+
                                 }
 
+                            } else
+                                Toast.makeText(ActivationActivity.this, "كود التحقق خاطئ", Toast.LENGTH_SHORT).show();
 
-                            }
-                        }
+                        } else
+                            Toast.makeText(ActivationActivity.this, "كود التحقق خاطئ", Toast.LENGTH_SHORT).show();
 
                     }
                 });

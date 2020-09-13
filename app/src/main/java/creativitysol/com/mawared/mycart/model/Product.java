@@ -8,63 +8,94 @@ import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class Product implements Parcelable {
+
     public int qty=0;
+
     @SerializedName("available")
-    private String mAvailable;
-    @SerializedName("created_at")
-    private String mCreatedAt;
-    @SerializedName("final_price_with_vat")
-    private String mFinalPriceWithVat;
+    private Long mAvailable;
+    @SerializedName("cart_item_id")
+    private Long mCartItemId;
     @SerializedName("has_offer")
-    private String mHasOffer;
+    private Long mHasOffer;
     @SerializedName("id")
     private Long mId;
+    @SerializedName("img")
+    private String mImg;
+    @SerializedName("in_cart_quantity")
+    private Long mInCartQuantity;
     @SerializedName("offer")
     private String mOffer;
-    @SerializedName("offer_percentage")
-    private String mOfferPercentage;
     @SerializedName("offer_price")
-    private String mOfferPrice;
-    @SerializedName("photo")
-    private String mPhoto;
+    private Long mOfferPrice;
     @SerializedName("price")
-    private String mPrice;
+    private Long mPrice;
     @SerializedName("price_with_vat")
     private Double mPriceWithVat;
     @SerializedName("quantity")
-    private String mQuantity;
+    private Long mQuantity;
     @SerializedName("sku")
     private String mSku;
     @SerializedName("title")
     private String mTitle;
-    @SerializedName("updated_at")
-    private String mUpdatedAt;
+    @SerializedName("vat")
+    private Long mVat;
 
     protected Product(Parcel in) {
         qty = in.readInt();
-        mAvailable = in.readString();
-        mCreatedAt = in.readString();
-        mFinalPriceWithVat = in.readString();
-        mHasOffer = in.readString();
+        if (in.readByte() == 0) {
+            mAvailable = null;
+        } else {
+            mAvailable = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            mCartItemId = null;
+        } else {
+            mCartItemId = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            mHasOffer = null;
+        } else {
+            mHasOffer = in.readLong();
+        }
         if (in.readByte() == 0) {
             mId = null;
         } else {
             mId = in.readLong();
         }
+        mImg = in.readString();
+        if (in.readByte() == 0) {
+            mInCartQuantity = null;
+        } else {
+            mInCartQuantity = in.readLong();
+        }
         mOffer = in.readString();
-        mOfferPercentage = in.readString();
-        mOfferPrice = in.readString();
-        mPhoto = in.readString();
-        mPrice = in.readString();
+        if (in.readByte() == 0) {
+            mOfferPrice = null;
+        } else {
+            mOfferPrice = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            mPrice = null;
+        } else {
+            mPrice = in.readLong();
+        }
         if (in.readByte() == 0) {
             mPriceWithVat = null;
         } else {
             mPriceWithVat = in.readDouble();
         }
-        mQuantity = in.readString();
+        if (in.readByte() == 0) {
+            mQuantity = null;
+        } else {
+            mQuantity = in.readLong();
+        }
         mSku = in.readString();
         mTitle = in.readString();
-        mUpdatedAt = in.readString();
+        if (in.readByte() == 0) {
+            mVat = null;
+        } else {
+            mVat = in.readLong();
+        }
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -79,35 +110,27 @@ public class Product implements Parcelable {
         }
     };
 
-    public String getAvailable() {
+    public Long getAvailable() {
         return mAvailable;
     }
 
-    public void setAvailable(String available) {
+    public void setAvailable(Long available) {
         mAvailable = available;
     }
 
-    public String getCreatedAt() {
-        return mCreatedAt;
+    public Long getCartItemId() {
+        return mCartItemId;
     }
 
-    public void setCreatedAt(String createdAt) {
-        mCreatedAt = createdAt;
+    public void setCartItemId(Long cartItemId) {
+        mCartItemId = cartItemId;
     }
 
-    public String getFinalPriceWithVat() {
-        return mFinalPriceWithVat;
-    }
-
-    public void setFinalPriceWithVat(String finalPriceWithVat) {
-        mFinalPriceWithVat = finalPriceWithVat;
-    }
-
-    public String getHasOffer() {
+    public Long getHasOffer() {
         return mHasOffer;
     }
 
-    public void setHasOffer(String hasOffer) {
+    public void setHasOffer(Long hasOffer) {
         mHasOffer = hasOffer;
     }
 
@@ -119,6 +142,22 @@ public class Product implements Parcelable {
         mId = id;
     }
 
+    public String getImg() {
+        return mImg;
+    }
+
+    public void setImg(String img) {
+        mImg = img;
+    }
+
+    public Long getInCartQuantity() {
+        return mInCartQuantity;
+    }
+
+    public void setInCartQuantity(Long inCartQuantity) {
+        mInCartQuantity = inCartQuantity;
+    }
+
     public String getOffer() {
         return mOffer;
     }
@@ -127,35 +166,19 @@ public class Product implements Parcelable {
         mOffer = offer;
     }
 
-    public String getOfferPercentage() {
-        return mOfferPercentage;
-    }
-
-    public void setOfferPercentage(String offerPercentage) {
-        mOfferPercentage = offerPercentage;
-    }
-
-    public String getOfferPrice() {
+    public Long getOfferPrice() {
         return mOfferPrice;
     }
 
-    public void setOfferPrice(String offerPrice) {
+    public void setOfferPrice(Long offerPrice) {
         mOfferPrice = offerPrice;
     }
 
-    public String getPhoto() {
-        return mPhoto;
-    }
-
-    public void setPhoto(String photo) {
-        mPhoto = photo;
-    }
-
-    public String getPrice() {
+    public Long getPrice() {
         return mPrice;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Long price) {
         mPrice = price;
     }
 
@@ -167,11 +190,11 @@ public class Product implements Parcelable {
         mPriceWithVat = priceWithVat;
     }
 
-    public String getQuantity() {
+    public Long getQuantity() {
         return mQuantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(Long quantity) {
         mQuantity = quantity;
     }
 
@@ -191,12 +214,12 @@ public class Product implements Parcelable {
         mTitle = title;
     }
 
-    public String getUpdatedAt() {
-        return mUpdatedAt;
+    public Long getVat() {
+        return mVat;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        mUpdatedAt = updatedAt;
+    public void setVat(Long vat) {
+        mVat = vat;
     }
 
     @Override
@@ -207,30 +230,69 @@ public class Product implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(qty);
-        dest.writeString(mAvailable);
-        dest.writeString(mCreatedAt);
-        dest.writeString(mFinalPriceWithVat);
-        dest.writeString(mHasOffer);
+        if (mAvailable == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mAvailable);
+        }
+        if (mCartItemId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mCartItemId);
+        }
+        if (mHasOffer == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mHasOffer);
+        }
         if (mId == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
             dest.writeLong(mId);
         }
+        dest.writeString(mImg);
+        if (mInCartQuantity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mInCartQuantity);
+        }
         dest.writeString(mOffer);
-        dest.writeString(mOfferPercentage);
-        dest.writeString(mOfferPrice);
-        dest.writeString(mPhoto);
-        dest.writeString(mPrice);
+        if (mOfferPrice == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mOfferPrice);
+        }
+        if (mPrice == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mPrice);
+        }
         if (mPriceWithVat == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
             dest.writeDouble(mPriceWithVat);
         }
-        dest.writeString(mQuantity);
+        if (mQuantity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mQuantity);
+        }
         dest.writeString(mSku);
         dest.writeString(mTitle);
-        dest.writeString(mUpdatedAt);
+        if (mVat == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(mVat);
+        }
     }
 }

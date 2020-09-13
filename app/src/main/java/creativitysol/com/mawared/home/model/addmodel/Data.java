@@ -4,7 +4,7 @@ package creativitysol.com.mawared.home.model.addmodel;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class CardData {
+public class Data {
 
     @SerializedName("cart_id")
     private Long mCartId;
@@ -12,14 +12,12 @@ public class CardData {
     private Object mDeviceId;
     @SerializedName("isRegistered")
     private Boolean mIsRegistered;
+    @SerializedName("items_count")
+    private Long mItemsCount;
+    @SerializedName("items_sum_final_prices")
+    private Long mItemsSumFinalPrices;
     @SerializedName("message")
     private String mMessage;
-
-    @SerializedName("items_count")
-    private int items_count;
-
-    @SerializedName("items_sum_final_prices")
-    private double items_sum_final_prices;
 
     public Long getCartId() {
         return mCartId;
@@ -45,6 +43,22 @@ public class CardData {
         mIsRegistered = isRegistered;
     }
 
+    public Long getItemsCount() {
+        return mItemsCount;
+    }
+
+    public void setItemsCount(Long itemsCount) {
+        mItemsCount = itemsCount;
+    }
+
+    public Long getItemsSumFinalPrices() {
+        return mItemsSumFinalPrices;
+    }
+
+    public void setItemsSumFinalPrices(Long itemsSumFinalPrices) {
+        mItemsSumFinalPrices = itemsSumFinalPrices;
+    }
+
     public String getMessage() {
         return mMessage;
     }
@@ -53,19 +67,4 @@ public class CardData {
         mMessage = message;
     }
 
-    public int getItems_count() {
-        return items_count;
-    }
-
-    public void setItems_count(int items_count) {
-        this.items_count = items_count;
-    }
-
-    public double getItems_sum_final_prices() {
-        return items_sum_final_prices;
-    }
-
-    public void setItems_sum_final_prices(double items_sum_final_prices) {
-        this.items_sum_final_prices = items_sum_final_prices;
-    }
 }

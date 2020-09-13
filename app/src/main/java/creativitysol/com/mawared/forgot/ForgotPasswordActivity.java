@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,13 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.List;
 
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.activiation.ActivationActivity;
@@ -39,6 +47,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(ForgotViewModel.class);
+
+
+        checkSmsPermission();
 
         dialog = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -92,5 +103,35 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    void checkSmsPermission(){
+        Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_SMS)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+
+
+                    }
+                })
+                .onSameThread()
+                .check();
     }
 }

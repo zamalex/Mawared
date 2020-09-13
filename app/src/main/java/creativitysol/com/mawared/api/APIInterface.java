@@ -17,6 +17,7 @@ import creativitysol.com.mawared.home.model.HomeSliderModel;
 import creativitysol.com.mawared.home.model.MiniModel;
 import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
 import creativitysol.com.mawared.mycart.model.CardModel;
 import creativitysol.com.mawared.notification.model.Notification;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
@@ -124,11 +125,15 @@ public interface APIInterface {
     @POST("carts/add")
     Call<AddCardModel> addToCard(@Query("product_id")String product_id, @Query("amount")String amount, @Query("device_id")String device_id, @Query("cart_id")String cart_id, @Query("math_type")String math_type);
 
-    @POST("carts/{id}/remove")
-    Call<ResponseBody> removeFromCard(@Path("id")String id);
+    @POST("carts/{cart_id}/products/{product_id}/remove")
+    Call<ResponseBody> removeFromCard(@Path("cart_id")String cart_id,@Path("product_id")String product_id);
 
     @POST("carts/{cart_id}/user/{user_id}/update")
     Call<ResponseBody> bindUserCard(@Path("cart_id")String cart_id,@Path("user_id")String user_id);
+
+
+    @GET("carts/{user_id}/user-cart")
+    Call<CheckCardModel> checkUserCard(@Path("user_id")String user_id);
 
     @GET("carts/{card_id}/items")
     Call<CardModel> getCard(@Path("card_id")String card_id);

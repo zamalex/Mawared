@@ -16,6 +16,7 @@ import io.paperdb.Paper;
 public class SplashActivity extends AppCompatActivity {
 
     Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String token = Paper.book().read("token", "none");
-                if (!token.equals("none")) {
+              /*  if (token.equals("none")) {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     SplashActivity.this.finish();
                 }
@@ -37,12 +38,15 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                     SplashActivity.this.finish();
                 }
+*/
 
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                SplashActivity.this.finish();
 
 
                 this.cancel();
             }
-        },3000);
+        }, 3000);
 
 
     }

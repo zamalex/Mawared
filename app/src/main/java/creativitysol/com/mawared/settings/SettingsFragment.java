@@ -1,5 +1,6 @@
 package creativitysol.com.mawared.settings;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.about.AboutMawaredFragment;
+import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
 import io.paperdb.Paper;
@@ -100,5 +102,15 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     public void onSettingsClick(Settings settings) {
         if (settings.itemId==5)
             ((MainActivity)getActivity()).fragmentStack.push(new AboutMawaredFragment());
+        else if (settings.itemId==6)
+            logout();
+    }
+
+    void logout(){
+        Paper.book().delete("token");
+        Paper.book().delete("login");
+        Paper.book().delete("cid");
+
+        startActivity(new Intent(getActivity(), LoginActivity.class));
     }
 }

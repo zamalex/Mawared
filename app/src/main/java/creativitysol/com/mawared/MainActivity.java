@@ -30,10 +30,12 @@ import cc.cloudist.acplibrary.ACProgressFlower;
 import creativitysol.com.mawared.about.AboutMawaredFragment;
 import creativitysol.com.mawared.helpers.FragmentStack;
 import creativitysol.com.mawared.home.HomeFragment;
+import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.orders.OrderFragment;
 import creativitysol.com.mawared.settings.SettingsFragment;
 import creativitysol.com.mawared.support.SupportFragment;
 import creativitysol.com.mawared.support.chat.ChatFragment;
+import io.paperdb.Paper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -103,10 +105,20 @@ public class MainActivity extends AppCompatActivity {
                     fragmentStack.replace(homeFragment);
                 else if (item.getItemId() == R.id.support)
                     fragmentStack.replace(supportFragment);
-                else if (item.getItemId() == R.id.settings)
-                    fragmentStack.replace(new SettingsFragment());
-                 else if (item.getItemId() == R.id.orders)
-                fragmentStack.replace(new OrderFragment());
+                else if (item.getItemId() == R.id.settings) {
+
+                    String token = Paper.book().read("token", "none");
+
+                    if (token.equals("none")){
+                        Toast.makeText(MainActivity.this, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
+                    }else {
+                        fragmentStack.replace(new SettingsFragment());
+
+                    }
+                } else if (item.getItemId() == R.id.orders)
+                    fragmentStack.replace(new OrderFragment());
 
                 return true;
             }
@@ -152,14 +164,14 @@ public class MainActivity extends AppCompatActivity {
                     .setDimAmount(0.5f);
         }
 
-            if (show) {
-                if (!dialog.isShowing())
-                    dialog.show();
-            } else {
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
+        if (show) {
+            if (!dialog.isShowing())
+                dialog.show();
+        } else {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
             }
+        }
 
 
     }

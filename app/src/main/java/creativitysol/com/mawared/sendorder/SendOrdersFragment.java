@@ -63,7 +63,7 @@ import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.api.RetrofitClient;
-import creativitysol.com.mawared.mycart.model.Item;
+import creativitysol.com.mawared.mycart.model.Product;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.Bank;
@@ -117,7 +117,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     MutableLiveData<String> paymentMethod = new MutableLiveData<>();
 
-    ArrayList<Item> items = new ArrayList<>();
+    ArrayList<Product> items = new ArrayList<>();
 
     ImageView back;
     @Override
@@ -224,7 +224,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             items = getArguments().getParcelableArrayList("clist");
             ordersAdapter.setProducts(items);
 
-            orders_total_dialog_txt.setText((Double)(Math.round(calculateTotal(items) * 100) / 100.00)+" ر.س ");
+            //orders_total_dialog_txt.setText((Double)(Math.round(calculateTotal(items) * 100) / 100.00)+" ر.س ");
         }
 
 
@@ -497,16 +497,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         return v;
         }
 
-    Double calculateTotal(ArrayList<Item>products) {
+   /* Double calculateTotal(ArrayList<Product>products) {
         Double sum = 0.0;
 
-        for (Item p : products) {
+        for (Product p : products) {
             sum += (Double.parseDouble(p.getAmount()) * (p.getProduct().getPriceWithVat()));
         }
 
         return sum;
     }
-
+*/
         private void setAlertDialogs () {
             Window window1 = addCoponDialog.getWindow();
             Window window2 = timeDialog.getWindow();

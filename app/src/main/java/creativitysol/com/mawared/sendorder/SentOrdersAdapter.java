@@ -11,14 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
-import creativitysol.com.mawared.home.model.Product;
-import creativitysol.com.mawared.mycart.model.Item;
+import creativitysol.com.mawared.mycart.model.Product;
 
 
 public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Holder> {
 
 
-    ArrayList<Item> products = new ArrayList<>();
+    ArrayList<Product> products = new ArrayList<>();
 
 
 
@@ -34,15 +33,15 @@ public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Ho
     @Override
     public void onBindViewHolder(@NonNull final SentOrdersAdapter.Holder holder, final int position) {
 
-        Item p = products.get(position);
+        Product p = products.get(position);
 
-        holder.count.setText("X"+p.getAmount());
-        holder.name.setText(p.getProduct().getTitle());
-        holder.peice.setText(p.getProduct().getPriceWithVat().toString()+" ر.س");
+        holder.count.setText("X"+p.getInCartQuantity());
+        holder.name.setText(p.getTitle());
+        holder.peice.setText(p.getPriceWithVat().toString()+" ر.س");
 
     }
 
-    public void setProducts(ArrayList<Item> products) {
+    public void setProducts(ArrayList<Product> products) {
         this.products = products;
         notifyDataSetChanged();
     }

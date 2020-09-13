@@ -1,5 +1,6 @@
 package creativitysol.com.mawared.home;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,8 +28,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
     ArrayList<Product> products = new ArrayList<>();
     addListener listener;
+    Context context;
 
-    public HomeAdapter(addListener listener) {
+    public HomeAdapter(Context context,addListener listener) {
+
+        this.context=context;
         this.listener = listener;
     }
 
@@ -124,7 +129,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
         }
 
-
+       /* Glide
+                .with(context)
+                .load(product.getImg())
+                .fitCenter()
+                .into(holder.img);
+*/
         Picasso.get().load(product.getImg()).fit().into(holder.img);
         Log.d("imgg", product.getImg());
 
