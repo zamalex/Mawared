@@ -22,11 +22,12 @@ public class LoginViewModel extends ViewModel {
                 if (response.isSuccessful()){
                     loginResponse.setValue(response.body());
                 }
+                else loginResponse.setValue(null);
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+                loginResponse.setValue(null);
             }
         });
 

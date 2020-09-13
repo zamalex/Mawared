@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.about.model.SocialsModel;
 import okhttp3.internal.platform.android.SocketAdapter;
@@ -24,7 +26,7 @@ public class AboutMawaredFragment extends Fragment {
     View v;
     SocialViewModel viewModel;
     RecyclerView recyclerView;
-
+    ImageView x_back;
     AboutAdapter adapter;
 
     @Override
@@ -34,6 +36,7 @@ public class AboutMawaredFragment extends Fragment {
        v=inflater.inflate(R.layout.fragment_about_mawared, container, false);
 
        recyclerView = v.findViewById(R.id.rv_socials);
+       x_back = v.findViewById(R.id.imageView);
        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SocialViewModel.class);
 
        adapter = new AboutAdapter(getActivity());
@@ -51,6 +54,13 @@ public class AboutMawaredFragment extends Fragment {
                        adapter.setBanks(socialsModel);
                    }
                }
+           }
+       });
+
+       x_back.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               ((MainActivity)getActivity()).onBackPressed();
            }
        });
 

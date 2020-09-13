@@ -27,9 +27,11 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
     List<Settings> settingsList;
     FragmentStack fragmentStack;
     FragmentActivity fragmentActivity;
+    SeetingsListener listener;
 
-    public SettingsAdapter(List<Settings> settingsList, FragmentActivity fragmentActivity) {
+    public SettingsAdapter(List<Settings> settingsList, FragmentActivity fragmentActivity,SeetingsListener listener) {
         this.settingsList = settingsList;
+        this.listener = listener;
         this.fragmentActivity = fragmentActivity;
     }
 
@@ -82,10 +84,17 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
                         fragmentStack = new FragmentStack(fragmentActivity,fragmentActivity.getSupportFragmentManager(),R.id.main_container);
                         fragmentStack.push(new ContactUsFragment());
                     }
+                    else {
+                        listener.onSettingsClick(settingsList.get(getAdapterPosition()));
+                    }
                 }
             });
 
 
         }
+    }
+
+    public interface SeetingsListener{
+        void onSettingsClick(Settings settings);
     }
 }

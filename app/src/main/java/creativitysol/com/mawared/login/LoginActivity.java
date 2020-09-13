@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -105,13 +106,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onChanged(LoginResponse loginResponse) {
                 dialog.dismiss();
-                if (loginResponse.getStatus() == 200) {
-                    Paper.book().write("token", loginResponse.getUser().getToken());
-                    Paper.book().write("login", loginResponse);
+                if (loginResponse!=null){
+                    if (loginResponse.getStatus() == 200) {
+                        Paper.book().write("token", loginResponse.getUser().getToken());
+                        Paper.book().write("login", loginResponse);
 
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    LoginActivity.this.finish();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        LoginActivity.this.finish();
+                    }
+                }else {
+                    Toast.makeText(LoginActivity.this, "البيانات التي ادخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 

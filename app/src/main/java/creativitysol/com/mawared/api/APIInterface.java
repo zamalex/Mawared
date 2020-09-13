@@ -9,6 +9,7 @@ import creativitysol.com.mawared.about.model.SocialsModel;
 import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.cities.Cities;
 import creativitysol.com.mawared.contactus.model.ContactUsResponse;
+import creativitysol.com.mawared.forgot.model.ForgotModel;
 import creativitysol.com.mawared.home.model.CitiesModel;
 import creativitysol.com.mawared.home.model.HomeProductModel;
 
@@ -24,6 +25,7 @@ import creativitysol.com.mawared.register.model.RegisterBody;
 import creativitysol.com.mawared.register.model.RegisterModel;
 import creativitysol.com.mawared.registeration.model.LoginRegistration;
 import creativitysol.com.mawared.registeration.terms.model.Terms;
+import creativitysol.com.mawared.reset.model.ResetModel;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
@@ -106,7 +108,10 @@ public interface APIInterface {
     Call<LoginResponse> login(@Body JsonObject jsonObject);
 
     @POST("password/forget")
-    Call<ResponseBody> forgotPass(@Body JsonObject jsonObject);
+    Call<ForgotModel> forgotPass(@Body JsonObject jsonObject);
+
+    @POST("password/reset")
+    Call<ResetModel> resetPass(@Body JsonObject jsonObject);
 
     @POST("deliver-time/available-times")
     Call<TimesModel> getTimes(@Body JsonObject jsonObject,@Header("Authorization") String topen);

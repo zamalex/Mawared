@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,12 +26,14 @@ import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.helpers.SmsListener;
 import creativitysol.com.mawared.register.RegisterBottomSheet;
+import creativitysol.com.mawared.reset.ResetPassActivity;
 import okhttp3.ResponseBody;
 
 public class ActivationActivity extends AppCompatActivity implements SmsListener.OnSmsReceivedListener {
 
     ConstraintLayout btn_login;
     String phoneNumber;
+    String type = null;
     TextView tv_mobileNumber;
     SquarePinField sq_verification;
     ActivationViewModel activationViewModel;
@@ -61,6 +64,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
         registerReceiver(receiver, fp);
 
 
+        type = getIntent().getStringExtra("type");
         phoneNumber = getIntent().getStringExtra("mobNo");
         tv_mobileNumber = findViewById(R.id.tv_mobileNumber);
         sq_verification = findViewById(R.id.sq_verification);
@@ -92,6 +96,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                 jsonObject.addProperty("mobile", phoneNumber);
                 jsonObject.addProperty("code", codeVerification);
                 dialog.show();
+
                 activationViewModel.verifyMobile(jsonObject).observe(ActivationActivity.this, new Observer<ActivationiModel>() {
                     @Override
                     public void onChanged(ActivationiModel responseBody) {
@@ -99,11 +104,23 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                         if (responseBody != null) {
                             if (responseBody.getStatus() == 200) {
                                 Toast.makeText(getApplicationContext(), responseBody.getMessage().getDescription(), Toast.LENGTH_LONG).show();
-                                RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
 
-                                registerBottomSheet.setCode(codeVerification);
+                                if (type.equals("forgot")){
+                                    Intent intent = new Intent(ActivationActivity.this, ResetPassActivity.class);
+                                    intent.putExtra("mobNo",phoneNumber);
+                                    intent.putExtra("code",codeVerification);
+                                    startActivity(intent);
+                                    ActivationActivity.this.finish();
 
-                                registerBottomSheet.show(getSupportFragmentManager(), "tag");
+
+                                }else {
+                                    RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
+
+                                    registerBottomSheet.setCode(codeVerification);
+
+                                    registerBottomSheet.show(getSupportFragmentManager(), "tag");
+                                }
+
 
                             }
                         }
@@ -129,6 +146,13 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
         fp.setPriority(18);
 
         registerReceiver(receiver, fp);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceiver(receiver);
     }
 
     @Override

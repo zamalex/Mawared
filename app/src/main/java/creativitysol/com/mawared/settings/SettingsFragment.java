@@ -18,11 +18,13 @@ import java.util.List;
 
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.about.AboutMawaredFragment;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
 import io.paperdb.Paper;
 
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements SettingsAdapter.SeetingsListener {
 
     Settings settingsModel;
     List<Settings> settingsList;
@@ -53,7 +55,7 @@ public class SettingsFragment extends Fragment {
         settingsList.add(settingsModel);
         settingsModel = new Settings(6,R.drawable.logout,"تسجيل خروج","3");
         settingsList.add(settingsModel);
-        settingsAdapter = new SettingsAdapter(settingsList,getActivity());
+        settingsAdapter = new SettingsAdapter(settingsList,getActivity(),this);
 
         LoginResponse loginResponse = Paper.book().read("login",null);
 
@@ -68,6 +70,15 @@ public class SettingsFragment extends Fragment {
         rv_settings.setAdapter(settingsAdapter);
 
 
+        tv_collectPoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
+
+                termsBottomSheet.show(getActivity().getSupportFragmentManager(),"tag");
+
+            }
+        });
 
 
         return view;
@@ -83,5 +94,11 @@ public class SettingsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         ((MainActivity) getActivity()).bottomNavVisibility(false);
+    }
+
+    @Override
+    public void onSettingsClick(Settings settings) {
+        if (settings.itemId==5)
+            ((MainActivity)getActivity()).fragmentStack.push(new AboutMawaredFragment());
     }
 }
