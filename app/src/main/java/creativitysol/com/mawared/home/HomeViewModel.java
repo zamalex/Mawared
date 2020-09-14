@@ -113,17 +113,18 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
+    MutableLiveData<ResponseBody> bindResponse = new MutableLiveData<>();
     public  void bindUserCard(String card_id,String user_id) {
         RetrofitClient.getApiInterface().bindUserCard(card_id,user_id).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                bindResponse.setValue(response.body());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-
+                bindResponse.setValue(null);
             }
         });
     }

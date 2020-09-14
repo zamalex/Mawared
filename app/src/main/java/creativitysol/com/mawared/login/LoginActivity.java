@@ -115,9 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                         Paper.book().write("token", loginResponse.getUser().getToken());
                         Paper.book().write("login", loginResponse);
                         // viewModel.checkUserCart(loginResponse.getUser().getId().toString());
-                        String cid = Paper.book().read("cid", null);
-                        if (cid != null)
-                            homeViewModel.bindUserCard(cid, loginResponse.getUser().getId().toString());
+
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         LoginActivity.this.finish();
 

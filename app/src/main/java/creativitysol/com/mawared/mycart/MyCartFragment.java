@@ -84,6 +84,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 if (cardModel!=null){
                     if (cardModel.getStatus()==200){
                         adapter.setProducts((ArrayList<Product>) cardModel.getData().getProducts());
+                        total_sum.setText((Double) (Math.round(cardModel.getData().getItemsSumFinalPrices() * 100) / 100.00) + " ر.س");
 
                     }
                 }
@@ -143,7 +144,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
     @Override
     public void doSum(Double sum) {
-        total_sum.setText((Double) (Math.round(sum * 100) / 100.00) + " ر.س");
+        //total_sum.setText((Double) (Math.round(sum * 100) / 100.00) + " ر.س");
 
     }
 

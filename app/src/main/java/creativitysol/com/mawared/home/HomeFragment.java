@@ -45,6 +45,7 @@ import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
 import creativitysol.com.mawared.mycart.CartViewModel;
 import creativitysol.com.mawared.mycart.MyCartFragment;
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
 
 
 public class HomeFragment extends Fragment implements HomeAdapter.addListener {
@@ -78,7 +79,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         LoginResponse loginResponse = Paper.book().read("login", null);
         card_id = Paper.book().read("cid", null);
 
-        if (loginResponse != null)
+        if (card_id != null && loginResponse != null)
+            viewModel.bindUserCard(card_id, loginResponse.getUser().getId().toString());
+
+        else if (loginResponse != null)
             viewModel.checkUserCart(loginResponse.getUser().getId().toString());
 
 
@@ -164,6 +168,14 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                     }
                 }
 
+            }
+        });
+
+        viewModel.bindResponse.observe(getActivity(), new Observer<ResponseBody>() {
+            @Override
+            public void onChanged(ResponseBody responseBody) {
+                if (loginResponse != null)
+                    viewModel.checkUserCart(loginResponse.getUser().getId().toString());
             }
         });
 

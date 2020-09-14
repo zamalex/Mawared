@@ -1,5 +1,7 @@
 package creativitysol.com.mawared.mycart;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -56,6 +58,7 @@ public class CartViewModel extends ViewModel {
             @Override
             public void onFailure(Call<CardModel> call, Throwable t) {
                 cardModelMutableLiveData.setValue(null);
+                Log.d("carde",t.getMessage());
             }
         });
     }
