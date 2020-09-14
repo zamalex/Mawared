@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
 public class AddCardModel {
 
     @SerializedName("data")
-    private CardData mData;
+    private Data mData;
     @SerializedName("status")
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
 
-    public CardData getData() {
+    public Data getData() {
         return mData;
     }
 
-    public void setData(CardData data) {
+    public void setData(Data data) {
         mData = data;
     }
 

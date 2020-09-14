@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.contactus.model.ContactUsResponse;
 import creativitysol.com.mawared.helpers.FragmentStack;
@@ -44,16 +45,27 @@ public class ContactUsFragment extends Fragment {
         btn_sendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(et_MessageTitle.getText() != null && et_MessageContent.getText() != null){
+                if(!et_MessageTitle.getText().toString().isEmpty() && !et_MessageContent.getText().toString().isEmpty()){
+                    ((MainActivity)getActivity()).showDialog(true);
                     contactUsViewModel.contactUs(et_MessageTitle.getText().toString(),et_MessageContent.getText().toString())
                             .observe(getActivity(), new Observer<ContactUsResponse>() {
                                 @Override
                                 public void onChanged(ContactUsResponse contactUsResponse) {
-                                    if (contactUsResponse.getStatus() == 200){
-                                        Toast.makeText(getActivity(),contactUsResponse.getMessage().getDescription(),Toast.LENGTH_LONG).show();
-                                    }
+                                    ((MainActivity)getActivity()).showDialog(false);
+
+                                    if (contactUsResponse!=null){
+                                        if (contactUsResponse.getStatus() == 200){
+                                            Toast.makeText(getActivity(),contactUsResponse.getMessage().getDescription(),Toast.LENGTH_LONG).show();
+                                        }
+                                    }else
+                                        Toast.makeText(getActivity(),"حدث خطأ",Toast.LENGTH_LONG).show();
+
+
                                 }
                             });
+                }else {
+                    //Toast.makeText(getActivity(),"",Toast.LENGTH_LONG).show();
+
                 }
             }
         });

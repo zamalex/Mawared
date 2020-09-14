@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     ArrayList<String> cities;
     ArrayList<String> cityIds;
     MutableLiveData<Integer> card_size = new MutableLiveData<>();
-    TextView card_txt,linear_txt;
+    TextView card_txt, linear_txt;
     ProgressBar progressBar_cyclic;
     LinearLayout card_linear;
     String card_id;
@@ -70,17 +70,16 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_home, container, false);
-        adapter = new HomeAdapter(getActivity(),this);
+        adapter = new HomeAdapter(getActivity(), this);
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
         cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
-        LoginResponse loginResponse = Paper.book().read("login",null);
-         card_id = Paper.book().read("cid",null);
+        LoginResponse loginResponse = Paper.book().read("login", null);
+        card_id = Paper.book().read("cid", null);
 
-       if (loginResponse!=null)
-           viewModel.checkUserCart(loginResponse.getUser().getId().toString());
-
+        if (loginResponse != null)
+            viewModel.checkUserCart(loginResponse.getUser().getId().toString());
 
 
         viewModel.getMin();
@@ -212,9 +211,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             public void onChanged(CheckCardModel checkCardModel) {
 
 
-                if (checkCardModel!=null){
-                    if (checkCardModel.getStatus()==200){
-                        Paper.book().write("cid",checkCardModel.getData().getCartId().toString());
+                if (checkCardModel != null) {
+                    if (checkCardModel.getStatus() == 200) {
+                        if (checkCardModel.getData().getCartId() != null)
+                            Paper.book().write("cid", checkCardModel.getData().getCartId().toString());
                     }
                 }
 
@@ -273,11 +273,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                 if (isAdded()) {
                     showCard(true);
                     card_size.setValue(addCardModel.getData().getItemsCount().intValue());
-                    if (addCardModel.getData().getItemsCount()>0){
+                    if (addCardModel.getData().getItemsCount() > 0) {
                         card_linear.setVisibility(View.VISIBLE);
-                        linear_txt.setText(addCardModel.getData().getItemsSumFinalPrices()+" ر.س ");
-                    }
-                    else
+                        linear_txt.setText(addCardModel.getData().getItemsSumFinalPrices() + " ر.س ");
+                    } else
                         card_linear.setVisibility(View.GONE);
 
                     Paper.book().write("cid", addCardModel.getData().getCartId().toString());
@@ -305,26 +304,26 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         showCard(false);
         //Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
 
-        card_id = Paper.book().read("cid",null);
+        card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id,"plus");
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus");
     }
 
     @Override
     public void onDecreaseClick(int pos, Product product) {
-       // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
-        card_id = Paper.book().read("cid",null);
+        // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
+        card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id,"minus");
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
 
 
     }
 
-    void showCard(boolean b){
-        if (!b){
+    void showCard(boolean b) {
+        if (!b) {
             go_cart.setVisibility(View.INVISIBLE);
             progressBar_cyclic.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             progressBar_cyclic.setVisibility(View.INVISIBLE);
             go_cart.setVisibility(View.VISIBLE);
         }

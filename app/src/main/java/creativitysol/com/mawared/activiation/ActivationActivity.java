@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.helpers.SmsListener;
 import creativitysol.com.mawared.register.RegisterBottomSheet;
+import creativitysol.com.mawared.registeration.RegisterationActivity;
 import creativitysol.com.mawared.reset.ResetPassActivity;
 import okhttp3.ResponseBody;
 
@@ -34,11 +36,12 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
     ConstraintLayout btn_login;
     String phoneNumber;
     String type = null;
-    TextView tv_mobileNumber;
+    TextView tv_mobileNumber,counter;
     SquarePinField sq_verification;
     ActivationViewModel activationViewModel;
     private SmsListener receiver;
     KProgressHUD dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
         phoneNumber = getIntent().getStringExtra("mobNo");
         tv_mobileNumber = findViewById(R.id.tv_mobileNumber);
         sq_verification = findViewById(R.id.sq_verification);
+        counter = findViewById(R.id.counter);
         tv_mobileNumber.setText(phoneNumber + "+");
 
         dialog = KProgressHUD.create(this)
@@ -76,6 +80,20 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                 .setCancellable(true)
                 .setAnimationSpeed(2)
                 .setDimAmount(0.5f);
+
+        new CountDownTimer(59000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                counter.setText("00:" + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                counter.setText("00:00");
+                Toast.makeText(ActivationActivity.this, "حاول مرة اخرى", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ActivationActivity.this, RegisterationActivity.class));
+                ActivationActivity.this.finish();
+            }
+        }.start();
 
 
         activationViewModel = new ViewModelProvider(this).get(ActivationViewModel.class);
@@ -159,6 +177,12 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
 
     @Override
     public void onSmsReceived(String otp) {
-        Toast.makeText(this, otp, Toast.LENGTH_SHORT).show();
+        String number  = otp.replaceAll("[^0-9]", "");
+       // Toast.makeText(this, number, Toast.LENGTH_SHORT).show();
+
+        if (sq_verification==null)
+            sq_verification = findViewById(R.id.sq_verification);
+        if (number.length()==4)
+            sq_verification.setText(number);
     }
 }
