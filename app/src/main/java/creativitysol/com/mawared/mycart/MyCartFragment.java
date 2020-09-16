@@ -125,6 +125,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
                 Bundle b = new Bundle();
                 b.putParcelableArrayList("clist", (ArrayList<? extends Parcelable>) viewModel.cardModelMutableLiveData.getValue().getData().getProducts());
+                b.putDouble("total",viewModel.cardModelMutableLiveData.getValue().getData().getItemsSumFinalPrices());
                 sendOrdersFragment.setArguments(b);
 
                 ((MainActivity) getActivity()).fragmentStack.push(sendOrdersFragment);

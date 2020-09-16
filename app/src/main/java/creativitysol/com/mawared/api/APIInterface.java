@@ -29,7 +29,10 @@ import creativitysol.com.mawared.registeration.terms.model.Terms;
 import creativitysol.com.mawared.reset.model.ResetModel;
 import creativitysol.com.mawared.sendorder.model.AddressModel;
 import creativitysol.com.mawared.sendorder.model.BanksModel;
+import creativitysol.com.mawared.sendorder.model.PaymentModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
+import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
+import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -84,7 +87,7 @@ public interface APIInterface {
     @GET("settings/slider")
     Call<HomeSliderModel> getHomeSlider();
 
-    @GET("addresses")
+    @GET("orders/addresses")
     Call<AddressModel> getaddresses(@Header("Authorization") String topen);
 
 
@@ -122,6 +125,19 @@ public interface APIInterface {
     Call<ResponseBody> sendOrder(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
+    @POST("add-new-address")
+    Call<ResponseBody> addAddress(@Query("username") String username,@Query("mobile") String mobile,
+                                  @Query("lat") String lat,@Query("lng") String lang,
+                                  @Query("address") String address,@Query("delivery_type") String delivery_type,
+                                  @Header("Authorization") String token);
+
+    @POST("points/count")
+    Call<PointsModel> getPoints(@Header("Authorization") String token);
+
+    @POST("coupon/check")
+    Call<CoponModel> checkCopon(@Body JsonObject jsonObject,@Header("Authorization") String token);
+
+
     @POST("carts/add")
     Call<AddCardModel> addToCard(@Query("product_id")String product_id, @Query("amount")String amount, @Query("device_id")String device_id, @Query("cart_id")String cart_id, @Query("math_type")String math_type);
 
@@ -137,6 +153,9 @@ public interface APIInterface {
 
     @GET("carts/{card_id}/items")
     Call<CardModel> getCard(@Path("card_id")String card_id);
+
+    @GET("payment/payment-methods")
+    Call<PaymentModel> getPayment();
 
 
 

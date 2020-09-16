@@ -6,23 +6,22 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class AddressModel {
+public class PaymentModel {
 
-    @SerializedName("order_shipping_addresses")
-    private List<OrderShippingAddress> mOrderShippingAddresses;
-
-    public List<OrderShippingAddress> getOrderShippingAddresses() {
-        return mOrderShippingAddresses;
-    }
-
-    public void setOrderShippingAddresses(List<OrderShippingAddress> orderShippingAddresses) {
-        mOrderShippingAddresses = orderShippingAddresses;
-    }
+    @SerializedName("payment_methods")
+    private List<PaymentMethod> mPaymentMethods;
     @SerializedName("status")
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
 
+    public List<PaymentMethod> getPaymentMethods() {
+        return mPaymentMethods;
+    }
+
+    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
+        mPaymentMethods = paymentMethods;
+    }
 
     public Long getStatus() {
         return mStatus;

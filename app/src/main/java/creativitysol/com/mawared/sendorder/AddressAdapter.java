@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
-import creativitysol.com.mawared.sendorder.model.CustomerShippingAddress;
+import creativitysol.com.mawared.sendorder.model.OrderShippingAddress;
 
 
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> {
 
 
-    ArrayList<CustomerShippingAddress> addresses = new ArrayList<>();
+    ArrayList<OrderShippingAddress> addresses = new ArrayList<>();
 
 
     AddressInterface addressInterface;
@@ -46,7 +46,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
 
     }
 
-    public void setAddresses(ArrayList<CustomerShippingAddress> addresses) {
+    public void setAddresses(ArrayList<OrderShippingAddress> addresses) {
         this.addresses = addresses;
         notifyDataSetChanged();
     }
@@ -72,7 +72,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
             add_c.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addressInterface.setAddress("شخصي",addresses.get(getAdapterPosition()).getAddress());
+                    addressInterface.setAddress("شخصي",addresses.get(getAdapterPosition()));
                 }
             });
 
@@ -80,7 +80,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
     }
 
     public interface AddressInterface{
-        void setAddress(String type,String address);
+        void setAddress(String type,OrderShippingAddress address);
     }
 
 }

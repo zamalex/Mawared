@@ -105,11 +105,12 @@
         />
 
     <TextView
+        android:id="@+id/bank_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:fontFamily="@font/urosemi"
-        android:text="شركة مياة موارد لتعبئة المياة\nرقم الحساب : 98765432345678987 "
+        android:text=""
         android:textColor="#0D2142"
         android:layout_margin="8dp"
         />

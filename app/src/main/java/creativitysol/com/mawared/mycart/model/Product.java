@@ -10,7 +10,6 @@ import com.google.gson.annotations.SerializedName;
 public class Product implements Parcelable {
 
     public int qty=0;
-
     @SerializedName("available")
     private Long mAvailable;
     @SerializedName("cart_item_id")
@@ -26,9 +25,9 @@ public class Product implements Parcelable {
     @SerializedName("offer")
     private String mOffer;
     @SerializedName("offer_price")
-    private Long mOfferPrice;
+    private Double mOfferPrice;
     @SerializedName("price")
-    private Long mPrice;
+    private Double mPrice;
     @SerializedName("price_with_vat")
     private Double mPriceWithVat;
     @SerializedName("quantity")
@@ -41,7 +40,6 @@ public class Product implements Parcelable {
     private Long mVat;
 
     protected Product(Parcel in) {
-        qty = in.readInt();
         if (in.readByte() == 0) {
             mAvailable = null;
         } else {
@@ -72,12 +70,12 @@ public class Product implements Parcelable {
         if (in.readByte() == 0) {
             mOfferPrice = null;
         } else {
-            mOfferPrice = in.readLong();
+            mOfferPrice = in.readDouble();
         }
         if (in.readByte() == 0) {
             mPrice = null;
         } else {
-            mPrice = in.readLong();
+            mPrice = in.readDouble();
         }
         if (in.readByte() == 0) {
             mPriceWithVat = null;
@@ -166,19 +164,19 @@ public class Product implements Parcelable {
         mOffer = offer;
     }
 
-    public Long getOfferPrice() {
+    public Double getOfferPrice() {
         return mOfferPrice;
     }
 
-    public void setOfferPrice(Long offerPrice) {
+    public void setOfferPrice(Double offerPrice) {
         mOfferPrice = offerPrice;
     }
 
-    public Long getPrice() {
+    public Double getPrice() {
         return mPrice;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(Double price) {
         mPrice = price;
     }
 
@@ -229,7 +227,6 @@ public class Product implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(qty);
         if (mAvailable == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -266,13 +263,13 @@ public class Product implements Parcelable {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(mOfferPrice);
+            dest.writeDouble(mOfferPrice);
         }
         if (mPrice == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeLong(mPrice);
+            dest.writeDouble(mPrice);
         }
         if (mPriceWithVat == null) {
             dest.writeByte((byte) 0);

@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class Bank {
 
+    public int is=0;
     @SerializedName("account_number")
     private String mAccountNumber;
     @SerializedName("hint")
