@@ -19,7 +19,7 @@ public class OrderViewModel extends ViewModel {
 
     public MutableLiveData<AllOrder> getAllOrders(int pageNumber){
         orderMutableLiveData = new MutableLiveData<>();
-        RetrofitClient.getApiInterface().getAllOrders(pageNumber,"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk5ODQ0MTc2LCJleHAiOjE2MDA0NDg5NzYsIm5iZiI6MTU5OTg0NDE3NiwianRpIjoieXJhUXVmSXllaUtLM0E4TSJ9.2aoJij9XgyyYUU9GQv3LrbB9rU3QP0Wyy2SeUzr6v2w").enqueue(new Callback<AllOrder>() {
+        RetrofitClient.getApiInterface().getAllOrders(pageNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<AllOrder>() {
             @Override
             public void onResponse(Call<AllOrder> call, Response<AllOrder> response) {
                 if (response.body() != null) {
@@ -39,7 +39,7 @@ public class OrderViewModel extends ViewModel {
         orderSearchLiveData = new MutableLiveData<>();
 
 
-        RetrofitClient.getApiInterface().searchOrder(orderNumber,"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk5ODQ0MTc2LCJleHAiOjE2MDA0NDg5NzYsIm5iZiI6MTU5OTg0NDE3NiwianRpIjoieXJhUXVmSXllaUtLM0E4TSJ9.2aoJij9XgyyYUU9GQv3LrbB9rU3QP0Wyy2SeUzr6v2w").enqueue(new Callback<AllOrder>() {
+        RetrofitClient.getApiInterface().searchOrder(orderNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<AllOrder>() {
             @Override
             public void onResponse(Call<AllOrder> call, Response<AllOrder> response) {
                 if (response.body() != null) {

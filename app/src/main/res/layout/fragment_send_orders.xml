@@ -89,6 +89,7 @@
                     app:layout_constraintTop_toTopOf="@+id/imageView3" />
 
                 <TextView
+                    android:id="@+id/count_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
@@ -123,7 +124,7 @@
                 android:layout_marginStart="16dp"
 
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/radius_et"
@@ -181,7 +182,6 @@
                     android:layout_marginRight="16dp"
                     android:fontFamily="@font/urwbold"
                     android:gravity="right"
-                    android:text="4496 Anas Ibn Malik Rd, 3rd Floor, Riyadh 13524"
                     android:textColor="#0D2142"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -200,7 +200,6 @@
                     android:layout_marginBottom="16dp"
                     android:fontFamily="@font/urwbold"
                     android:gravity="start"
-                    android:text="شخصي"
                     android:textColor="#0D2142"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -220,7 +219,7 @@
                 android:layout_marginStart="16dp"
 
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/radius_et"
@@ -263,7 +262,6 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/urwbold"
-                    android:text="الأحد 23 ديسمبر 2019 . 10:00 ص - 12:00 م "
                     android:textColor="#0D2142"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -294,14 +292,14 @@
                 android:layout_marginStart="16dp"
 
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/radius_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/add_time">
+                app:layout_constraintTop_toBottomOf="@+id/show_products2">
 
                 <ImageView
                     android:id="@+id/imageView33"
@@ -329,7 +327,7 @@
                     app:layout_constraintTop_toTopOf="@+id/imageView33" />
 
                 <TextView
-                    
+
                     android:id="@+id/selected_payment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -338,7 +336,6 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/urwbold"
-                    android:text="الدفع عند الإستلام"
                     android:textColor="#0D2142"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -367,14 +364,14 @@
                 android:layout_marginStart="16dp"
 
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/radius_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/add_payment">
+                app:layout_constraintTop_toBottomOf="@+id/add_time">
 
                 <ImageView
                     android:id="@+id/imageView333"
@@ -421,11 +418,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:gravity="center"
                     android:layout_marginLeft="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:fontFamily="@font/urwbold"
+                    android:gravity="center"
                     android:text=""
                     android:textColor="#F25F5F"
                     app:layout_constraintBottom_toBottomOf="@+id/textView22"
@@ -443,7 +440,7 @@
                 android:layout_marginStart="16dp"
 
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/radius_et"
@@ -479,12 +476,12 @@
                     app:layout_constraintTop_toTopOf="@+id/imageView32" />
 
                 <TextView
+                    android:id="@+id/pts_c_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
                     android:fontFamily="@font/urosemi"
-                    android:text="50 نقطة"
                     android:textColor="#7B92A5"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView42"
@@ -515,7 +512,7 @@
                 android:layout_marginTop="16dp"
                 android:src="@drawable/info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_products2" />
+                app:layout_constraintTop_toBottomOf="@+id/add_payment" />
 
             <TextView
                 android:id="@+id/terms_txt"
@@ -549,11 +546,12 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/urosemi"
                     android:gravity="right"
-                    android:text="مجموع الطلب"
+                    android:text="المجموع قبل الضريبة"
                     android:textColor="#0D2142"
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/semi_final_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -584,11 +582,12 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/urosemi"
                     android:gravity="right"
-                    android:text="رسوم التوصيل"
+                    android:text="الخصم"
                     android:textColor="#0D2142"
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/discount_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -621,11 +620,12 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/urosemi"
                     android:gravity="right"
-                    android:text="الخصم"
+                    android:text="القيمة المضافة (الضريبة)"
                     android:textColor="#0D2142"
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/vat_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

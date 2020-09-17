@@ -15,7 +15,10 @@ public class Data {
     @SerializedName("items_count")
     private Long mItemsCount;
     @SerializedName("items_sum_final_prices")
-    private Long mItemsSumFinalPrices;
+    private Double mItemsSumFinalPrices;
+
+    @SerializedName("items_sum_prices")
+    private Double mItemsSumPrices;
     @SerializedName("message")
     private String mMessage;
 
@@ -51,12 +54,20 @@ public class Data {
         mItemsCount = itemsCount;
     }
 
-    public Long getItemsSumFinalPrices() {
+    public Double getItemsSumFinalPrices() {
         return mItemsSumFinalPrices;
     }
 
-    public void setItemsSumFinalPrices(Long itemsSumFinalPrices) {
+    public void setItemsSumFinalPrices(Double itemsSumFinalPrices) {
         mItemsSumFinalPrices = itemsSumFinalPrices;
+    }
+
+    public Double getmItemsSumFinalPrices() {
+        return mItemsSumFinalPrices;
+    }
+
+    public Double getmItemsSumPrices() {
+        return mItemsSumPrices;
     }
 
     public String getMessage() {

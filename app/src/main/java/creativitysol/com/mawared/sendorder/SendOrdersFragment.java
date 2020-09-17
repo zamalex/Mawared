@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -50,6 +51,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.gson.JsonObject;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -79,6 +81,7 @@ import creativitysol.com.mawared.sendorder.model.OrderShippingAddress;
 import creativitysol.com.mawared.sendorder.model.Time;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
 import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
+import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -99,7 +102,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     View v;
 
-    Dialog addCoponDialog, timeDialog;
+    Dialog addCoponDialog, timeDialog, pts_dialog;
     RecyclerView address_rv, products_rv, banks_rv;
 
     BottomSheetDialog address_dialog, map_dailog, payDialog, ordersDialog, confirmDialog;
@@ -111,15 +114,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     MapView mapView;
     GoogleMap map;
 
-    Button snd_order, p_bank, p_deliver, p_visa, add_copon_btn;
+    Button snd_order, p_bank, p_deliver, p_visa, add_copon_btn, add_pts,confirm_transfer;
 
     ImageView show_map, dismiss_map;
 
     TextView orders_total_dialog_txt, terms_txt, bank_details, final_total_txt;
     TextView selected_address, selected_address_type, selected_payment, selected_copon, selected_date;
-    EditText copon_et;
+    EditText copon_et,transfer_no;
     String token = "";
-    Spinner time_spinner, map_spinner;
+    Spinner time_spinner, map_spinner, pts_spinner;
     Button day_spinner, btn_add_loc, confirm_time;
     ProgressBar mapprogressBar;
     ConstraintLayout add_copon, add_time, add_address, add_payment, show_products;
@@ -137,8 +140,20 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     String selectedShippingType = null;
     String convertedAddress = null;
     ArrayList<String> times;
+    ArrayList<String> pts_amounts = new ArrayList<>();
+    Double coponDiscount = 0d;
+    MutableLiveData<Double> total = new MutableLiveData<>();
+    Double ptsDiscount = 0d;
+    Double total_before = 0d;
+    Double vat = 0d;
 
-    Double total = null;
+    TextView semi_final_txt, vat_txt, discount_txt,pts_c_txt,count_tv;
+
+    SwitchMaterial pts_switch;
+
+    Bank selected_bank=null;
+
+    String selected_payment_method = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -150,19 +165,25 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         back = v.findViewById(R.id.imageView);
         final_total_txt = v.findViewById(R.id.final_total_txt);
         terms_txt = v.findViewById(R.id.terms_txt);
+        pts_switch = v.findViewById(R.id.imageView42);
 
         selected_address = v.findViewById(R.id.selected_address);
         selected_address_type = v.findViewById(R.id.selected_address_type);
         selected_copon = v.findViewById(R.id.selected_copon);
         selected_date = v.findViewById(R.id.selected_date);
         selected_payment = v.findViewById(R.id.selected_payment);
+        semi_final_txt = v.findViewById(R.id.semi_final_txt);
+        vat_txt = v.findViewById(R.id.vat_txt);
+        discount_txt = v.findViewById(R.id.discount_txt);
+        pts_c_txt = v.findViewById(R.id.pts_c_txt);
+        count_tv = v.findViewById(R.id.count_tv);
 
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
         token = Paper.book().read("token", "");
 
         if (!token.isEmpty()) {
-            viewModel.getAddresses("Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNjAwMTY5OTY0LCJleHAiOjE2MDA3NzQ3NjQsIm5iZiI6MTYwMDE2OTk2NCwianRpIjoiQlZaWUNpZ3JnYWpNUjNFMyJ9.T6JidbfjPNvySuKQ4A6kMgQCejtzSyikFG3O_H_XXKw");
+            viewModel.getAddresses("Bearer " + token);
             viewModel.getPoints("Bearer " + token);
 
         }
@@ -175,6 +196,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         addCoponDialog = new Dialog(getActivity());
         timeDialog = new Dialog(getActivity());
+        pts_dialog = new Dialog(getActivity());
 
         adapter = new AddressAdapter(this);
         ordersAdapter = new SentOrdersAdapter();
@@ -188,6 +210,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 addCoponDialog.dismiss();
             }
         });
+
+
+        pts_dialog.setContentView(R.layout.pts_dialog);
 
 
         timeDialog.setContentView(R.layout.time_dialog);
@@ -240,6 +265,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         btn_add_loc = map_dailog.findViewById(R.id.btn_add_loc);
         address_rv = address_dialog.findViewById(R.id.address_rv);
         banks_rv = confirmDialog.findViewById(R.id.banks_rv);
+        transfer_no = confirmDialog.findViewById(R.id.transfer_no);
+        confirm_transfer = confirmDialog.findViewById(R.id.cnonfirm_transfer);
         add_copon_btn = addCoponDialog.findViewById(R.id.add_copon);
         copon_et = addCoponDialog.findViewById(R.id.copon_et);
 
@@ -247,16 +274,26 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         products_rv = ordersDialog.findViewById(R.id.products_rv);
         orders_total_dialog_txt = ordersDialog.findViewById(R.id.orders_total);
 
+        pts_spinner = pts_dialog.findViewById(R.id.pts_spinner);
+        add_pts = pts_dialog.findViewById(R.id.add_pts);
+
         products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         products_rv.setAdapter(ordersAdapter);
 
         if (getArguments() != null) {
             items = getArguments().getParcelableArrayList("clist");
-            total = getArguments().getDouble("total");
-            final_total_txt.setText(total + " ر.س ");
+            total.setValue(getArguments().getDouble("total"));
+
             ordersAdapter.setProducts(items);
 
-            //orders_total_dialog_txt.setText((Double)(Math.round(calculateTotal(items) * 100) / 100.00)+" ر.س ");
+            semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
+             vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+            vat_txt.setText(vat + " ر.س ");
+            discount_txt.setText("0 ر.س");
+            orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00)+" ر.س ");
+            count_tv.setText(calculateCount(items)+"");
+
+            total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
         }
 
 
@@ -300,6 +337,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         addCoponDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         timeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pts_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         add_copon = v.findViewById(R.id.add_copon);
         add_time = v.findViewById(R.id.add_time);
@@ -322,7 +360,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onChanged(PointsModel pointsModel) {
                 if (pointsModel != null) {
-                    Toast.makeText(getActivity(), pointsModel.getData().getTotalPoints().toString(), Toast.LENGTH_SHORT).show();
+                    if (pointsModel.getSuccess()) {
+                        if (pointsModel.getData().getToExchange().size() > 0) {
+                            pts_amounts = new ArrayList<>();
+                            pts_c_txt.setText(pointsModel.getData().getTotalPoints()+" نقطة ");
+                            for (Long l : pointsModel.getData().getToExchange()) {
+                                pts_amounts.add(l.toString());
+                            }
+                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, pts_amounts);
+                            pts_spinner.setAdapter(aarrdapter);
+                        }
+                    }
                 }
             }
         });
@@ -344,73 +392,56 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
 
 
-                RequestBody payment_method = RequestBody.create(MediaType.parse("text/plain"), "visa");
+                confirmOrder();
 
 
-                requestBodyMap.put("payment_method", payment_method);
-
-                if (!requestBodyMap.containsKey("address") || !requestBodyMap.containsKey("lng") || !requestBodyMap.containsKey("lat")) {
-                    Toast.makeText(getActivity(), "ادخل عنوان التوصيل", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!requestBodyMap.containsKey("delivery_type")) {
-                    Toast.makeText(getActivity(), "ادخل نوع المستلم", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!requestBodyMap.containsKey("delivery_date")) {
-                    Toast.makeText(getActivity(), "ادخل تاريخ الاستلام", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!requestBodyMap.containsKey("delivery_start_time") || !requestBodyMap.containsKey("delivery_end_time")) {
-                    Toast.makeText(getActivity(), "ادخل موعد الاستلام", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!requestBodyMap.containsKey("payment_method")) {
-                    Toast.makeText(getActivity(), "اختر طريقة الدفع", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-                RequestBody id1 = RequestBody.create(MediaType.parse("text/plain"), "10");
-                RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), "10");
-                RequestBody id2 = RequestBody.create(MediaType.parse("text/plain"), "12");
-                RequestBody quantity2 = RequestBody.create(MediaType.parse("text/plain"), "10");
-
-                requestBodyMap.put("products[0][id]", id1);
-                requestBodyMap.put("products[0][quantity]", quantity1);
-
-                requestBodyMap.put("products[1][id]", id2);
-                requestBodyMap.put("products[1][quantity]", quantity2);
-
-
-                String token = "Bearer " + Paper.book().read("token");
-
-
-                RetrofitClient.getApiInterface().sendOrder(requestBodyMap, token).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d("resooo", response.message());
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d("resooo", t.getMessage());
-                    }
-                });
             }
         });
 
+
+        pts_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked){
+                    if (pts_amounts.size()>0){
+                        pts_dialog.show();
+                    }else {
+                        Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
+                        pts_switch.setChecked(false);
+                    }
+                }
+
+
+
+            }
+        });
+
+
+        total.observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double aDouble) {
+                final_total_txt.setText((Double) (Math.round(aDouble * 100) / 100.00) + " ر.س ");
+            }
+        });
 
         viewModel.copon.observe(getViewLifecycleOwner(), new Observer<CoponModel>() {
             @Override
             public void onChanged(CoponModel coponModel) {
 
-                ((MainActivity)getActivity()).showDialog(false);
+                ((MainActivity) getActivity()).showDialog(false);
                 if (coponModel != null) {
                     if (coponModel.getSuccess()) {
-                        Toast.makeText(getActivity(), "copon is "+coponModel.getPromocode().getAmount(), Toast.LENGTH_SHORT).show();
+                        selected_copon.setText(coponModel.getPromocode().getCode());
+
+                        coponDiscount = Double.parseDouble(coponModel.getPromocode().getAmount());
+                        discount_txt.setText((Double) (Math.round((total.getValue() * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
+
+                        Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
+                        total.setValue(sum);
+                        vat_txt.setText(vat-((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
+                        vat=vat-((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+
                     } else {
                         Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
                     }
@@ -446,6 +477,43 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         });
 
 
+        add_pts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pts_dialog.dismiss();
+
+                if (pts_amounts.size()>0){
+
+
+                        ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition())))/50*.05;
+
+                        Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
+                         discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount ) * 100) / 100.00) + " ر.س ");
+
+                        Double sum = total.getValue() - (total.getValue() * ptsDiscount );
+                         total.setValue(sum);
+                         vat_txt.setText(vat-((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00)) + " ر.س ");
+                          vat=vat-((Double) (Math.round((vat * ptsDiscount ) * 100) / 100.00));
+
+                }
+            }
+        });
+
+
+        confirm_transfer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (transfer_no.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(), "ادخل رقم العملية", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                RequestBody trans_no = RequestBody.create(MediaType.parse("text/plain"), transfer_no.getText().toString());
+
+                requestBodyMap.put("bank_transfer_no", trans_no);
+                confirmOrder();
+            }
+        });
         add_copon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -453,12 +521,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     Toast.makeText(getActivity(), "ادخل الكوبون", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                ((MainActivity)getActivity()).showDialog(true);
+                ((MainActivity) getActivity()).showDialog(true);
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("coupon", copon_et.getText().toString());
-                jsonObject.addProperty("total", total);
-                viewModel.checkCopon(jsonObject, "Bearer "+token);
+                jsonObject.addProperty("total", total.getValue());
+                viewModel.checkCopon(jsonObject, "Bearer " + token);
 
                 addCoponDialog.dismiss();
             }
@@ -487,12 +555,6 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
 
-                   /* viewModel.addAddress(loginResponse.getUser().getName(),loginResponse.getUser().getMobile()
-                            ,selectedLocation.getLatitude()+"",selectedLocation.getLongitude()+"",
-                           convertedAddress,selectedShippingType,"Bearer "+loginResponse.getUser().getToken());*/
-                Toast.makeText(getActivity(), "selected address is " + convertedAddress, Toast.LENGTH_SHORT).show();
-
-
                 selected_address.setText(convertedAddress);
                 selected_address_type.setText(types[map_spinner.getSelectedItemPosition()]);
 
@@ -512,6 +574,23 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
             }
         });
+
+
+        pts_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
 
         time_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -653,6 +732,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 paymentMethod.setValue("تحويل بنكي");
+                selected_payment_method = "bank";
                 confirmDialog.show();
             }
         });
@@ -660,6 +740,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 paymentMethod.setValue("بطاقة مدى / visa");
+                selected_payment_method = "visa";
+
 
             }
         });
@@ -668,6 +750,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 paymentMethod.setValue("الدفع عن الإستلام");
+                selected_payment_method = "cash";
+
                 payDialog.dismiss();
             }
         });
@@ -684,22 +768,139 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         return v;
     }
 
-    /* Double calculateTotal(ArrayList<Product>products) {
-         Double sum = 0.0;
+    private void confirmOrder() {
+        if (!requestBodyMap.containsKey("address") || !requestBodyMap.containsKey("lng") || !requestBodyMap.containsKey("lat")) {
+            Toast.makeText(getActivity(), "ادخل عنوان التوصيل", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-         for (Product p : products) {
-             sum += (Double.parseDouble(p.getAmount()) * (p.getProduct().getPriceWithVat()));
-         }
+        if (!requestBodyMap.containsKey("delivery_type")) {
+            Toast.makeText(getActivity(), "ادخل نوع المستلم", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!requestBodyMap.containsKey("delivery_date")) {
+            Toast.makeText(getActivity(), "ادخل تاريخ الاستلام", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!requestBodyMap.containsKey("delivery_start_time") || !requestBodyMap.containsKey("delivery_end_time")) {
+            Toast.makeText(getActivity(), "ادخل موعد الاستلام", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-         return sum;
-     }
- */
+
+        if (selected_payment_method==null) {
+            Toast.makeText(getActivity(), "اختر طريقة الدفع", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        RequestBody payment_method = RequestBody.create(MediaType.parse("text/plain"), selected_payment_method);
+
+        requestBodyMap.put("payment_method", payment_method);
+
+
+        if (selected_payment_method.equals("bank")){
+            if (!requestBodyMap.containsKey("bank_id")) {
+                Toast.makeText(getActivity(), "اختر البنك", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!requestBodyMap.containsKey("bank_transfer_no")) {
+                Toast.makeText(getActivity(), "ادخل رقم العملية", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        for (int i=0;i<items.size();i++){
+            RequestBody id1 = RequestBody.create(MediaType.parse("text/plain"), items.get(i).getId().toString());
+            RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), 10+"");
+            requestBodyMap.put("products["+i+"][id]", id1);
+            requestBodyMap.put("products["+i+"][quantity]", quantity1);
+        }
+
+
+
+
+
+
+
+
+        String token = "Bearer " + Paper.book().read("token");
+
+
+        ((MainActivity)getActivity()).showDialog(true);
+        if (selected_payment_method.equals("visa")){
+            RetrofitClient.getApiInterface().sendOrderVisa(requestBodyMap, token).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.d("resooo", response.message());
+                    ((MainActivity)getActivity()).showDialog(false);
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d("resooo", t.getMessage());
+                    ((MainActivity)getActivity()).showDialog(false);
+
+                }
+            });
+        }
+        else {
+            RetrofitClient.getApiInterface().sendOrder(requestBodyMap, token).enqueue(new Callback<ConfirmModel>() {
+                @Override
+                public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
+                    Log.d("resooo", response.message());
+                    ((MainActivity)getActivity()).showDialog(false);
+                    if (response!=null){
+                        Toast.makeText(getActivity(), response.message(), Toast.LENGTH_SHORT).show();
+                        if (response.code()==200){
+
+
+                            ((MainActivity)getActivity()).fragmentStack.replace(new OrderDoneFragment());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ConfirmModel> call, Throwable t) {
+                    Log.d("resooo", t.getMessage());
+                    ((MainActivity)getActivity()).showDialog(false);
+
+                }
+            });
+        }
+
+    }
+
+    Double calculateTotal(ArrayList<Product> products) {
+        Double sum = 0.0;
+
+        for (Product p : products) {
+            sum += (Double.parseDouble(p.getInCartQuantity().toString()) * (p.getPrice()));
+        }
+
+        return sum;
+    }
+
+    int calculateCount(ArrayList<Product> products) {
+        int sum = 0;
+
+        for (Product p : products) {
+            sum += p.getInCartQuantity();
+        }
+
+        return sum;
+    }
+
     private void setAlertDialogs() {
         Window window1 = addCoponDialog.getWindow();
         Window window2 = timeDialog.getWindow();
+        Window window22 = pts_dialog.getWindow();
         Window window3 = payDialog.getWindow();
         window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         window2.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window22.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
@@ -940,7 +1141,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void onBankSelected(Bank bank, int position) {
-        bank_details.setText(bank.getName() + "\n" + " رقم الحساب " + bank.getAccountNumber() + "\n" + " ابان " + bank.getIban());
+        bank_details.setText(bank.getName() + "\n\n" + " رقم الحساب " + bank.getAccountNumber() + "\n\n" + " ابان " + bank.getIban());
 
         for (int i = 0; i < viewModel.banks.getValue().getBanks().size(); i++) {
             if (viewModel.banks.getValue().getBanks().get(i).getId() == bank.getId()) {
@@ -952,6 +1153,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             }
 
         }
+        selected_bank = bank;
         bankAdapter.setBanks((ArrayList<Bank>) viewModel.banks.getValue().getBanks());
+
+        RequestBody bank_id = RequestBody.create(MediaType.parse("text/plain"), selected_bank.getId().toString());
+
+        requestBodyMap.put("bank_id", bank_id);
     }
 }

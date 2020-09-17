@@ -97,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
         fragmentStack = new FragmentStack(this, getSupportFragmentManager(), R.id.main_container);
         fragmentStack.replace(homeFragment);
 
+        if (getIntent().getStringExtra("order")!=null){
+            if (getIntent().getStringExtra("order").equals("order")){
+                navigationView.setSelectedItemId(R.id.orders);
+                fragmentStack.replace(new OrderFragment());
+
+            }
+        }
+
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

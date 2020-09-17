@@ -32,6 +32,7 @@ import creativitysol.com.mawared.sendorder.model.BanksModel;
 import creativitysol.com.mawared.sendorder.model.PaymentModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
 import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
+import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -122,7 +123,12 @@ public interface APIInterface {
 
     @Multipart
     @POST("orders")
-    Call<ResponseBody> sendOrder(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
+    Call<ResponseBody> sendOrderVisa(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
+
+
+    @Multipart
+    @POST("orders")
+    Call<ConfirmModel> sendOrder(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
     @POST("add-new-address")
@@ -140,6 +146,10 @@ public interface APIInterface {
 
     @POST("carts/add")
     Call<AddCardModel> addToCard(@Query("product_id")String product_id, @Query("amount")String amount, @Query("device_id")String device_id, @Query("cart_id")String cart_id, @Query("math_type")String math_type);
+
+
+    @POST("points/calculate-price")
+    Call<ResponseBody> addToCard(@Query("points")String points, @Query("price")String price);
 
     @POST("carts/{cart_id}/products/{product_id}/remove")
     Call<ResponseBody> removeFromCard(@Path("cart_id")String cart_id,@Path("product_id")String product_id);

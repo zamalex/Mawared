@@ -29,6 +29,8 @@ public class CartViewModel extends ViewModel {
             @Override
             public void onFailure(Call<AddCardModel> call, Throwable t) {
                 addResponse.setValue(null);
+                Log.d("carde",t.getMessage());
+
             }
         });
     }

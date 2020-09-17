@@ -1,11 +1,14 @@
 package creativitysol.com.mawared.orderdetails;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
 import creativitysol.com.mawared.orders.model.AllOrder;
+import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -15,7 +18,7 @@ public class OrderDetailsViewModel extends ViewModel {
 
     public MutableLiveData<OrderDetails> getOrderDetails(int orderId){
         detailsMutableLiveData = new MutableLiveData<>();
-        RetrofitClient.getApiInterface().getOrderDetails(orderId,"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk5ODQ0MTc2LCJleHAiOjE2MDA0NDg5NzYsIm5iZiI6MTU5OTg0NDE3NiwianRpIjoieXJhUXVmSXllaUtLM0E4TSJ9.2aoJij9XgyyYUU9GQv3LrbB9rU3QP0Wyy2SeUzr6v2w").enqueue(new Callback<OrderDetails>() {
+        RetrofitClient.getApiInterface().getOrderDetails(orderId,"Bearer "+ Paper.book().read("token","none")).enqueue(new Callback<OrderDetails>() {
             @Override
             public void onResponse(Call<OrderDetails> call, Response<OrderDetails> response) {
                 if (response.body() != null) {
@@ -25,6 +28,7 @@ public class OrderDetailsViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<OrderDetails> call, Throwable t) {
+                Log.d("odetails",t.getMessage());
 
             }
         });

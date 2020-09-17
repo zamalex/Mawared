@@ -24,7 +24,7 @@ public class Product implements Parcelable
     private String img;
     @SerializedName("has_offer")
     @Expose
-    private boolean hasOffer;
+    private int hasOffer;
     @SerializedName("offer")
     @Expose
     private String offer;
@@ -50,7 +50,7 @@ public class Product implements Parcelable
         this.quantity = ((int) in.readValue((int.class.getClassLoader())));
         this.total = ((int) in.readValue((int.class.getClassLoader())));
         this.img = ((String) in.readValue((String.class.getClassLoader())));
-        this.hasOffer = ((boolean) in.readValue((boolean.class.getClassLoader())));
+        this.hasOffer = ((int) in.readValue((int.class.getClassLoader())));
         this.offer = ((String) in.readValue((String.class.getClassLoader())));
     }
 
@@ -89,11 +89,11 @@ public class Product implements Parcelable
         this.img = img;
     }
 
-    public boolean isHasOffer() {
+    public int isHasOffer() {
         return hasOffer;
     }
 
-    public void setHasOffer(boolean hasOffer) {
+    public void setHasOffer(int hasOffer) {
         this.hasOffer = hasOffer;
     }
 
