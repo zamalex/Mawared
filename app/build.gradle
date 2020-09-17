@@ -15,6 +15,21 @@ repositories {
     maven { url 'https://maven.google.com' }
 }
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:\\Mawared\\mwaredjks.jks')
+            storePassword '12345678'
+            keyAlias 'key0'
+            keyPassword '12345678'
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
@@ -39,6 +54,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

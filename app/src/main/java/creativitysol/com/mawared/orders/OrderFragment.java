@@ -61,10 +61,13 @@ public class OrderFragment extends Fragment implements OrderClickListener {
             public void onChanged(AllOrder allOrder) {
                 ((MainActivity)getActivity()).showDialog(false);
 
-                if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                if (allOrder!=null){
+                    if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
-                    ordersAdapter.setList(allOrder.getOrders());
+                        ordersAdapter.setList(allOrder.getOrders());
+                    }
                 }
+
             }
         });
 
@@ -81,9 +84,11 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                     orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
                         @Override
                         public void onChanged(AllOrder allOrder) {
-                            if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
-                                ordersAdapter.setList(allOrder.getOrders());
-                            }
+                           if (allOrder!=null){
+                               if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                                   ordersAdapter.setList(allOrder.getOrders());
+                               }
+                           }
                         }
                     });
                 }
@@ -113,11 +118,14 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
                             @Override
                             public void onChanged(AllOrder allOrder) {
-                                if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                                if (allOrder!=null){
+                                    if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
-                                    ordersAdapter.setList(allOrder.getOrders());
-                                    rv_orders.setAdapter(ordersAdapter);
+                                        ordersAdapter.setList(allOrder.getOrders());
+                                        rv_orders.setAdapter(ordersAdapter);
+                                    }
                                 }
+
                             }
                         });
                     }

@@ -125,7 +125,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                 int part2 = Integer.parseInt(parts[1]);
                 Log.d("oof", part1 + "   " + part2);
 
-                if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1) {
+                if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1&&part2>0) {
                     holder.offerCard.setVisibility(View.VISIBLE);
 
                     int q = Integer.parseInt(products.get(position).getInCartQuantity()+"")/part1*part2;

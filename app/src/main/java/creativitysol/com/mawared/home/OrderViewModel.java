@@ -25,10 +25,13 @@ public class OrderViewModel extends ViewModel {
                 if (response.body() != null) {
                     orderMutableLiveData.postValue(response.body());
                 }
+                else
+                    orderMutableLiveData.setValue(null);
             }
 
             @Override
             public void onFailure(Call<AllOrder> call, Throwable t) {
+                orderMutableLiveData.setValue(null);
 
             }
         });
@@ -45,11 +48,14 @@ public class OrderViewModel extends ViewModel {
                 if (response.body() != null) {
                     orderSearchLiveData.postValue(response.body());
                 }
+                else
+                    orderSearchLiveData.postValue(null);
             }
+
 
             @Override
             public void onFailure(Call<AllOrder> call, Throwable t) {
-
+                orderSearchLiveData.postValue(null);
             }
         });
 

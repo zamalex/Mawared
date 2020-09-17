@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import creativitysol.com.mawared.BlankFragment;
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.OrderDoneFragment;
 import creativitysol.com.mawared.R;
@@ -114,13 +115,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     MapView mapView;
     GoogleMap map;
 
-    Button snd_order, p_bank, p_deliver, p_visa, add_copon_btn, add_pts,confirm_transfer;
+    Button snd_order, p_bank, p_deliver, p_visa, add_copon_btn, add_pts, confirm_transfer;
 
     ImageView show_map, dismiss_map;
 
     TextView orders_total_dialog_txt, terms_txt, bank_details, final_total_txt;
     TextView selected_address, selected_address_type, selected_payment, selected_copon, selected_date;
-    EditText copon_et,transfer_no;
+    EditText copon_et, transfer_no;
     String token = "";
     Spinner time_spinner, map_spinner, pts_spinner;
     Button day_spinner, btn_add_loc, confirm_time;
@@ -147,11 +148,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Double total_before = 0d;
     Double vat = 0d;
 
-    TextView semi_final_txt, vat_txt, discount_txt,pts_c_txt,count_tv;
+    TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv;
 
     SwitchMaterial pts_switch;
 
-    Bank selected_bank=null;
+    Bank selected_bank = null;
+
+    String date="",time="";
 
     String selected_payment_method = null;
 
@@ -183,7 +186,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         token = Paper.book().read("token", "");
 
         if (!token.isEmpty()) {
-            viewModel.getAddresses("Bearer " + token);
+            viewModel.getAddresses("Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNjAwMTY5OTY0LCJleHAiOjE2MDA3NzQ3NjQsIm5iZiI6MTYwMDE2OTk2NCwianRpIjoiQlZaWUNpZ3JnYWpNUjNFMyJ9.T6JidbfjPNvySuKQ4A6kMgQCejtzSyikFG3O_H_XXKw");
             viewModel.getPoints("Bearer " + token);
 
         }
@@ -287,11 +290,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             ordersAdapter.setProducts(items);
 
             semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
-             vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+            vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
             vat_txt.setText(vat + " ر.س ");
             discount_txt.setText("0 ر.س");
-            orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00)+" ر.س ");
-            count_tv.setText(calculateCount(items)+"");
+            orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
+            count_tv.setText(calculateCount(items) + "");
 
             total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
         }
@@ -363,7 +366,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     if (pointsModel.getSuccess()) {
                         if (pointsModel.getData().getToExchange().size() > 0) {
                             pts_amounts = new ArrayList<>();
-                            pts_c_txt.setText(pointsModel.getData().getTotalPoints()+" نقطة ");
+                            pts_c_txt.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
                             for (Long l : pointsModel.getData().getToExchange()) {
                                 pts_amounts.add(l.toString());
                             }
@@ -403,15 +406,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked){
-                    if (pts_amounts.size()>0){
+                if (isChecked) {
+                    if (pts_amounts.size() > 0) {
                         pts_dialog.show();
-                    }else {
+                    } else {
                         Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
                         pts_switch.setChecked(false);
                     }
                 }
-
 
 
             }
@@ -439,8 +441,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
                         total.setValue(sum);
-                        vat_txt.setText(vat-((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
-                        vat=vat-((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+                        vat_txt.setText(vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
+                        vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+
+                        RequestBody coupon = RequestBody.create(MediaType.parse("text/plain"), coponModel.getPromocode().getCode());
+
+                        requestBodyMap.put("coupon", coupon);
 
                     } else {
                         Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
@@ -482,18 +488,23 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             public void onClick(View v) {
                 pts_dialog.dismiss();
 
-                if (pts_amounts.size()>0){
+                if (pts_amounts.size() > 0) {
 
 
-                        ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition())))/50*.05;
+                    ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
 
-                        Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
-                         discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount ) * 100) / 100.00) + " ر.س ");
+                    Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
+                    discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount) * 100) / 100.00) + " ر.س ");
 
-                        Double sum = total.getValue() - (total.getValue() * ptsDiscount );
-                         total.setValue(sum);
-                         vat_txt.setText(vat-((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00)) + " ر.س ");
-                          vat=vat-((Double) (Math.round((vat * ptsDiscount ) * 100) / 100.00));
+                    Double sum = total.getValue() - (total.getValue() * ptsDiscount);
+                    total.setValue(sum);
+                    vat_txt.setText(vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00)) + " ر.س ");
+                    vat = vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00));
+
+
+                    RequestBody points = RequestBody.create(MediaType.parse("text/plain"), pts_amounts.get(pts_spinner.getSelectedItemPosition()));
+
+                    requestBodyMap.put("points", points);
 
                 }
             }
@@ -503,7 +514,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         confirm_transfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (transfer_no.getText().toString().isEmpty()){
+                if (transfer_no.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "ادخل رقم العملية", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -553,8 +564,6 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 }
 
 
-
-
                 selected_address.setText(convertedAddress);
                 selected_address_type.setText(types[map_spinner.getSelectedItemPosition()]);
 
@@ -581,7 +590,6 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 
 
-
             }
 
             @Override
@@ -603,7 +611,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                         String[] tarr = stimw.split("-");
                         RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), tarr[0].replace(" ", "") + ":00");
                         RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), tarr[1].replace(" ", "") + ":00");
-
+                        time = stimw;
                         requestBodyMap.put("delivery_start_time", delivery_start_time);
                         requestBodyMap.put("delivery_end_time", delivery_end_time);
 
@@ -644,7 +652,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         requestBodyMap.put("delivery_date", delivery_date);
 
-
+                        date = year + "-" + month + "-" + day;
                         jsonObject.addProperty("delivery_date", year + "-" + month + "-" + day);
                         viewModel.getTimes(jsonObject, "Bearer " + Paper.book().read("token").toString());
                     }
@@ -660,6 +668,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 timeDialog.dismiss();
+                if (date!=null&&time!=null){
+                    if (!date.isEmpty()&& !time.isEmpty()){
+                        selected_date.setText(date + " . "+time);
+                    }
+                }
             }
         });
 
@@ -742,6 +755,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 paymentMethod.setValue("بطاقة مدى / visa");
                 selected_payment_method = "visa";
 
+                confirmOrder();
 
             }
         });
@@ -788,7 +802,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         }
 
 
-        if (selected_payment_method==null) {
+        if (selected_payment_method == null) {
             Toast.makeText(getActivity(), "اختر طريقة الدفع", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -799,7 +813,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         requestBodyMap.put("payment_method", payment_method);
 
 
-        if (selected_payment_method.equals("bank")){
+        if (selected_payment_method.equals("bank")) {
             if (!requestBodyMap.containsKey("bank_id")) {
                 Toast.makeText(getActivity(), "اختر البنك", Toast.LENGTH_SHORT).show();
                 return;
@@ -811,53 +825,59 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             }
         }
 
-        for (int i=0;i<items.size();i++){
+        for (int i = 0; i < items.size(); i++) {
             RequestBody id1 = RequestBody.create(MediaType.parse("text/plain"), items.get(i).getId().toString());
-            RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), 10+"");
-            requestBodyMap.put("products["+i+"][id]", id1);
-            requestBodyMap.put("products["+i+"][quantity]", quantity1);
+            RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), items.get(i).getInCartQuantity() + "");
+            requestBodyMap.put("products[" + i + "][id]", id1);
+            requestBodyMap.put("products[" + i + "][quantity]", quantity1);
         }
-
-
-
-
-
-
 
 
         String token = "Bearer " + Paper.book().read("token");
 
+        confirmDialog.dismiss();
+        payDialog.dismiss();
 
-        ((MainActivity)getActivity()).showDialog(true);
-        if (selected_payment_method.equals("visa")){
+        ((MainActivity) getActivity()).showDialog(true);
+        if (selected_payment_method.equals("visa")) {
             RetrofitClient.getApiInterface().sendOrderVisa(requestBodyMap, token).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.d("resooo", response.message());
-                    ((MainActivity)getActivity()).showDialog(false);
+                    ((MainActivity) getActivity()).showDialog(false);
+
+                    BlankFragment blankFragment = new BlankFragment();
+                    Bundle b = new Bundle();
+                    try {
+                        b.putString("html", response.body().string());
+                        blankFragment.setArguments(b);
+                        ((MainActivity) getActivity()).fragmentStack.replace(blankFragment);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.d("resooo", t.getMessage());
-                    ((MainActivity)getActivity()).showDialog(false);
+                    ((MainActivity) getActivity()).showDialog(false);
 
                 }
             });
-        }
-        else {
+        } else {
             RetrofitClient.getApiInterface().sendOrder(requestBodyMap, token).enqueue(new Callback<ConfirmModel>() {
                 @Override
                 public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
                     Log.d("resooo", response.message());
-                    ((MainActivity)getActivity()).showDialog(false);
-                    if (response!=null){
+                    ((MainActivity) getActivity()).showDialog(false);
+                    if (response != null) {
                         Toast.makeText(getActivity(), response.message(), Toast.LENGTH_SHORT).show();
-                        if (response.code()==200){
+                        if (response.code() == 200) {
 
 
-                            ((MainActivity)getActivity()).fragmentStack.replace(new OrderDoneFragment());
+                            ((MainActivity) getActivity()).fragmentStack.replace(new OrderDoneFragment());
                         }
                     }
                 }
@@ -865,7 +885,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onFailure(Call<ConfirmModel> call, Throwable t) {
                     Log.d("resooo", t.getMessage());
-                    ((MainActivity)getActivity()).showDialog(false);
+                    ((MainActivity) getActivity()).showDialog(false);
 
                 }
             });

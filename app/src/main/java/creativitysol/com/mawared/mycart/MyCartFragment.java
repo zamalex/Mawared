@@ -1,5 +1,6 @@
 package creativitysol.com.mawared.mycart;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -25,6 +26,7 @@ import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
+import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.mycart.model.CardModel;
 import creativitysol.com.mawared.mycart.model.Product;
 import creativitysol.com.mawared.sendorder.SendOrdersFragment;
@@ -81,15 +83,13 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 next.revertAnimation();
                 next.setBackgroundResource(R.drawable.next_radius);
 
-                if (cardModel!=null){
-                    if (cardModel.getStatus()==200){
+                if (cardModel != null) {
+                    if (cardModel.getStatus() == 200) {
                         adapter.setProducts((ArrayList<Product>) cardModel.getData().getProducts());
                         total_sum.setText((Double) (Math.round(cardModel.getData().getItemsSumFinalPrices() * 100) / 100.00) + " ر.س");
 
                     }
                 }
-
-
 
 
             }
@@ -115,20 +115,33 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (viewModel.cardModelMutableLiveData.getValue().getData().getProducts().size() == 0) {
-                    Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
-                    return;
+                if (!Paper.book().read("token", "none").equals("none")) {
+                    if (viewModel.cardModelMutableLiveData.getValue().getData().getProducts().size() == 0) {
+                        Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    for (Product p : viewModel.cardModelMutableLiveData.getValue().getData().getProducts()){
+                        if (p.getInCartQuantity()<10){
+                            Toast.makeText(getActivity(), "اقل قيمة للطلب 10 قطع", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    ((MainActivity) getActivity()).showDialog(true);
+
+                    SendOrdersFragment sendOrdersFragment = new SendOrdersFragment();
+
+                    Bundle b = new Bundle();
+                    b.putParcelableArrayList("clist", (ArrayList<? extends Parcelable>) viewModel.cardModelMutableLiveData.getValue().getData().getProducts());
+                    b.putDouble("total", viewModel.cardModelMutableLiveData.getValue().getData().getItemsSumFinalPrices());
+                    sendOrdersFragment.setArguments(b);
+
+                    ((MainActivity) getActivity()).fragmentStack.push(sendOrdersFragment);
                 }
-                ((MainActivity) getActivity()).showDialog(true);
+                else {
+                    Toast.makeText(getActivity(), "سجل الدخول اولا", Toast.LENGTH_SHORT).show();
 
-                SendOrdersFragment sendOrdersFragment = new SendOrdersFragment();
-
-                Bundle b = new Bundle();
-                b.putParcelableArrayList("clist", (ArrayList<? extends Parcelable>) viewModel.cardModelMutableLiveData.getValue().getData().getProducts());
-                b.putDouble("total",viewModel.cardModelMutableLiveData.getValue().getData().getItemsSumFinalPrices());
-                sendOrdersFragment.setArguments(b);
-
-                ((MainActivity) getActivity()).fragmentStack.push(sendOrdersFragment);
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
             }
         });
 
@@ -153,7 +166,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     public void increase(Product item, int qty) {
         next.startAnimation();
         isLoading = true;
-        viewModel.addToCard(item.getId() + "", "1", null, cid , "plus");
+        viewModel.addToCard(item.getId() + "", "1", null, cid, "plus");
 
     }
 
@@ -163,9 +176,9 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
         next.startAnimation();
         if (qty == 0)
-            viewModel.removeFromCard(cid+"",item.getId().toString());
+            viewModel.removeFromCard(cid + "", item.getId().toString());
         else
-            viewModel.addToCard(item.getId() + "", "1", null, cid , "minus");
+            viewModel.addToCard(item.getId() + "", "1", null, cid, "minus");
 
     }
 }

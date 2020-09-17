@@ -111,6 +111,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         Paper.book().delete("login");
         Paper.book().delete("cid");
 
-        startActivity(new Intent(getActivity(), LoginActivity.class));
+        getActivity().finishAffinity();
+        startActivity(new Intent(getActivity(), MainActivity.class));
     }
 }

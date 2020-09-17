@@ -59,7 +59,7 @@
         android:background="@drawable/custom_spinner"
         android:textColor="@color/darkgrey"
         android:fontFamily="@font/urosemi"
-        android:text="تاريخ النوصيل"
+        android:text="تاريخ التوصيل"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
