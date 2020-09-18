@@ -117,23 +117,31 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
         String c = "\\u002B";
 
-        if (products.get(position).getOffer() != null)
-            if (!products.get(position).getOffer().isEmpty()) {
-                String o = products.get(position).getOffer().replace(" ", "");
-                String[] parts = o.split(c);
-                int part1 = Integer.parseInt(parts[0]);
-                int part2 = Integer.parseInt(parts[1]);
-                Log.d("oof", part1 + "   " + part2);
 
-                if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1&&part2>0) {
-                    holder.offerCard.setVisibility(View.VISIBLE);
+        if (products.get(position).getHasOffer()==1){
+            if (products.get(position).getOffer() != null)
+                if (!products.get(position).getOffer().isEmpty()) {
+                    String o = products.get(position).getOffer().replace(" ", "");
+                    String[] parts = o.split(c);
+                    int part1 = Integer.parseInt(parts[0]);
+                    int part2 = Integer.parseInt(parts[1]);
+                    Log.d("oof", part1 + "   " + part2);
 
-                    int q = Integer.parseInt(products.get(position).getInCartQuantity()+"")/part1*part2;
-                    holder.offer_qty.setText(" الكمية "+q);
-                } else
-                    holder.offerCard.setVisibility(View.GONE);
+                    if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1&&part2>0) {
+                        holder.offerCard.setVisibility(View.VISIBLE);
+                        holder.offer_name.setText(products.get(position).getTitle());
+                        Picasso.get().load(products.get(position).getImg()).fit().into(holder.product_img2);
 
-            }
+                        int q = Integer.parseInt(products.get(position).getInCartQuantity()+"")/part1*part2;
+                        holder.offer_qty.setText(" الكمية "+q);
+                    } else
+                        holder.offerCard.setVisibility(View.GONE);
+
+                }
+        }else {
+            holder.offerCard.setVisibility(View.GONE);
+        }
+
 
 
     }
@@ -151,8 +159,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView name, price, total_qty,offer_qty;
-        ImageView img;
+        TextView name, price, total_qty,offer_qty,offer_name;
+        ImageView img,product_img2;
         ImageButton increase, decrease;
         LinearLayout quantityLayout;
         CardView offerCard;
@@ -169,6 +177,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             decrease = itemView.findViewById(R.id.decrease);
             offerCard = itemView.findViewById(R.id.cardView2);
             offer_qty = itemView.findViewById(R.id.offer_qty);
+            offer_name = itemView.findViewById(R.id.product_name2);
+            product_img2 = itemView.findViewById(R.id.product_img2);
         }
     }
 

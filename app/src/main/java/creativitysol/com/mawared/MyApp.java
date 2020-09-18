@@ -1,6 +1,8 @@
 package creativitysol.com.mawared;
 
 
+import android.content.res.Configuration;
+
 import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
 
@@ -23,6 +25,14 @@ public class MyApp extends android.app.Application {
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
+
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Lingver.getInstance().setLocale(this, "ar");
 
     }
 }

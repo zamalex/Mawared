@@ -3,9 +3,9 @@
     <item android:id="@+id/products"
         android:title="المنتجات"
         android:icon="@drawable/pros" />
-    <item android:id="@+id/support"
+   <!--  <item android:id="@+id/support"
         android:title="الدعم"
-        android:icon="@drawable/support" />
+        android:icon="@drawable/support" />-->
     <item android:id="@+id/orders"
         android:title="الطلبات"
         android:icon="@drawable/orders" />

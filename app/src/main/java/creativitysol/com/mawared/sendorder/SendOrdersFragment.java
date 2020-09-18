@@ -119,7 +119,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     ImageView show_map, dismiss_map;
 
-    TextView orders_total_dialog_txt, terms_txt, bank_details, final_total_txt;
+    TextView orders_total_dialog_txt, terms_txt, bank_details,bank_acc_no,bank_iban, final_total_txt;
     TextView selected_address, selected_address_type, selected_payment, selected_copon, selected_date;
     EditText copon_et, transfer_no;
     String token = "";
@@ -260,6 +260,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         day_spinner = timeDialog.findViewById(R.id.day_spinner);
         confirm_time = timeDialog.findViewById(R.id.confirm_time);
         bank_details = confirmDialog.findViewById(R.id.bank_details);
+        bank_acc_no = confirmDialog.findViewById(R.id.bank_acc_no);
+        bank_iban = confirmDialog.findViewById(R.id.bank_iban);
         p_bank = payDialog.findViewById(R.id.p_bank);
         p_deliver = payDialog.findViewById(R.id.p_deliver);
         p_visa = payDialog.findViewById(R.id.p_visa);
@@ -1096,7 +1098,6 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
                                             mapprogressBar.setVisibility(View.GONE);
-                                            Toast.makeText(getActivity(), "loc is " + location.getLatitude(), Toast.LENGTH_LONG).show();
                                             map.clear();
 
                                             MarkerOptions mp = new MarkerOptions();
@@ -1161,7 +1162,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void onBankSelected(Bank bank, int position) {
-        bank_details.setText(bank.getName() + "\n\n" + " رقم الحساب " + bank.getAccountNumber() + "\n\n" + " ابان " + bank.getIban());
+        bank_details.setText(bank.getName());
+        bank_acc_no.setText(" رقم الحساب "+bank.getAccountNumber());
+        bank_iban.setText(" الاي بان "+bank.getIban());
 
         for (int i = 0; i < viewModel.banks.getValue().getBanks().size(); i++) {
             if (viewModel.banks.getValue().getBanks().get(i).getId() == bank.getId()) {

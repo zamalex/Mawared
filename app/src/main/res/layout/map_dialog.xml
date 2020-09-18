@@ -90,6 +90,9 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/radius_et"
             android:hint="رقم التواصل"
+            android:fontFamily="@font/urosemi"
+            android:gravity="right|center_vertical"
+            android:inputType="phone"
             android:padding="10dp"
             android:textColorHint="#7B92A5" />
 

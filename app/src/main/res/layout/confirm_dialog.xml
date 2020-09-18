@@ -78,10 +78,33 @@
         android:id="@+id/bank_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_margin="8dp"
         android:fontFamily="@font/urosemi"
         android:text=""
         android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/bank_acc_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        />
+        android:fontFamily="@font/urosemi"
+        android:text=""
+        android:textIsSelectable="true"
+        android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/bank_iban"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/urosemi"
+        android:text=""
+        android:textIsSelectable="true"
+        android:textColor="#0D2142"
+        android:textSize="18sp" />
+
+
 </LinearLayout>

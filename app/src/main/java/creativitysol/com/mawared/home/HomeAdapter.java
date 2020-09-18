@@ -106,7 +106,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         }
 
         holder.offer_txt.setText("");
-        if (product.getOffer().isEmpty()) {
+        if (product.getHasOffer()==0||product.getOffer().isEmpty()||product.getOffer().replace(" ","").equals("1+0")) {
             holder.offer_txt.setVisibility(View.GONE);
             holder.offer_img.setVisibility(View.GONE);
 
@@ -162,6 +162,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
             super(itemView);
 
             name = itemView.findViewById(R.id.product_name);
+            name.setSelected(true);
             price = itemView.findViewById(R.id.product_price);
             img = itemView.findViewById(R.id.product_img);
             add = itemView.findViewById(R.id.add);

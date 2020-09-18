@@ -26,9 +26,15 @@ public class NotificationViewModel extends ViewModel {
                 if (response.body() != null) {
                     notificationMutableLiveData.postValue(response.body());
                 }
+                else {
+                    notificationMutableLiveData.postValue(null);
+
+                }
             }
             @Override
             public void onFailure(Call<Notification> call, Throwable t) {
+                notificationMutableLiveData.postValue(null);
+
             }
         });
         return notificationMutableLiveData;

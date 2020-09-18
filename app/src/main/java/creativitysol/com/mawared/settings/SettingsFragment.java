@@ -5,6 +5,8 @@ import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,8 @@ import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.about.AboutMawaredFragment;
 import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.login.model.LoginResponse;
+import creativitysol.com.mawared.notification.NotificationViewModel;
+import creativitysol.com.mawared.notification.model.Notification;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
 import io.paperdb.Paper;
 
@@ -33,19 +37,26 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     RecyclerView rv_settings;
     TextView tv_collectPoints,tv_profileName,tv_userPhone;
     SettingsAdapter settingsAdapter;
+    NotificationViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(NotificationViewModel.class);
+
+
+
+
         tv_collectPoints = view.findViewById(R.id.tv_collectPoints);
         tv_collectPoints.setPaintFlags(tv_collectPoints.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         rv_settings = view.findViewById(R.id.rv_settings);
         tv_userPhone = view.findViewById(R.id.tv_userPhone);
         tv_profileName = view.findViewById(R.id.tv_profileName);
         settingsList = new ArrayList<>();
-        settingsModel = new Settings(1,R.drawable.bell,"التنبيهات","3");
+        settingsModel = new Settings(1,R.drawable.bell,"التنبيهات","0");
         settingsList.add(settingsModel);
         settingsModel = new Settings(2,R.drawable.phonecall,"تواصل معنا","3");
         settingsList.add(settingsModel);
@@ -67,6 +78,24 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         }
 
 
+        ((MainActivity)getActivity()).showDialog(true);
+        viewModel.getAllNotification(1).observe(getViewLifecycleOwner(), new Observer<Notification>() {
+            @Override
+            public void onChanged(Notification notification) {
+                ((MainActivity)getActivity()).showDialog(false);
+                if (notification!=null){
+                    if (notification.getSuccess()){
+                        if (notification.getNotifications_messages()!=null){
+                            settingsList.get(0).setNotificationCount(notification.getNotifications_messages().size()+"");
+                            settingsAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        });
+
+
+
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
         rv_settings.setLayoutManager(gridLayoutManager);
         rv_settings.setAdapter(settingsAdapter);
@@ -81,6 +110,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
 
             }
         });
+
 
 
         return view;
