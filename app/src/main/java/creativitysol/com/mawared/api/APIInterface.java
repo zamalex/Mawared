@@ -158,6 +158,10 @@ public interface APIInterface {
     Call<ResponseBody> bindUserCard(@Path("cart_id")String cart_id,@Path("user_id")String user_id);
 
 
+    @POST("orders/cancel")
+    Call<ConfirmModel> cancelOrder(@Body JsonObject jsonObject,@Header("Authorization") String token);
+
+
     @GET("carts/{user_id}/user-cart")
     Call<CheckCardModel> checkUserCard(@Path("user_id")String user_id);
 

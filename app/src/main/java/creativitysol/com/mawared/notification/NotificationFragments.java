@@ -49,8 +49,11 @@ public class NotificationFragments extends Fragment {
             public void onChanged(Notification notification) {
                 ((MainActivity)getActivity()).showDialog(false);
 
-                notificationsAdapter = new NotificationsAdapter(notification.getNotifications_messages());
-                rv_notifications.setAdapter(notificationsAdapter);
+                if (notification!=null){
+                    notificationsAdapter = new NotificationsAdapter(notification.getNotifications_messages());
+                    rv_notifications.setAdapter(notificationsAdapter);
+                }
+
             }
         });
 

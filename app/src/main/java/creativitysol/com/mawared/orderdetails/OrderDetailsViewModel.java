@@ -5,9 +5,12 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.JsonObject;
+
 import creativitysol.com.mawared.api.RetrofitClient;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
 import creativitysol.com.mawared.orders.model.AllOrder;
+import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,5 +36,29 @@ public class OrderDetailsViewModel extends ViewModel {
             }
         });
         return detailsMutableLiveData;
+    }
+
+
+
+    MutableLiveData<ConfirmModel> cancelResponse = new MutableLiveData<>();
+
+    void cancelOrder(JsonObject jsonObject,String token){
+        RetrofitClient.getApiInterface().cancelOrder(jsonObject,token).enqueue(new Callback<ConfirmModel>() {
+            @Override
+            public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
+                if (response.isSuccessful()){
+                    cancelResponse.setValue(response.body());
+
+                }else {
+                    cancelResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ConfirmModel> call, Throwable t) {
+                cancelResponse.setValue(null);
+
+            }
+        });
     }
 }

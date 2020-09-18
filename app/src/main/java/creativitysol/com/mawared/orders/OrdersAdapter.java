@@ -55,10 +55,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
             Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);*/
             if (allOrderModel.getStatus().equals("تم استلام الطلب")){
                 //DrawableCompat.setTint(wrappedDrawable, Color.BLUE);
-                holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg));
+                holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.light_green_bg));
             }else if(allOrderModel.getStatus().equals("ملغي")){
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.malghi_bg));
                 //DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#de666b"));
+            }
+            else {
+                holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg));
+
             }
         }
     }
