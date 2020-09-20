@@ -1,6 +1,9 @@
 package creativitysol.com.mawared.mycart;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +50,12 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     CircularProgressButton next;
     ImageView back;
     String cid;
+    Dialog dialog;
+
+    EditText q_et;
+    Button q_btn;
+
+    Product p = null;
 
     public boolean isLoading = false;
 
@@ -57,11 +68,22 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
         adapter = new MyCartAdapter(this, this);
+        dialog= new Dialog(getActivity());
+
+        dialog.setContentView(R.layout.count_dialog);
+
+        Window window1 = dialog.getWindow();
+        window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        q_btn = dialog.findViewById(R.id.q_btn);
+        q_et = dialog.findViewById(R.id.q_et);
 
         cartRv = v.findViewById(R.id.cart_rv);
         total_sum = v.findViewById(R.id.total_sum);
         next = v.findViewById(R.id.btn_next);
         next.setBackgroundResource(R.drawable.next_radius);
+
+
 
         cartRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -153,6 +175,28 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             }
         });
 
+
+        q_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (q_et.getText().toString().isEmpty())
+                    return;
+                if (p==null||Integer.parseInt(q_et.getText().toString())==0)
+                    return;
+
+
+                dialog.dismiss();
+
+                next.startAnimation();
+                isLoading = true;
+                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "plus");
+                q_et.setText("");
+
+
+            }
+        });
+
+
         return v;
     }
 
@@ -181,4 +225,12 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             viewModel.addToCard(item.getId() + "", "1", null, cid, "minus");
 
     }
+
+    @Override
+    public void setAmount(Product item) {
+        p=item;
+
+        dialog.show();
+    }
+
 }

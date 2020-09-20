@@ -1,12 +1,16 @@
 package creativitysol.com.mawared.orderdetails;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -36,6 +40,49 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         holder.tv_productCountDetails.setText("x"+productModel.getQuantity());
         holder.tv_productDetailsName.setText(productModel.getTitle());
         holder.tv_productDetailsPrice.setText(productModel.getTotal()+" ر.س");
+
+
+        String c = "\\u002B";
+        if (productModel.isHasOffer() == 1) {
+            if (productModel.getOffer() != null)
+                if (!productModel.getOffer().isEmpty()) {
+                    String o = productModel.getOffer().replace(" ", "");
+                    String[] parts = o.split(c);
+                    int part1 = Integer.parseInt(parts[0]);
+                    int part2 = Integer.parseInt(parts[1]);
+
+                    if (productModel.getQuantity() >= part1 && part2 > 0) {
+                        holder.offer_c.setVisibility(View.VISIBLE);
+                        holder.tv_productDetailsName2.setText(productModel.getTitle());
+                        holder.tv_productCountDetails2.setText("x"+productModel.getQuantity());
+                    } else
+                        holder.offer_c.setVisibility(View.GONE);
+
+                }
+        } else {
+            holder.offer_c.setVisibility(View.GONE);
+        }
+
+        /*String c = "\\u002B";
+
+            if (productModel.getOffer() != null)
+                if (!productModel.getOffer().isEmpty()) {
+                    String o = productModel.getOffer().replace(" ", "");
+                    String[] parts = o.split(c);
+                    int part1 = Integer.parseInt(parts[0]);
+                    int part2 = Integer.parseInt(parts[1]);
+
+                    if (productModel.getQuantity() >= part1 && part2 > 0) {
+                        holder.offer_c.setVisibility(View.VISIBLE);
+                        holder.tv_productDetailsName2.setText(productModel.getTitle());
+                        int q = Integer.parseInt(productModel.getQuantity() + "") / part1 * part2;
+
+                        holder.tv_productCountDetails2.setText("x"+q);
+                    } else
+                        holder.offer_c.setVisibility(View.GONE);
+
+                }*/
+
     }
 
     @Override
@@ -45,12 +92,17 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
 
     public class productHolder extends RecyclerView.ViewHolder {
         TextView tv_productCountDetails, tv_productDetailsName, tv_productDetailsPrice;
+        TextView tv_productCountDetails2, tv_productDetailsName2;
+        ConstraintLayout offer_c;
 
         public productHolder(@NonNull View itemView) {
             super(itemView);
             tv_productCountDetails = itemView.findViewById(R.id.tv_productCountDetails);
             tv_productDetailsName = itemView.findViewById(R.id.tv_productDetailsName);
+            tv_productCountDetails2 = itemView.findViewById(R.id.tv_productCountDetails2);
+            tv_productDetailsName2 = itemView.findViewById(R.id.tv_productDetailsName2);
             tv_productDetailsPrice = itemView.findViewById(R.id.tv_productDetailsPrice);
+            offer_c = itemView.findViewById(R.id.offer_c);
         }
     }
 }

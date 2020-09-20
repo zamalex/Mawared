@@ -52,6 +52,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         holder.price.setText(p + " " + "ر.س");
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
+
+        holder.total_qty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.setAmount(position,products.get(position));
+            }
+        });
+
+
+
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,6 +188,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     public interface addListener {
         void onAddClick(int pos, Product product);
         void onDecreaseClick(int pos, Product product);
+        void setAmount(int pos, Product product);
 
 
 

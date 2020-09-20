@@ -41,6 +41,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
     ActivationViewModel activationViewModel;
     private SmsListener receiver;
     KProgressHUD dialog;
+    CountDownTimer countDownTimer;
 
 
     @Override
@@ -81,7 +82,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                 .setAnimationSpeed(2)
                 .setDimAmount(0.5f);
 
-        new CountDownTimer(59000, 1000) {
+        countDownTimer= new CountDownTimer(59000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 counter.setText("00:" + millisUntilFinished / 1000);
@@ -124,6 +125,8 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                                 Toast.makeText(getApplicationContext(), responseBody.getMessage().getDescription(), Toast.LENGTH_LONG).show();
 
                                 if (type == null) {
+
+                                    countDownTimer.cancel();
                                     RegisterBottomSheet registerBottomSheet = new RegisterBottomSheet();
 
                                     registerBottomSheet.setCode(codeVerification);
@@ -173,6 +176,12 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
         super.onPause();
 
         unregisterReceiver(receiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        countDownTimer.cancel();
     }
 
     @Override

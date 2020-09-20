@@ -15,7 +15,7 @@ public class Pricing implements Parcelable
     private double totalWithCouponVat;
     @SerializedName("total")
     @Expose
-    private int total;
+    private double total;
     @SerializedName("copoun_amount")
     @Expose
     private double copounAmount;
@@ -57,7 +57,7 @@ public class Pricing implements Parcelable
         this.totalWithCouponVat = totalWithCouponVat;
     }
 
-    public int getTotal() {
+    public double getTotal() {
         return total;
     }
 

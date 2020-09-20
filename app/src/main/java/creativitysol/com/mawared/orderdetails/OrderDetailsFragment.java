@@ -99,7 +99,7 @@ public class OrderDetailsFragment extends Fragment {
                 if (orderDetails != null) {
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());
                     rv_productDetails.setAdapter(orderDetailsAdapter);
-                    tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getId());
+                    tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getFormatedNumber());
                     tv_orderDetailsStatus.setText(orderDetails.getOrder().getStatus());
                     status = orderDetails.getOrder().getStatus();
                     if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب")) {
@@ -114,7 +114,7 @@ public class OrderDetailsFragment extends Fragment {
                         totalPrice += orderDetails.getOrder().getProducts().get(i).getTotal();
                     }
 
-                    tv_totalPrice.setText(orderDetails.getOrder().getPricing().getTotal() + " ر.س");
+                    tv_totalPrice.setText(orderDetails.getOrder().getPricing().getTotalWithCouponVat() + " ر.س");
                 }
             }
         });

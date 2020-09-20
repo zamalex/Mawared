@@ -48,7 +48,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
     public void onBindViewHolder(@NonNull ordersHolder holder, int position) {
         Order allOrderModel = allOrderList.get(position);
         if(allOrderModel != null){
-            holder.tv_orderNumber.setText(allOrderModel.getId()+"#");
+            holder.tv_orderNumber.setText(allOrderModel.getFormatedNumber()+"#");
             holder.tv_orderStatus.setText(allOrderModel.getStatus());
             holder.tv_orderDate.setText("بتاريخ: " + allOrderModel.getCreatedAt());
            /* Drawable unwrappedDrawable = AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg);

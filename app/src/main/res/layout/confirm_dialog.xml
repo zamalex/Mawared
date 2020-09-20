@@ -84,27 +84,59 @@
         android:textColor="#0D2142"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/bank_acc_no"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:fontFamily="@font/urosemi"
-        android:text=""
-        android:textIsSelectable="true"
-        android:textColor="#0D2142"
-        android:textSize="18sp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/bank_iban"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:fontFamily="@font/urosemi"
-        android:text=""
-        android:textIsSelectable="true"
-        android:textColor="#0D2142"
-        android:textSize="18sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/urosemi"
+            android:text="رقم الحساب:"
+            android:textIsSelectable="true"
+            android:textColor="#0D2142"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/bank_acc_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/urosemi"
+            android:text=""
+            android:textColor="#0D2142"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/urosemi"
+            android:text="الاي بان:"
+            android:textIsSelectable="true"
+            android:textColor="#0D2142"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/bank_iban"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/urosemi"
+            android:text=""
+            android:textColor="#0D2142"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+
+
 
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package creativitysol.com.mawared.sendorder;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -186,7 +187,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         token = Paper.book().read("token", "");
 
         if (!token.isEmpty()) {
-            viewModel.getAddresses("Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNjAwMTY5OTY0LCJleHAiOjE2MDA3NzQ3NjQsIm5iZiI6MTYwMDE2OTk2NCwianRpIjoiQlZaWUNpZ3JnYWpNUjNFMyJ9.T6JidbfjPNvySuKQ4A6kMgQCejtzSyikFG3O_H_XXKw");
+            viewModel.getAddresses("Bearer " + token);
             viewModel.getPoints("Bearer " + token);
 
         }
@@ -217,6 +218,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         pts_dialog.setContentView(R.layout.pts_dialog);
 
+        pts_dialog.setCancelable(false);
+
+        pts_dialog.findViewById(R.id.xpts).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pts_switch.setChecked(false);
+                pts_dialog.dismiss();
+            }
+        });
 
         timeDialog.setContentView(R.layout.time_dialog);
         timeDialog.findViewById(R.id.xtime).setOnClickListener(new View.OnClickListener() {
@@ -485,6 +495,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         });
 
 
+        bank_acc_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setClipboard(getActivity(),bank_acc_no.getText().toString());
+                Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bank_iban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setClipboard(getActivity(),bank_iban.getText().toString());
+                Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
         add_pts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1163,8 +1189,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onBankSelected(Bank bank, int position) {
         bank_details.setText(bank.getName());
-        bank_acc_no.setText(" رقم الحساب "+bank.getAccountNumber());
-        bank_iban.setText(" الاي بان "+bank.getIban());
+        bank_acc_no.setText(bank.getAccountNumber());
+        bank_iban.setText(bank.getIban());
 
         for (int i = 0; i < viewModel.banks.getValue().getBanks().size(); i++) {
             if (viewModel.banks.getValue().getBanks().get(i).getId() == bank.getId()) {
@@ -1182,5 +1208,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         RequestBody bank_id = RequestBody.create(MediaType.parse("text/plain"), selected_bank.getId().toString());
 
         requestBodyMap.put("bank_id", bank_id);
+    }
+
+    private void setClipboard(Context context, String text) {
+        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(text);
+        } else {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 }

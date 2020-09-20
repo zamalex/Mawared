@@ -18,7 +18,7 @@ public class Product implements Parcelable
     private int quantity;
     @SerializedName("total")
     @Expose
-    private int total;
+    private double total;
     @SerializedName("img")
     @Expose
     private String img;
@@ -73,7 +73,7 @@ public class Product implements Parcelable
         this.quantity = quantity;
     }
 
-    public int getTotal() {
+    public double getTotal() {
         return total;
     }
 

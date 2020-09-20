@@ -15,7 +15,7 @@ import retrofit2.Response;
 
 public class CartViewModel extends ViewModel {
 
-    MutableLiveData<CardModel> cardModelMutableLiveData = new MutableLiveData<>();
+   public MutableLiveData<CardModel> cardModelMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<AddCardModel> addResponse = new MutableLiveData<>();
     public MutableLiveData<ResponseBody> removeResponse = new MutableLiveData<>();
 

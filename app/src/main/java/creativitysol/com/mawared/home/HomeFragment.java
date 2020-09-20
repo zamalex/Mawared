@@ -1,7 +1,9 @@
 package creativitysol.com.mawared.home;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,8 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,6 +49,7 @@ import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.login.model.checkmodel.CheckCardModel;
 import creativitysol.com.mawared.mycart.CartViewModel;
 import creativitysol.com.mawared.mycart.MyCartFragment;
+import creativitysol.com.mawared.mycart.model.CardModel;
 import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
@@ -66,13 +72,25 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     LinearLayout card_linear;
     String card_id;
 
+    Dialog dialog;
+    Button q_btn;
+    EditText q_et;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_home, container, false);
         adapter = new HomeAdapter(getActivity(), this);
+        dialog= new Dialog(getActivity());
 
+        dialog.setContentView(R.layout.count_dialog);
+
+        Window window1 = dialog.getWindow();
+        window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        q_btn = dialog.findViewById(R.id.q_btn);
+        q_et = dialog.findViewById(R.id.q_et);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
         cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
@@ -86,6 +104,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             viewModel.checkUserCart(loginResponse.getUser().getId().toString());
 
 
+        if (card_id != null)
+            cartViewModel.getCard(card_id);
         viewModel.getMin();
         viewModel.getCities();
         viewModel.getHomeProducts();
@@ -279,6 +299,27 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             }
         });
 
+        cartViewModel.cardModelMutableLiveData.observe(getViewLifecycleOwner(), new Observer<CardModel>() {
+            @Override
+            public void onChanged(CardModel cardModel) {
+                if (isAdded()) {
+                    if (cardModel!=null){
+                        if (cardModel.getStatus()==200){
+                            card_size.setValue(cardModel.getData().getItemsCount().intValue());
+                            if (cardModel.getData().getItemsCount() > 0) {
+                                card_linear.setVisibility(View.VISIBLE);
+
+                                linear_txt.setText( (Double) (Math.round((cardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00)+ " ر.س ");
+                            } else
+                                card_linear.setVisibility(View.GONE);
+
+                        }
+                    }
+                }
+            }
+        });
+
+
         cartViewModel.addResponse.observe(getActivity(), new Observer<AddCardModel>() {
             @Override
             public void onChanged(AddCardModel addCardModel) {
@@ -287,12 +328,36 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                     card_size.setValue(addCardModel.getData().getItemsCount().intValue());
                     if (addCardModel.getData().getItemsCount() > 0) {
                         card_linear.setVisibility(View.VISIBLE);
-                        linear_txt.setText(addCardModel.getData().getItemsSumFinalPrices() + " ر.س ");
+                        linear_txt.setText( (Double) (Math.round((addCardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00)+ " ر.س ");
                     } else
                         card_linear.setVisibility(View.GONE);
 
                     Paper.book().write("cid", addCardModel.getData().getCartId().toString());
+
                 }
+            }
+        });
+
+
+
+        q_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (q_et.getText().toString().isEmpty())
+                    return;
+                if (p==null||Integer.parseInt(q_et.getText().toString())==0)
+                    return;
+
+
+                dialog.dismiss();
+
+                card_id = Paper.book().read("cid", null);
+                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "plus");
+                adapter.products.get(pos).qty=Integer.parseInt(q_et.getText().toString());
+                adapter.notifyDataSetChanged();
+                q_et.setText("");
+
+
             }
         });
 
@@ -328,6 +393,17 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
 
+
+    }
+
+    Product p = null;
+    int pos = 0;
+
+    @Override
+    public void setAmount(int position, Product product) {
+        p=product;
+        pos = position;
+        dialog.show();
 
     }
 

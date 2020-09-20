@@ -27,6 +27,8 @@ import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.notification.NotificationViewModel;
 import creativitysol.com.mawared.notification.model.Notification;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
+import creativitysol.com.mawared.update.email.EmailFragment;
+import creativitysol.com.mawared.update.name.NameFragment;
 import io.paperdb.Paper;
 
 
@@ -35,7 +37,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     Settings settingsModel;
     List<Settings> settingsList;
     RecyclerView rv_settings;
-    TextView tv_collectPoints,tv_profileName,tv_userPhone;
+    TextView tv_collectPoints,tv_profileName,tv_userPhone,tv_userMail;
     SettingsAdapter settingsAdapter;
     NotificationViewModel viewModel;
 
@@ -54,6 +56,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         tv_collectPoints.setPaintFlags(tv_collectPoints.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         rv_settings = view.findViewById(R.id.rv_settings);
         tv_userPhone = view.findViewById(R.id.tv_userPhone);
+        tv_userMail = view.findViewById(R.id.tv_userMail);
         tv_profileName = view.findViewById(R.id.tv_profileName);
         settingsList = new ArrayList<>();
         settingsModel = new Settings(1,R.drawable.bell,"التنبيهات","0");
@@ -75,7 +78,23 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         if (loginResponse!=null){
             tv_profileName.setText(loginResponse.getUser().getName());
             tv_userPhone.setText(loginResponse.getUser().getMobile());
+            tv_userMail.setText(loginResponse.getUser().getEmail());
         }
+
+
+        tv_userMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new EmailFragment());
+            }
+        });
+
+        tv_profileName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new NameFragment());
+            }
+        });
 
 
         ((MainActivity)getActivity()).showDialog(true);

@@ -44,7 +44,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                 .inflate(R.layout.item_my_card, parent, false);
         return new MyCartAdapter.Holder(itemView);
     }
+
     long mLastClickTime = 0;
+
     @Override
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
 
@@ -53,8 +55,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         holder.total_qty.setText(products.get(position).getInCartQuantity() + "");
 
 
-
-            holder.offerCard.setVisibility(View.GONE);
+        holder.offerCard.setVisibility(View.GONE);
 
         sumListener.doSum(calculateTotal());
 
@@ -62,13 +63,26 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         products.get(position).qty = Integer.parseInt(products.get(position).getInCartQuantity().toString());
 
 
+        holder.total_qty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateListener.setAmount(products.get(position));
+            }
+        });
+
 
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               if (((MyCartFragment)updateListener).isLoading)
-                   return;
+                if (((MyCartFragment) updateListener).isLoading)
+                    return;
+
+              /*  if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }*/
+                mLastClickTime = SystemClock.elapsedRealtime();
+
 
                 products.get(position).qty++;
                 holder.total_qty.setText(products.get(position).qty + "");
@@ -88,9 +102,14 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         holder.decrease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (((MyCartFragment)updateListener).isLoading)
+                if (((MyCartFragment) updateListener).isLoading)
                     return;
 
+
+              /*  if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }*/
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 Long amount = Long.parseLong(products.get(position).getInCartQuantity().toString());
                 if (amount > 1)
@@ -118,7 +137,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         String c = "\\u002B";
 
 
-        if (products.get(position).getHasOffer()==1){
+        if (products.get(position).getHasOffer() == 1) {
             if (products.get(position).getOffer() != null)
                 if (!products.get(position).getOffer().isEmpty()) {
                     String o = products.get(position).getOffer().replace(" ", "");
@@ -127,21 +146,20 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                     int part2 = Integer.parseInt(parts[1]);
                     Log.d("oof", part1 + "   " + part2);
 
-                    if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1&&part2>0) {
+                    if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1 && part2 > 0) {
                         holder.offerCard.setVisibility(View.VISIBLE);
                         holder.offer_name.setText(products.get(position).getTitle());
                         Picasso.get().load(products.get(position).getImg()).fit().into(holder.product_img2);
 
-                        int q = Integer.parseInt(products.get(position).getInCartQuantity()+"")/part1*part2;
-                        holder.offer_qty.setText(" الكمية "+q);
+                        int q = Integer.parseInt(products.get(position).getInCartQuantity() + "") / part1 * part2;
+                        holder.offer_qty.setText(" الكمية " + q);
                     } else
                         holder.offerCard.setVisibility(View.GONE);
 
                 }
-        }else {
+        } else {
             holder.offerCard.setVisibility(View.GONE);
         }
-
 
 
     }
@@ -159,8 +177,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView name, price, total_qty,offer_qty,offer_name;
-        ImageView img,product_img2;
+        TextView name, price, total_qty, offer_qty, offer_name;
+        ImageView img, product_img2;
         ImageButton increase, decrease;
         LinearLayout quantityLayout;
         CardView offerCard;
@@ -201,6 +219,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         void increase(Product item, int qty);
 
         void decrease(Product item, int qty);
+
+        void setAmount(Product item);
 
     }
 }
