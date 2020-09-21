@@ -116,6 +116,9 @@ public interface APIInterface {
     @POST("update-email")
     Call<UpdateModel> uodateEmail(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 
+    @POST("mobile-notifications/subscription")
+    Call<ResponseBody> sendNotificationToken(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
     @POST("update-name")
     Call<UpdateModel> uodateName(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 

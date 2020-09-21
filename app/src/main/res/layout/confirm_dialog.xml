@@ -105,6 +105,7 @@
             android:layout_margin="8dp"
             android:fontFamily="@font/urosemi"
             android:text=""
+            android:textIsSelectable="true"
             android:textColor="#0D2142"
             android:textSize="18sp" />
     </LinearLayout>
@@ -131,6 +132,8 @@
             android:layout_margin="8dp"
             android:fontFamily="@font/urosemi"
             android:text=""
+            android:textIsSelectable="true"
+
             android:textColor="#0D2142"
             android:textSize="18sp" />
     </LinearLayout>
