@@ -2,6 +2,7 @@ package creativitysol.com.mawared.home;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +55,8 @@ import creativitysol.com.mawared.mycart.model.CardModel;
 import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
@@ -76,13 +80,16 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     Button q_btn;
     EditText q_et;
 
+    SharedPreferences pref;
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_home, container, false);
         adapter = new HomeAdapter(getActivity(), this);
-        dialog= new Dialog(getActivity());
+        dialog = new Dialog(getActivity());
 
         dialog.setContentView(R.layout.count_dialog);
 
@@ -97,11 +104,35 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         LoginResponse loginResponse = Paper.book().read("login", null);
         card_id = Paper.book().read("cid", null);
 
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+   listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                if(key.equals("ccc"))
+                    viewModel.getHomeProducts();
+                Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
+
+            }
+        };
+
+
+
+
         if (card_id != null && loginResponse != null)
-            viewModel.bindUserCard(card_id, loginResponse.getUser().getId().toString());
+            viewModel.bindUserCard(card_id, loginResponse.getUser().
+
+                    getId().
+
+                    toString());
 
         else if (loginResponse != null)
-            viewModel.checkUserCart(loginResponse.getUser().getId().toString());
+            viewModel.checkUserCart(loginResponse.getUser().
+
+                    getId().
+
+                    toString());
 
 
         if (card_id != null)
@@ -127,23 +158,26 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         cities.add("الكل");
         cityIds.add("");
 
-        card_size.observe(getActivity(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                card_txt.setText(integer + "");
+        card_size.observe(
 
-                if (integer > 0)
-                    card_txt.setVisibility(View.VISIBLE);
-                else
-                    card_txt.setVisibility(View.GONE);
+                getActivity(), new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer integer) {
+                        card_txt.setText(integer + "");
+
+                        if (integer > 0)
+                            card_txt.setVisibility(View.VISIBLE);
+                        else
+                            card_txt.setVisibility(View.GONE);
 
 
-            }
-        });
+                    }
+                });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
+                                       int position, long id) {
                 ((MainActivity) getActivity()).showDialog(true);
 
                 if (position == 0)
@@ -162,96 +196,115 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         });
 
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        recyclerView.setLayoutManager(new
+
+                GridLayoutManager(getActivity(), 2));
         recyclerView.setAdapter(adapter);
-        viewModel.result.observe(getActivity(), new Observer<HomeProductModel>() {
-            @Override
-            public void onChanged(HomeProductModel homeProductModel) {
-                if (isAdded()) {
-                    ((MainActivity) getActivity()).showDialog(false);
+        viewModel.result.observe(
 
-                    if (homeProductModel != null)
-                        adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+                getActivity(), new Observer<HomeProductModel>() {
+                    @Override
+                    public void onChanged(HomeProductModel homeProductModel) {
+                        if (isAdded()) {
+                            ((MainActivity) getActivity()).showDialog(false);
 
-                }
-            }
-        });
-        viewModel.minimum.observe(getActivity(), new Observer<MiniModel>() {
-            @Override
-            public void onChanged(MiniModel miniModel) {
-
-
-                if (miniModel != null) {
-                    if (miniModel.getStatus() == 200) {
-
-                        Paper.book().write("min", miniModel.getData().getAmount());
-                    }
-                }
-
-            }
-        });
-
-        viewModel.bindResponse.observe(getActivity(), new Observer<ResponseBody>() {
-            @Override
-            public void onChanged(ResponseBody responseBody) {
-                if (loginResponse != null)
-                    viewModel.checkUserCart(loginResponse.getUser().getId().toString());
-            }
-        });
-
-        viewModel.filteredProducts.observe(getActivity(), new Observer<HomeProductModel>() {
-            @Override
-            public void onChanged(HomeProductModel homeProductModel) {
-                if (isAdded()) {
-
-                    ((MainActivity) getActivity()).showDialog(false);
-                    if (homeProductModel != null) {
-                        if (homeProductModel.getStatus() != null) {
-                            if (homeProductModel.getStatus() == 200)
+                            if (homeProductModel != null)
                                 adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+
                         }
-                    } else
-                        adapter.setProducts(new ArrayList<Product>());
-
-                }
-            }
-        });
-        viewModel.slider.observe(getActivity(), new Observer<HomeSliderModel>() {
-            @Override
-            public void onChanged(HomeSliderModel homeSliderModel) {
-                if (isAdded()) {
-                    if (homeSliderModel != null) {
-                        SliderAdapterExample sliderAdapterExample = new SliderAdapterExample(getActivity());
-                        flipper_layout.setSliderAdapter(sliderAdapterExample);
-                        sliderAdapterExample.renewItems(homeSliderModel.getData());
-
-                        flipper_layout.startAutoCycle();
-                        flipper_layout.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-                        flipper_layout.setIndicatorSelectedColor(Color.WHITE);
-                        flipper_layout.setIndicatorUnselectedColor(Color.GRAY);
-                        flipper_layout.setIndicatorVisibility(true);
                     }
-                }
+                });
+        viewModel.minimum.observe(
+
+                getActivity(), new Observer<MiniModel>() {
+                    @Override
+                    public void onChanged(MiniModel miniModel) {
 
 
-            }
-        });
+                        if (miniModel != null) {
+                            if (miniModel.getStatus() == 200) {
 
+                                Paper.book().write("min", miniModel.getData().getAmount());
+                            }
+                        }
 
-        viewModel.checkCardModelMutableLiveData.observe(getActivity(), new Observer<CheckCardModel>() {
-            @Override
-            public void onChanged(CheckCardModel checkCardModel) {
-
-
-                if (checkCardModel != null) {
-                    if (checkCardModel.getStatus() == 200) {
-                        if (checkCardModel.getData().getCartId() != null)
-                            Paper.book().write("cid", checkCardModel.getData().getCartId().toString());
                     }
-                }
+                });
 
-            }
-        });
+        viewModel.bindResponse.observe(
+
+                getActivity(), new Observer<ResponseBody>() {
+                    @Override
+                    public void onChanged(ResponseBody responseBody) {
+                        if (loginResponse != null)
+                            viewModel.checkUserCart(loginResponse.getUser().getId().toString());
+                    }
+                });
+
+        viewModel.filteredProducts.observe(
+
+                getActivity(), new Observer<HomeProductModel>() {
+                    @Override
+                    public void onChanged(HomeProductModel homeProductModel) {
+                        if (isAdded()) {
+
+                            ((MainActivity) getActivity()).showDialog(false);
+                            if (homeProductModel != null) {
+                                if (homeProductModel.getStatus() != null) {
+                                    if (homeProductModel.getStatus() == 200)
+                                        adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+                                }
+                            } else
+                                adapter.setProducts(new ArrayList<Product>());
+
+                        }
+                    }
+                });
+        viewModel.slider.observe(
+
+                getActivity(), new Observer<HomeSliderModel>() {
+                    @Override
+                    public void onChanged(HomeSliderModel homeSliderModel) {
+                        if (isAdded()) {
+                            if (homeSliderModel != null) {
+                                SliderAdapterExample sliderAdapterExample = new SliderAdapterExample(getActivity());
+                                flipper_layout.setSliderAdapter(sliderAdapterExample);
+                                sliderAdapterExample.renewItems(homeSliderModel.getData());
+
+                                flipper_layout.startAutoCycle();
+                                flipper_layout.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                                flipper_layout.setIndicatorSelectedColor(Color.WHITE);
+                                flipper_layout.setIndicatorUnselectedColor(Color.GRAY);
+                                flipper_layout.setIndicatorVisibility(true);
+                            }
+                        }
+
+
+                    }
+                });
+
+
+        viewModel.checkCardModelMutableLiveData.observe(
+
+                getActivity(), new Observer<CheckCardModel>() {
+                    @Override
+                    public void onChanged(CheckCardModel checkCardModel) {
+
+
+                        if (checkCardModel != null) {
+                            if (checkCardModel.getStatus() == 200) {
+                                if (checkCardModel.getData().getCartId() != null){
+                                    Paper.book().write("cid", checkCardModel.getData().getCartId().toString());
+                                    SharedPreferences.Editor editor = pref.edit();
+                                    editor.putString("ccc",checkCardModel.getData().getCartId().toString());
+
+                                    editor.apply();
+                                }
+                            }
+                        }
+
+                    }
+                });
 
 
         go_cart.setOnClickListener(new View.OnClickListener() {
@@ -278,66 +331,71 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         });
 
 
-        viewModel.cities.observe(getActivity(), new Observer<CitiesModel>() {
-            @Override
-            public void onChanged(CitiesModel citiesModel) {
-                if (isAdded()) {
-                    if (citiesModel != null) {
-                        if (citiesModel.getStatusCode() == 200) {
-                            for (Datum d : citiesModel.getData()) {
-                                cities.add(d.getName());
-                                cityIds.add(d.getId() + "");
+        viewModel.cities.observe(
+
+                getActivity(), new Observer<CitiesModel>() {
+                    @Override
+                    public void onChanged(CitiesModel citiesModel) {
+                        if (isAdded()) {
+                            if (citiesModel != null) {
+                                if (citiesModel.getStatusCode() == 200) {
+                                    for (Datum d : citiesModel.getData()) {
+                                        cities.add(d.getName());
+                                        cityIds.add(d.getId() + "");
+                                    }
+
+                                }
+
                             }
+                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
+                            spinner.setAdapter(aarrdapter);
 
                         }
-
                     }
-                    ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
-                    spinner.setAdapter(aarrdapter);
+                });
 
-                }
-            }
-        });
+        cartViewModel.cardModelMutableLiveData.observe(
 
-        cartViewModel.cardModelMutableLiveData.observe(getViewLifecycleOwner(), new Observer<CardModel>() {
-            @Override
-            public void onChanged(CardModel cardModel) {
-                if (isAdded()) {
-                    if (cardModel!=null){
-                        if (cardModel.getStatus()==200){
-                            card_size.setValue(cardModel.getData().getItemsCount().intValue());
-                            if (cardModel.getData().getItemsCount() > 0) {
+                getViewLifecycleOwner(), new Observer<CardModel>() {
+                    @Override
+                    public void onChanged(CardModel cardModel) {
+                        if (isAdded()) {
+                            if (cardModel != null) {
+                                if (cardModel.getStatus() == 200) {
+                                    card_size.setValue(cardModel.getData().getItemsCount().intValue());
+                                    if (cardModel.getData().getItemsCount() > 0) {
+                                        card_linear.setVisibility(View.VISIBLE);
+
+                                        linear_txt.setText((Double) (Math.round((cardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00) + " ر.س ");
+                                    } else
+                                        card_linear.setVisibility(View.GONE);
+
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+        cartViewModel.addResponse.observe(
+
+                getActivity(), new Observer<AddCardModel>() {
+                    @Override
+                    public void onChanged(AddCardModel addCardModel) {
+                        if (isAdded()) {
+                            showCard(true);
+                            card_size.setValue(addCardModel.getData().getItemsCount().intValue());
+                            if (addCardModel.getData().getItemsCount() > 0) {
                                 card_linear.setVisibility(View.VISIBLE);
-
-                                linear_txt.setText( (Double) (Math.round((cardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00)+ " ر.س ");
+                                linear_txt.setText((Double) (Math.round((addCardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00) + " ر.س ");
                             } else
                                 card_linear.setVisibility(View.GONE);
 
+                            Paper.book().write("cid", addCardModel.getData().getCartId().toString());
+
                         }
                     }
-                }
-            }
-        });
-
-
-        cartViewModel.addResponse.observe(getActivity(), new Observer<AddCardModel>() {
-            @Override
-            public void onChanged(AddCardModel addCardModel) {
-                if (isAdded()) {
-                    showCard(true);
-                    card_size.setValue(addCardModel.getData().getItemsCount().intValue());
-                    if (addCardModel.getData().getItemsCount() > 0) {
-                        card_linear.setVisibility(View.VISIBLE);
-                        linear_txt.setText( (Double) (Math.round((addCardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00)+ " ر.س ");
-                    } else
-                        card_linear.setVisibility(View.GONE);
-
-                    Paper.book().write("cid", addCardModel.getData().getCartId().toString());
-
-                }
-            }
-        });
-
+                });
 
 
         q_btn.setOnClickListener(new View.OnClickListener() {
@@ -345,7 +403,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             public void onClick(View v) {
                 if (q_et.getText().toString().isEmpty())
                     return;
-                if (p==null||Integer.parseInt(q_et.getText().toString())==0)
+                if (p == null || Integer.parseInt(q_et.getText().toString()) == 0)
                     return;
 
 
@@ -353,7 +411,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
                 card_id = Paper.book().read("cid", null);
                 cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "plus");
-                adapter.products.get(pos).qty=Integer.parseInt(q_et.getText().toString());
+                adapter.products.get(pos).qty = Integer.parseInt(q_et.getText().toString());
                 adapter.notifyDataSetChanged();
                 q_et.setText("");
 
@@ -384,6 +442,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         card_id = Paper.book().read("cid", null);
 
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus");
+
+
+
+
     }
 
     @Override
@@ -394,6 +456,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
 
 
+
     }
 
     Product p = null;
@@ -401,7 +464,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
     @Override
     public void setAmount(int position, Product product) {
-        p=product;
+        p = product;
         pos = position;
         dialog.show();
 
@@ -415,5 +478,19 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             progressBar_cyclic.setVisibility(View.INVISIBLE);
             go_cart.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onResume() {
+        pref.registerOnSharedPreferenceChangeListener(listener);
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        pref.unregisterOnSharedPreferenceChangeListener(listener);
+
+        super.onPause();
     }
 }

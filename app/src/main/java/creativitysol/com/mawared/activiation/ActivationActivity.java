@@ -23,12 +23,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.activiation.model.ActivationiModel;
 import creativitysol.com.mawared.helpers.SmsListener;
+import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.register.RegisterBottomSheet;
 import creativitysol.com.mawared.registeration.RegisterationActivity;
 import creativitysol.com.mawared.reset.ResetPassActivity;
+import creativitysol.com.mawared.update.UpdateViewModel;
+import creativitysol.com.mawared.update.model.UpdateModel;
+import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
 public class ActivationActivity extends AppCompatActivity implements SmsListener.OnSmsReceivedListener {
@@ -36,12 +41,15 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
     ConstraintLayout btn_login;
     String phoneNumber;
     String type = null;
-    TextView tv_mobileNumber,counter;
+    TextView tv_mobileNumber, counter;
     SquarePinField sq_verification;
     ActivationViewModel activationViewModel;
+
+    UpdateViewModel updateViewModel;
     private SmsListener receiver;
     KProgressHUD dialog;
     CountDownTimer countDownTimer;
+    String token = null;
 
 
     @Override
@@ -56,6 +64,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                 getBaseContext().getResources().getDisplayMetrics());
         setContentView(R.layout.activity_activation);
 
+        token = Paper.book().read("token", null);
 
         if (receiver == null)
             receiver = new SmsListener();
@@ -82,7 +91,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                 .setAnimationSpeed(2)
                 .setDimAmount(0.5f);
 
-        countDownTimer= new CountDownTimer(59000, 1000) {
+        countDownTimer = new CountDownTimer(59000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 counter.setText("00:" + millisUntilFinished / 1000);
@@ -98,6 +107,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
 
 
         activationViewModel = new ViewModelProvider(this).get(ActivationViewModel.class);
+        updateViewModel = new ViewModelProvider(this).get(UpdateViewModel.class);
 
         btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +150,21 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                                     ActivationActivity.this.finish();
 
 
+                                } else if (type.equals("update")) {
+
+                                    JsonObject jsonObject1 = new JsonObject();
+
+                                    jsonObject.addProperty("mobile", phoneNumber);
+                                    jsonObject.addProperty("code", codeVerification);
+
+
+                                    if (token != null) {
+                                        dialog.show();
+                                        updateViewModel.updateMob(jsonObject, "Bearer " + token);
+
+                                    }
+
+
                                 }
 
                             } else
@@ -151,6 +176,27 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
                     }
                 });
                 return true;
+            }
+        });
+
+
+        updateViewModel.updateEmailRes.observe(this, new Observer<UpdateModel>() {
+            @Override
+            public void onChanged(UpdateModel updateModel) {
+                dialog.dismiss();
+                if (updateModel != null) {
+                    if (updateModel.getSuccess()) {
+                        Toast.makeText(ActivationActivity.this, "تم تحديث رقم الجوال", Toast.LENGTH_SHORT).show();
+                        LoginResponse loginResponse = Paper.book().read("login");
+                        loginResponse.getUser().setMobile(phoneNumber);
+
+                        Paper.book().write("login",loginResponse);
+
+                    }
+                } else
+                    Toast.makeText(ActivationActivity.this, "حدث خطأ", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ActivationActivity.this, MainActivity.class));
+                ActivationActivity.this.finish();
             }
         });
 
@@ -186,12 +232,12 @@ public class ActivationActivity extends AppCompatActivity implements SmsListener
 
     @Override
     public void onSmsReceived(String otp) {
-        String number  = otp.replaceAll("[^0-9]", "");
-       // Toast.makeText(this, number, Toast.LENGTH_SHORT).show();
+        String number = otp.replaceAll("[^0-9]", "");
+        // Toast.makeText(this, number, Toast.LENGTH_SHORT).show();
 
-        if (sq_verification==null)
+        if (sq_verification == null)
             sq_verification = findViewById(R.id.sq_verification);
-        if (number.length()==4)
+        if (number.length() == 4)
             sq_verification.setText(number);
     }
 }

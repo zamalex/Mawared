@@ -34,6 +34,7 @@ import creativitysol.com.mawared.sendorder.model.TimesModel;
 import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
+import creativitysol.com.mawared.update.model.SendCodeModel;
 import creativitysol.com.mawared.update.model.UpdateModel;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -122,6 +123,9 @@ public interface APIInterface {
     @POST("update-name")
     Call<UpdateModel> uodateName(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 
+    @POST("update-mobile")
+    Call<UpdateModel> updateMob(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
     @POST("password/forget")
     Call<ForgotModel> forgotPass(@Body JsonObject jsonObject);
 
@@ -170,6 +174,10 @@ public interface APIInterface {
 
     @POST("orders/cancel")
     Call<ConfirmModel> cancelOrder(@Body JsonObject jsonObject,@Header("Authorization") String token);
+
+
+    @POST("send-mobile-code")
+    Call<SendCodeModel> sendCodeMobile(@Body JsonObject jsonObject, @Header("Authorization") String token);
 
 
     @GET("carts/{user_id}/user-cart")

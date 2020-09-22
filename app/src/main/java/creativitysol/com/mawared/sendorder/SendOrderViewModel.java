@@ -25,7 +25,7 @@ public class SendOrderViewModel extends ViewModel {
     MutableLiveData<BanksModel> banks = new MutableLiveData<>();
     MutableLiveData<TimesModel> times = new MutableLiveData<>();
     MutableLiveData<PaymentModel> payment = new MutableLiveData<>();
-    MutableLiveData<PointsModel> points = new MutableLiveData<>();
+     public  MutableLiveData<PointsModel> points = new MutableLiveData<>();
     MutableLiveData<CoponModel> copon = new MutableLiveData<>();
 
     void getAddresses(String token) {
@@ -127,7 +127,7 @@ public class SendOrderViewModel extends ViewModel {
     }
 
 
-    void getPoints(String token){
+    public void getPoints(String token){
         RetrofitClient.getApiInterface().getPoints(token).enqueue(new Callback<PointsModel>() {
             @Override
             public void onResponse(Call<PointsModel> call, Response<PointsModel> response) {

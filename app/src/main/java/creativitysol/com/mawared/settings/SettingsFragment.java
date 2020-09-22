@@ -1,6 +1,7 @@
 package creativitysol.com.mawared.settings;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,10 @@ import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.notification.NotificationViewModel;
 import creativitysol.com.mawared.notification.model.Notification;
 import creativitysol.com.mawared.registeration.terms.TermsBottomSheet;
+import creativitysol.com.mawared.sendorder.SendOrderViewModel;
+import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import creativitysol.com.mawared.update.email.EmailFragment;
+import creativitysol.com.mawared.update.mobile.MobileFragment;
 import creativitysol.com.mawared.update.name.NameFragment;
 import io.paperdb.Paper;
 
@@ -37,9 +42,11 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     Settings settingsModel;
     List<Settings> settingsList;
     RecyclerView rv_settings;
-    TextView tv_collectPoints,tv_profileName,tv_userPhone,tv_userMail;
+    TextView tv_collectPoints,tv_profileName,tv_userPhone,tv_userMail,tv_profilePoints;
     SettingsAdapter settingsAdapter;
     NotificationViewModel viewModel;
+    SendOrderViewModel sendOrderViewModel;
+    SharedPreferences pref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,11 +55,14 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(NotificationViewModel.class);
+        sendOrderViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
 
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
 
         tv_collectPoints = view.findViewById(R.id.tv_collectPoints);
+        tv_profilePoints = view.findViewById(R.id.tv_profilePoints);
         tv_collectPoints.setPaintFlags(tv_collectPoints.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         rv_settings = view.findViewById(R.id.rv_settings);
         tv_userPhone = view.findViewById(R.id.tv_userPhone);
@@ -79,6 +89,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
             tv_profileName.setText(loginResponse.getUser().getName());
             tv_userPhone.setText(loginResponse.getUser().getMobile());
             tv_userMail.setText(loginResponse.getUser().getEmail());
+            sendOrderViewModel.getPoints("Bearer "+loginResponse.getUser().getToken());
         }
 
 
@@ -96,6 +107,26 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
             }
         });
 
+        tv_userPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new MobileFragment());
+            }
+        });
+
+
+        sendOrderViewModel.points.observe(getViewLifecycleOwner(), new Observer<PointsModel>() {
+            @Override
+            public void onChanged(PointsModel pointsModel) {
+                if (pointsModel!=null){
+                    if (pointsModel.getSuccess()){
+                        if (pointsModel.getData().getExpireDate()>0){
+                            tv_profilePoints.setText(pointsModel.getData().getTotalPoints()+" نقطة ");
+                        }
+                    }
+                }
+            }
+        });
 
         ((MainActivity)getActivity()).showDialog(true);
         viewModel.getAllNotification(1).observe(getViewLifecycleOwner(), new Observer<Notification>() {
@@ -159,6 +190,13 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         Paper.book().delete("token");
         Paper.book().delete("login");
         Paper.book().delete("cid");
+
+        SharedPreferences.Editor editor = pref.edit();
+       editor.remove("ccc");
+
+        editor.apply();
+
+
 
         getActivity().finishAffinity();
         startActivity(new Intent(getActivity(), MainActivity.class));

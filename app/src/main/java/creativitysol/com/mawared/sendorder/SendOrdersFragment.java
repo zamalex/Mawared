@@ -418,6 +418,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+                if (viewModel.points!=null){
+                    if (viewModel.points.getValue()!=null){
+                        if (viewModel.points.getValue().getSuccess()){
+                            if (viewModel.points.getValue().getData().getExpireDate()<=0){
+                                Toast.makeText(getActivity(), "ليس لديك نقاط صالحة للاستبدال", Toast.LENGTH_SHORT).show();
+                                pts_switch.setChecked(false);
+                                pts_switch.setClickable(false);
+                                return;
+                            }else {
+                                pts_switch.setClickable(true);
+
+                            }
+                        }
+
+                    }
+                }
                 if (isChecked) {
                     if (pts_amounts.size() > 0) {
                         pts_dialog.show();
