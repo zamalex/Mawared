@@ -43,8 +43,8 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    void getHomeProducts() {
-        RetrofitClient.getApiInterface().getHomeProducts().enqueue(new Callback<HomeProductModel>() {
+    void getHomeProducts(String cart_id) {
+        RetrofitClient.getApiInterface().getHomeProducts(cart_id).enqueue(new Callback<HomeProductModel>() {
             @Override
             public void onResponse(Call<HomeProductModel> call, Response<HomeProductModel> response) {
                 result.setValue(response.body());

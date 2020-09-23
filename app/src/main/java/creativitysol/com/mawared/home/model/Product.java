@@ -23,6 +23,10 @@ public class Product {
     private String mPrice;
     @SerializedName("quantity")
     private Long mQuantity;
+
+    @SerializedName("in_cart_quantity")
+    private Long incart;
+
     @SerializedName("sku")
     private String mSku;
     @SerializedName("title")
@@ -136,5 +140,13 @@ public class Product {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public Long getIncart() {
+        return incart;
+    }
+
+    public void setIncart(Long incart) {
+        this.incart = incart;
     }
 }

@@ -49,6 +49,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         final Product product = products.get(position);
         Double p = Double.parseDouble(product.getPrice())+(Double.parseDouble(product.getVat())/100* Double.parseDouble(product.getPrice()));
 
+        if (product.qty==0)
+            product.qty=Integer.parseInt(product.getIncart().toString());
+
         holder.price.setText(p + " " + "ر.س");
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
@@ -97,6 +100,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
                     holder.total_qty.setText(products.get(position).qty + "");
                     notifyDataSetChanged();
                 } else {
+                    product.setIncart(0l);
                     notifyDataSetChanged();
                 }
 

@@ -189,7 +189,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
                 next.startAnimation();
                 isLoading = true;
-                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "plus");
+                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance");
                 q_et.setText("");
 
 

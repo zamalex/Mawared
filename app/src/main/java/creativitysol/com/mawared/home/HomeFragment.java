@@ -106,18 +106,21 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
         pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-   listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                if(key.equals("ccc"))
-                    viewModel.getHomeProducts();
-                Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
+                if (key.equals("ccc")) {
+                    String ccc = Paper.book().read("cid", null);
+
+                    viewModel.getHomeProducts(ccc);
+                    Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
+
+                }
+
 
             }
         };
-
-
 
 
         if (card_id != null && loginResponse != null)
@@ -139,7 +142,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             cartViewModel.getCard(card_id);
         viewModel.getMin();
         viewModel.getCities();
-        viewModel.getHomeProducts();
+        viewModel.getHomeProducts(card_id);
 
         card_size.setValue(0);
 
@@ -181,7 +184,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                 ((MainActivity) getActivity()).showDialog(true);
 
                 if (position == 0)
-                    viewModel.getHomeProducts();
+                    viewModel.getHomeProducts(card_id);
                 else
                     viewModel.filterByCity(cityIds.get(position));
 
@@ -208,8 +211,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                         if (isAdded()) {
                             ((MainActivity) getActivity()).showDialog(false);
 
-                            if (homeProductModel != null)
+                            if (homeProductModel != null) {
                                 adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+                            }
 
                         }
                     }
@@ -293,10 +297,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
                         if (checkCardModel != null) {
                             if (checkCardModel.getStatus() == 200) {
-                                if (checkCardModel.getData().getCartId() != null){
+                                if (checkCardModel.getData().getCartId() != null) {
                                     Paper.book().write("cid", checkCardModel.getData().getCartId().toString());
                                     SharedPreferences.Editor editor = pref.edit();
-                                    editor.putString("ccc",checkCardModel.getData().getCartId().toString());
+                                    editor.putString("ccc", checkCardModel.getData().getCartId().toString());
 
                                     editor.apply();
                                 }
@@ -367,6 +371,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                                         card_linear.setVisibility(View.VISIBLE);
 
                                         linear_txt.setText((Double) (Math.round((cardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00) + " ر.س ");
+
+
                                     } else
                                         card_linear.setVisibility(View.GONE);
 
@@ -410,7 +416,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                 dialog.dismiss();
 
                 card_id = Paper.book().read("cid", null);
-                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "plus");
+                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance");
                 adapter.products.get(pos).qty = Integer.parseInt(q_et.getText().toString());
                 adapter.notifyDataSetChanged();
                 q_et.setText("");
@@ -444,8 +450,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus");
 
 
-
-
     }
 
     @Override
@@ -454,6 +458,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         card_id = Paper.book().read("cid", null);
 
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
+
 
 
 

@@ -84,6 +84,7 @@ import creativitysol.com.mawared.sendorder.model.Time;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
 import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
+import creativitysol.com.mawared.sendorder.model.paymentmodel.visa.VisaModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -120,7 +121,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     ImageView show_map, dismiss_map;
 
-    TextView orders_total_dialog_txt, terms_txt, bank_details,bank_acc_no,bank_iban, final_total_txt;
+    TextView orders_total_dialog_txt, terms_txt, bank_details, bank_acc_no, bank_iban, final_total_txt;
     TextView selected_address, selected_address_type, selected_payment, selected_copon, selected_date;
     EditText copon_et, transfer_no;
     String token = "";
@@ -155,7 +156,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     Bank selected_bank = null;
 
-    String date="",time="";
+    String date = "", time = "";
 
     String selected_payment_method = null;
 
@@ -418,15 +419,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (viewModel.points!=null){
-                    if (viewModel.points.getValue()!=null){
-                        if (viewModel.points.getValue().getSuccess()){
-                            if (viewModel.points.getValue().getData().getExpireDate()<=0){
+                if (viewModel.points != null) {
+                    if (viewModel.points.getValue() != null) {
+                        if (viewModel.points.getValue().getSuccess()) {
+                            if (viewModel.points.getValue().getData().getExpireDate() <= 0) {
                                 Toast.makeText(getActivity(), "ليس لديك نقاط صالحة للاستبدال", Toast.LENGTH_SHORT).show();
                                 pts_switch.setChecked(false);
                                 pts_switch.setClickable(false);
                                 return;
-                            }else {
+                            } else {
                                 pts_switch.setClickable(true);
 
                             }
@@ -514,7 +515,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         bank_acc_no.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setClipboard(getActivity(),bank_acc_no.getText().toString());
+                setClipboard(getActivity(), bank_acc_no.getText().toString());
                 Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
             }
         });
@@ -522,7 +523,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         bank_iban.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setClipboard(getActivity(),bank_iban.getText().toString());
+                setClipboard(getActivity(), bank_iban.getText().toString());
                 Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
 
             }
@@ -712,9 +713,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             @Override
             public void onClick(View v) {
                 timeDialog.dismiss();
-                if (date!=null&&time!=null){
-                    if (!date.isEmpty()&& !time.isEmpty()){
-                        selected_date.setText(date + " . "+time);
+                if (date != null && time != null) {
+                    if (!date.isEmpty() && !time.isEmpty()) {
+                        selected_date.setText(date + " . " + time);
                     }
                 }
             }
@@ -884,27 +885,34 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         ((MainActivity) getActivity()).showDialog(true);
         if (selected_payment_method.equals("visa")) {
-            RetrofitClient.getApiInterface().sendOrderVisa(requestBodyMap, token).enqueue(new Callback<ResponseBody>() {
+            RetrofitClient.getApiInterface().sendOrderVisa(requestBodyMap, token).enqueue(new Callback<VisaModel>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<VisaModel> call, Response<VisaModel> response) {
                     Log.d("resooo", response.message());
                     ((MainActivity) getActivity()).showDialog(false);
 
-                    BlankFragment blankFragment = new BlankFragment();
-                    Bundle b = new Bundle();
-                    try {
-                        b.putString("html", response.body().string());
-                        blankFragment.setArguments(b);
-                        ((MainActivity) getActivity()).fragmentStack.replace(blankFragment);
+                    if (response.isSuccessful()) {
+                        VisaModel visaModel = response.body();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        if (visaModel != null) {
+                            if (visaModel.getSuccess()) {
+                                BlankFragment blankFragment = new BlankFragment();
+                                Bundle b = new Bundle();
+
+                                b.putString("html", visaModel.getData().getView());
+                                blankFragment.setArguments(b);
+                                ((MainActivity) getActivity()).fragmentStack.replace(blankFragment);
+
+
+                            }
+                        }
                     }
+
 
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<VisaModel> call, Throwable t) {
                     Log.d("resooo", t.getMessage());
                     ((MainActivity) getActivity()).showDialog(false);
 
@@ -1227,7 +1235,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     private void setClipboard(Context context, String text) {
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
             android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             clipboard.setText(text);
         } else {

@@ -165,6 +165,10 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     }
 
     public void setProducts(ArrayList<Product> products) {
+        for (Product p : products){
+            if (p.getInCartQuantity()==0)
+                products.remove(p);
+        }
         this.products = products;
         notifyDataSetChanged();
     }
