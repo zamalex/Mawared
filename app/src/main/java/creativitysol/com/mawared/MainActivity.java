@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public FragmentStack fragmentStack;
     BottomNavigationView navigationView;
-
+    private boolean paymentSuccess  = false;
     KProgressHUD dialog;
 
     @Override
@@ -182,6 +182,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public boolean isPaymentSuccess() {
+        return paymentSuccess;
+    }
+
+
+    public void setPaymentSuccess(boolean paymentSuccess) {
+        this.paymentSuccess = paymentSuccess;
     }
 
     @Override

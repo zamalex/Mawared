@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -165,663 +166,676 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        v = inflater.inflate(R.layout.fragment_send_orders, container, false);
+        if (v == null) {
+            v = inflater.inflate(R.layout.fragment_send_orders, container, false);
 
-        back = v.findViewById(R.id.imageView);
-        final_total_txt = v.findViewById(R.id.final_total_txt);
-        terms_txt = v.findViewById(R.id.terms_txt);
-        pts_switch = v.findViewById(R.id.imageView42);
+            back = v.findViewById(R.id.imageView);
+            final_total_txt = v.findViewById(R.id.final_total_txt);
+            terms_txt = v.findViewById(R.id.terms_txt);
+            pts_switch = v.findViewById(R.id.imageView42);
 
-        selected_address = v.findViewById(R.id.selected_address);
-        selected_address_type = v.findViewById(R.id.selected_address_type);
-        selected_copon = v.findViewById(R.id.selected_copon);
-        selected_date = v.findViewById(R.id.selected_date);
-        selected_payment = v.findViewById(R.id.selected_payment);
-        semi_final_txt = v.findViewById(R.id.semi_final_txt);
-        vat_txt = v.findViewById(R.id.vat_txt);
-        discount_txt = v.findViewById(R.id.discount_txt);
-        pts_c_txt = v.findViewById(R.id.pts_c_txt);
-        count_tv = v.findViewById(R.id.count_tv);
-
-
-        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
-        token = Paper.book().read("token", "");
-
-        if (!token.isEmpty()) {
-            viewModel.getAddresses("Bearer " + token);
-            viewModel.getPoints("Bearer " + token);
-
-        }
-
-        // Toast.makeText(getActivity(),token+ "", Toast.LENGTH_SHORT).show();
-
-        viewModel.getBanks();
-        // viewModel.getPayment();
+            selected_address = v.findViewById(R.id.selected_address);
+            selected_address_type = v.findViewById(R.id.selected_address_type);
+            selected_copon = v.findViewById(R.id.selected_copon);
+            selected_date = v.findViewById(R.id.selected_date);
+            selected_payment = v.findViewById(R.id.selected_payment);
+            semi_final_txt = v.findViewById(R.id.semi_final_txt);
+            vat_txt = v.findViewById(R.id.vat_txt);
+            discount_txt = v.findViewById(R.id.discount_txt);
+            pts_c_txt = v.findViewById(R.id.pts_c_txt);
+            count_tv = v.findViewById(R.id.count_tv);
 
 
-        addCoponDialog = new Dialog(getActivity());
-        timeDialog = new Dialog(getActivity());
-        pts_dialog = new Dialog(getActivity());
+            viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(SendOrderViewModel.class);
+            token = Paper.book().read("token", "");
 
-        adapter = new AddressAdapter(this);
-        ordersAdapter = new SentOrdersAdapter();
-        bankAdapter = new BankAdapter(this);
-
-        addCoponDialog.setContentView(R.layout.copon_dialog);
-
-        addCoponDialog.findViewById(R.id.xcopon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addCoponDialog.dismiss();
-            }
-        });
-
-
-        pts_dialog.setContentView(R.layout.pts_dialog);
-
-        pts_dialog.setCancelable(false);
-
-        pts_dialog.findViewById(R.id.xpts).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pts_switch.setChecked(false);
-                pts_dialog.dismiss();
-            }
-        });
-
-        timeDialog.setContentView(R.layout.time_dialog);
-        timeDialog.findViewById(R.id.xtime).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog.dismiss();
-            }
-        });
-        address_dialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
-        map_dailog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
-        payDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
-        ordersDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
-        confirmDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
-
-        payDialog.setContentView(R.layout.payment_dialog);
-        payDialog.findViewById(R.id.xpay).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                payDialog.dismiss();
-            }
-        });
-        confirmDialog.setContentView(R.layout.confirm_dialog);
-        map_dailog.setContentView(R.layout.map_dialog);
-        map_dailog.setCancelable(false);
-
-        address_dialog.setContentView(R.layout.address_dialog);
-        address_dialog.findViewById(R.id.xaddress).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                address_dialog.dismiss();
-            }
-        });
-        ordersDialog.setContentView(R.layout.products_dialog);
-        ordersDialog.findViewById(R.id.xorder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ordersDialog.dismiss();
-            }
-        });
-
-        day_spinner = timeDialog.findViewById(R.id.day_spinner);
-        confirm_time = timeDialog.findViewById(R.id.confirm_time);
-        bank_details = confirmDialog.findViewById(R.id.bank_details);
-        bank_acc_no = confirmDialog.findViewById(R.id.bank_acc_no);
-        bank_iban = confirmDialog.findViewById(R.id.bank_iban);
-        p_bank = payDialog.findViewById(R.id.p_bank);
-        p_deliver = payDialog.findViewById(R.id.p_deliver);
-        p_visa = payDialog.findViewById(R.id.p_visa);
-        set_loc = map_dailog.findViewById(R.id.set_loc);
-        map_spinner = map_dailog.findViewById(R.id.map_spinner);
-        btn_add_loc = map_dailog.findViewById(R.id.btn_add_loc);
-        address_rv = address_dialog.findViewById(R.id.address_rv);
-        banks_rv = confirmDialog.findViewById(R.id.banks_rv);
-        transfer_no = confirmDialog.findViewById(R.id.transfer_no);
-        confirm_transfer = confirmDialog.findViewById(R.id.cnonfirm_transfer);
-        add_copon_btn = addCoponDialog.findViewById(R.id.add_copon);
-        copon_et = addCoponDialog.findViewById(R.id.copon_et);
-
-        time_spinner = timeDialog.findViewById(R.id.time_spinner);
-        products_rv = ordersDialog.findViewById(R.id.products_rv);
-        orders_total_dialog_txt = ordersDialog.findViewById(R.id.orders_total);
-
-        pts_spinner = pts_dialog.findViewById(R.id.pts_spinner);
-        add_pts = pts_dialog.findViewById(R.id.add_pts);
-
-        products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        products_rv.setAdapter(ordersAdapter);
-
-        if (getArguments() != null) {
-            items = getArguments().getParcelableArrayList("clist");
-            total.setValue(getArguments().getDouble("total"));
-
-            ordersAdapter.setProducts(items);
-
-            semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
-            vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
-            vat_txt.setText(vat + " ر.س ");
-            discount_txt.setText("0 ر.س");
-            orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
-            count_tv.setText(calculateCount(items) + "");
-
-            total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
-        }
-
-
-        ArrayAdapter<String> typesadapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, types);
-        map_spinner.setAdapter(typesadapter);
-
-        map_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
-                selectedShippingType = types[position];
-
+            if (!token.isEmpty()) {
+                viewModel.getAddresses("Bearer " + token);
+                viewModel.getPoints("Bearer " + token);
 
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
+            // Toast.makeText(getActivity(),token+ "", Toast.LENGTH_SHORT).show();
 
-        });
+            viewModel.getBanks();
+            // viewModel.getPayment();
 
 
-        banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        banks_rv.setAdapter(bankAdapter);
+            addCoponDialog = new Dialog(getActivity());
+            timeDialog = new Dialog(getActivity());
+            pts_dialog = new Dialog(getActivity());
 
-        show_map = address_dialog.findViewById(R.id.show_map);
-        address_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        address_rv.setAdapter(adapter);
+            adapter = new AddressAdapter(this);
+            ordersAdapter = new SentOrdersAdapter();
+            bankAdapter = new BankAdapter(this);
 
-        mapView = map_dailog.findViewById(R.id.mapview);
-        mapprogressBar = map_dailog.findViewById(R.id.mapprogressBar);
-        dismiss_map = map_dailog.findViewById(R.id.dismiss_map);
-        mapView.onCreate(savedInstanceState);
+            addCoponDialog.setContentView(R.layout.copon_dialog);
 
-
-        mapView.getMapAsync(this);
-
-
-        setAlertDialogs();
-
-        addCoponDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        timeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        pts_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        add_copon = v.findViewById(R.id.add_copon);
-        add_time = v.findViewById(R.id.add_time);
-        add_address = v.findViewById(R.id.add_address);
-        add_payment = v.findViewById(R.id.add_payment);
-        show_products = v.findViewById(R.id.show_products);
-        snd_order = v.findViewById(R.id.snd_order);
-
-        viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
-            @Override
-            public void onChanged(BanksModel banksModel) {
-                ((MainActivity) getActivity()).showDialog(false);
-
-                if (banksModel.getStatus() == 200)
-                    bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
-            }
-        });
-
-        viewModel.points.observe(getViewLifecycleOwner(), new Observer<PointsModel>() {
-            @Override
-            public void onChanged(PointsModel pointsModel) {
-                if (pointsModel != null) {
-                    if (pointsModel.getSuccess()) {
-                        if (pointsModel.getData().getToExchange().size() > 0) {
-                            pts_amounts = new ArrayList<>();
-                            pts_c_txt.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
-                            for (Long l : pointsModel.getData().getToExchange()) {
-                                pts_amounts.add(l.toString());
-                            }
-                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, pts_amounts);
-                            pts_spinner.setAdapter(aarrdapter);
-                        }
-                    }
+            addCoponDialog.findViewById(R.id.xcopon).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addCoponDialog.dismiss();
                 }
-            }
-        });
+            });
 
-        viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
-            @Override
-            public void onChanged(AddressModel addressModel) {
-                ((MainActivity) getActivity()).showDialog(false);
 
-                if (addressModel.getStatus() == 200) {
-                    adapter.setAddresses((ArrayList<OrderShippingAddress>) addressModel.getOrderShippingAddresses());
+            pts_dialog.setContentView(R.layout.pts_dialog);
+
+            pts_dialog.setCancelable(false);
+
+            pts_dialog.findViewById(R.id.xpts).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pts_switch.setChecked(false);
+                    pts_dialog.dismiss();
                 }
-            }
-        });
+            });
 
-        snd_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
-
-
-                confirmOrder();
-
-
-            }
-        });
-
-
-        pts_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (viewModel.points != null) {
-                    if (viewModel.points.getValue() != null) {
-                        if (viewModel.points.getValue().getSuccess()) {
-                            if (viewModel.points.getValue().getData().getExpireDate() <= 0) {
-                                Toast.makeText(getActivity(), "ليس لديك نقاط صالحة للاستبدال", Toast.LENGTH_SHORT).show();
-                                pts_switch.setChecked(false);
-                                pts_switch.setClickable(false);
-                                return;
-                            } else {
-                                pts_switch.setClickable(true);
-
-                            }
-                        }
-
-                    }
+            timeDialog.setContentView(R.layout.time_dialog);
+            timeDialog.findViewById(R.id.xtime).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    timeDialog.dismiss();
                 }
-                if (isChecked) {
-                    if (pts_amounts.size() > 0) {
-                        pts_dialog.show();
-                    } else {
-                        Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
-                        pts_switch.setChecked(false);
-                    }
+            });
+            address_dialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+            map_dailog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+            payDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+            ordersDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+            confirmDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+
+            payDialog.setContentView(R.layout.payment_dialog);
+            payDialog.findViewById(R.id.xpay).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    payDialog.dismiss();
+                }
+            });
+            confirmDialog.setContentView(R.layout.confirm_dialog);
+            map_dailog.setContentView(R.layout.map_dialog);
+            map_dailog.setCancelable(false);
+
+            address_dialog.setContentView(R.layout.address_dialog);
+            address_dialog.findViewById(R.id.xaddress).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    address_dialog.dismiss();
+                }
+            });
+            ordersDialog.setContentView(R.layout.products_dialog);
+            ordersDialog.findViewById(R.id.xorder).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ordersDialog.dismiss();
+                }
+            });
+
+            day_spinner = timeDialog.findViewById(R.id.day_spinner);
+            confirm_time = timeDialog.findViewById(R.id.confirm_time);
+            bank_details = confirmDialog.findViewById(R.id.bank_details);
+            bank_acc_no = confirmDialog.findViewById(R.id.bank_acc_no);
+            bank_iban = confirmDialog.findViewById(R.id.bank_iban);
+            p_bank = payDialog.findViewById(R.id.p_bank);
+            p_deliver = payDialog.findViewById(R.id.p_deliver);
+            p_visa = payDialog.findViewById(R.id.p_visa);
+            set_loc = map_dailog.findViewById(R.id.set_loc);
+            map_spinner = map_dailog.findViewById(R.id.map_spinner);
+            btn_add_loc = map_dailog.findViewById(R.id.btn_add_loc);
+            address_rv = address_dialog.findViewById(R.id.address_rv);
+            banks_rv = confirmDialog.findViewById(R.id.banks_rv);
+            transfer_no = confirmDialog.findViewById(R.id.transfer_no);
+            confirm_transfer = confirmDialog.findViewById(R.id.cnonfirm_transfer);
+            add_copon_btn = addCoponDialog.findViewById(R.id.add_copon);
+            copon_et = addCoponDialog.findViewById(R.id.copon_et);
+
+            time_spinner = timeDialog.findViewById(R.id.time_spinner);
+            products_rv = ordersDialog.findViewById(R.id.products_rv);
+            orders_total_dialog_txt = ordersDialog.findViewById(R.id.orders_total);
+
+            pts_spinner = pts_dialog.findViewById(R.id.pts_spinner);
+            add_pts = pts_dialog.findViewById(R.id.add_pts);
+
+            products_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            products_rv.setAdapter(ordersAdapter);
+
+            if (getArguments() != null) {
+                items = getArguments().getParcelableArrayList("clist");
+                total.setValue(getArguments().getDouble("total"));
+
+                ordersAdapter.setProducts(items);
+
+                semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
+                vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+                vat_txt.setText(vat + " ر.س ");
+                discount_txt.setText("0 ر.س");
+                orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
+                count_tv.setText(calculateCount(items) + "");
+
+                total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
+            }
+
+
+            ArrayAdapter<String> typesadapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, types);
+            map_spinner.setAdapter(typesadapter);
+
+            map_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                    selectedShippingType = types[position];
+
+
                 }
 
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // your code here
+                }
 
-            }
-        });
+            });
 
 
-        total.observe(getViewLifecycleOwner(), new Observer<Double>() {
-            @Override
-            public void onChanged(Double aDouble) {
-                final_total_txt.setText((Double) (Math.round(aDouble * 100) / 100.00) + " ر.س ");
-            }
-        });
+            banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            banks_rv.setAdapter(bankAdapter);
 
-        viewModel.copon.observe(getViewLifecycleOwner(), new Observer<CoponModel>() {
-            @Override
-            public void onChanged(CoponModel coponModel) {
+            show_map = address_dialog.findViewById(R.id.show_map);
+            address_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            address_rv.setAdapter(adapter);
 
-                ((MainActivity) getActivity()).showDialog(false);
-                if (coponModel != null) {
-                    if (coponModel.getSuccess()) {
-                        selected_copon.setText(coponModel.getPromocode().getCode());
+            mapView = map_dailog.findViewById(R.id.mapview);
+            mapprogressBar = map_dailog.findViewById(R.id.mapprogressBar);
+            dismiss_map = map_dailog.findViewById(R.id.dismiss_map);
+            mapView.onCreate(savedInstanceState);
 
-                        coponDiscount = Double.parseDouble(coponModel.getPromocode().getAmount());
-                        discount_txt.setText((Double) (Math.round((total.getValue() * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
 
-                        Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
-                        total.setValue(sum);
-                        vat_txt.setText(vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
-                        vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+            mapView.getMapAsync(this);
 
-                        RequestBody coupon = RequestBody.create(MediaType.parse("text/plain"), coponModel.getPromocode().getCode());
 
-                        requestBodyMap.put("coupon", coupon);
+            setAlertDialogs();
 
-                    } else {
-                        Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
-                    }
-                } else
-                    Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
+            addCoponDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            timeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            pts_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            }
-        });
+            add_copon = v.findViewById(R.id.add_copon);
+            add_time = v.findViewById(R.id.add_time);
+            add_address = v.findViewById(R.id.add_address);
+            add_payment = v.findViewById(R.id.add_payment);
+            show_products = v.findViewById(R.id.show_products);
+            snd_order = v.findViewById(R.id.snd_order);
 
-        viewModel.times.observe(getActivity(), new Observer<TimesModel>() {
-            @Override
-            public void onChanged(TimesModel timesModel) {
-                if (isAdded()) {
+            viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
+                @Override
+                public void onChanged(BanksModel banksModel) {
                     ((MainActivity) getActivity()).showDialog(false);
-                    if (timesModel.getSuccess()) {
-                        times = new ArrayList<>();
-                        for (Time t : timesModel.getTimes())
-                            times.add(t.getName());
-                        ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, times);
-                        time_spinner.setAdapter(aarrdapter);
+
+                    if (banksModel.getStatus() == 200)
+                        bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
+                }
+            });
+
+            viewModel.points.observe(getViewLifecycleOwner(), new Observer<PointsModel>() {
+                @Override
+                public void onChanged(PointsModel pointsModel) {
+                    if (pointsModel != null) {
+                        if (pointsModel.getSuccess()) {
+                            if (pointsModel.getData().getToExchange().size() > 0) {
+                                pts_amounts = new ArrayList<>();
+                                pts_c_txt.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
+                                for (Long l : pointsModel.getData().getToExchange()) {
+                                    pts_amounts.add(l.toString());
+                                }
+                                ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, pts_amounts);
+                                pts_spinner.setAdapter(aarrdapter);
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        terms_txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
+            viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
+                @Override
+                public void onChanged(AddressModel addressModel) {
+                    ((MainActivity) getActivity()).showDialog(false);
 
-                termsBottomSheet.show(getActivity().getSupportFragmentManager(), "tag");
-            }
-        });
+                    if (addressModel.getStatus() == 200) {
+                        adapter.setAddresses((ArrayList<OrderShippingAddress>) addressModel.getOrderShippingAddresses());
+                    }
+                }
+            });
 
-
-        bank_acc_no.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setClipboard(getActivity(), bank_acc_no.getText().toString());
-                Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        bank_iban.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setClipboard(getActivity(), bank_iban.getText().toString());
-                Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        add_pts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pts_dialog.dismiss();
-
-                if (pts_amounts.size() > 0) {
+            snd_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
 
 
-                    ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
+                    if (selected_payment_method.equals("visa")) {
+                        if (((MainActivity)getActivity()).isPaymentSuccess()){
+                            getActivity().finishAffinity();
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            intent.putExtra("order","order");
 
-                    Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
-                    discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount) * 100) / 100.00) + " ر.س ");
+                            startActivity(intent);
+                        }else {
+                            confirmOrder();
+                        }
+                    } else
+                        confirmOrder();
 
-                    Double sum = total.getValue() - (total.getValue() * ptsDiscount);
-                    total.setValue(sum);
-                    vat_txt.setText(vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00)) + " ر.س ");
-                    vat = vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00));
-
-
-                    RequestBody points = RequestBody.create(MediaType.parse("text/plain"), pts_amounts.get(pts_spinner.getSelectedItemPosition()));
-
-                    requestBodyMap.put("points", points);
 
                 }
-            }
-        });
+            });
 
 
-        confirm_transfer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (transfer_no.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل رقم العملية", Toast.LENGTH_SHORT).show();
-                    return;
+            pts_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (viewModel.points != null) {
+                        if (viewModel.points.getValue() != null) {
+                            if (viewModel.points.getValue().getSuccess()) {
+                                if (viewModel.points.getValue().getData().getExpireDate() <= 0) {
+                                    Toast.makeText(getActivity(), "ليس لديك نقاط صالحة للاستبدال", Toast.LENGTH_SHORT).show();
+                                    pts_switch.setChecked(false);
+                                    pts_switch.setClickable(false);
+                                    return;
+                                } else {
+                                    pts_switch.setClickable(true);
+
+                                }
+                            }
+
+                        }
+                    }
+                    if (isChecked) {
+                        if (pts_amounts.size() > 0) {
+                            pts_dialog.show();
+                        } else {
+                            Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
+                            pts_switch.setChecked(false);
+                        }
+                    }
+
+
                 }
+            });
 
-                RequestBody trans_no = RequestBody.create(MediaType.parse("text/plain"), transfer_no.getText().toString());
 
-                requestBodyMap.put("bank_transfer_no", trans_no);
-                confirmOrder();
-            }
-        });
-        add_copon_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (copon_et.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل الكوبون", Toast.LENGTH_SHORT).show();
-                    return;
+            total.observe(getViewLifecycleOwner(), new Observer<Double>() {
+                @Override
+                public void onChanged(Double aDouble) {
+                    final_total_txt.setText((Double) (Math.round(aDouble * 100) / 100.00) + " ر.س ");
                 }
-                ((MainActivity) getActivity()).showDialog(true);
+            });
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("coupon", copon_et.getText().toString());
-                jsonObject.addProperty("total", total.getValue());
-                viewModel.checkCopon(jsonObject, "Bearer " + token);
+            viewModel.copon.observe(getViewLifecycleOwner(), new Observer<CoponModel>() {
+                @Override
+                public void onChanged(CoponModel coponModel) {
 
-                addCoponDialog.dismiss();
-            }
-        });
+                    ((MainActivity) getActivity()).showDialog(false);
+                    if (coponModel != null) {
+                        if (coponModel.getSuccess()) {
+                            selected_copon.setText(coponModel.getPromocode().getCode());
 
+                            coponDiscount = Double.parseDouble(coponModel.getPromocode().getAmount());
+                            discount_txt.setText((Double) (Math.round((total.getValue() * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
 
-        btn_add_loc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedShippingType == null) {
-                    Toast.makeText(getActivity(), "ادحل نوع المستلم", Toast.LENGTH_SHORT).show();
-                    return;
+                            Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
+                            total.setValue(sum);
+                            vat_txt.setText(vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
+                            vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+
+                            RequestBody coupon = RequestBody.create(MediaType.parse("text/plain"), coponModel.getPromocode().getCode());
+
+                            requestBodyMap.put("coupon", coupon);
+
+                        } else {
+                            Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
+                        }
+                    } else
+                        Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
+
                 }
+            });
 
-                if (selectedLocation == null) {
-                    Toast.makeText(getActivity(), "اضف العنوان", Toast.LENGTH_SHORT).show();
-                    return;
+            viewModel.times.observe(getActivity(), new Observer<TimesModel>() {
+                @Override
+                public void onChanged(TimesModel timesModel) {
+                    if (isAdded()) {
+                        ((MainActivity) getActivity()).showDialog(false);
+                        if (timesModel.getSuccess()) {
+                            times = new ArrayList<>();
+                            for (Time t : timesModel.getTimes())
+                                times.add(t.getName());
+                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, times);
+                            time_spinner.setAdapter(aarrdapter);
+                        }
+                    }
                 }
+            });
 
-                if (convertedAddress == null) {
-                    Toast.makeText(getActivity(), "اعد تحديد العنوان", Toast.LENGTH_SHORT).show();
+            terms_txt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
 
-                    return;
+                    termsBottomSheet.show(getActivity().getSupportFragmentManager(), "tag");
                 }
+            });
 
 
-                selected_address.setText(convertedAddress);
-                selected_address_type.setText(types[map_spinner.getSelectedItemPosition()]);
+            bank_acc_no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setClipboard(getActivity(), bank_acc_no.getText().toString());
+                    Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                map_dailog.dismiss();
-                address_dialog.dismiss();
+            bank_iban.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setClipboard(getActivity(), bank_iban.getText().toString());
+                    Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
 
-                RequestBody delivery_type = RequestBody.create(MediaType.parse("text/plain"), "personal");
-                RequestBody address = RequestBody.create(MediaType.parse("text/plain"), convertedAddress);
-                RequestBody lat = RequestBody.create(MediaType.parse("text/plain"), selectedLocation.getLatitude() + "");
-                RequestBody lng = RequestBody.create(MediaType.parse("text/plain"), selectedLocation.getLongitude() + "");
+                }
+            });
+            add_pts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pts_dialog.dismiss();
 
-
-                requestBodyMap.put("delivery_type", delivery_type);
-                requestBodyMap.put("address", address);
-                requestBodyMap.put("lat", lat);
-                requestBodyMap.put("lng", lng);
-
-            }
-        });
-
-
-        pts_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    if (pts_amounts.size() > 0) {
 
 
-            }
+                        ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
+                        Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
+                        discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount) * 100) / 100.00) + " ر.س ");
 
-        });
+                        Double sum = total.getValue() - (total.getValue() * ptsDiscount);
+                        total.setValue(sum);
+                        vat_txt.setText(vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00)) + " ر.س ");
+                        vat = vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00));
 
 
-        time_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        RequestBody points = RequestBody.create(MediaType.parse("text/plain"), pts_amounts.get(pts_spinner.getSelectedItemPosition()));
 
-                if (times != null) {
-                    if (times.size() > 0) {
-                        String stimw = times.get(position);
-
-                        String[] tarr = stimw.split("-");
-                        RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), tarr[0].replace(" ", "") + ":00");
-                        RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), tarr[1].replace(" ", "") + ":00");
-                        time = stimw;
-                        requestBodyMap.put("delivery_start_time", delivery_start_time);
-                        requestBodyMap.put("delivery_end_time", delivery_end_time);
+                        requestBodyMap.put("points", points);
 
                     }
                 }
+            });
 
 
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-
-
-        day_spinner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar newCalendar = Calendar.getInstance();
-                DatePickerDialog StartTime = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        Calendar newDate = Calendar.getInstance();
-                        newDate.set(year, monthOfYear, dayOfMonth);
-
-                        day_spinner.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                        JsonObject jsonObject = new JsonObject();
-                        String month = (monthOfYear + 1) + "";
-                        String day = dayOfMonth + "";
-                        if (month.length() == 1)
-                            month = "0" + month;
-                        if (day.length() == 1)
-                            day = "0" + day;
-                        ((MainActivity) getActivity()).showDialog(true);
-
-                        RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), year + "-" + month + "-" + day);
-
-                        requestBodyMap.put("delivery_date", delivery_date);
-
-                        date = year + "-" + month + "-" + day;
-                        jsonObject.addProperty("delivery_date", year + "-" + month + "-" + day);
-                        viewModel.getTimes(jsonObject, "Bearer " + Paper.book().read("token").toString());
+            confirm_transfer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (transfer_no.getText().toString().isEmpty()) {
+                        Toast.makeText(getActivity(), "ادخل رقم العملية", Toast.LENGTH_SHORT).show();
+                        return;
                     }
 
-                }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+                    RequestBody trans_no = RequestBody.create(MediaType.parse("text/plain"), transfer_no.getText().toString());
 
-                StartTime.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                StartTime.show();
-            }
-        });
+                    requestBodyMap.put("bank_transfer_no", trans_no);
+                    confirmOrder();
+                }
+            });
+            add_copon_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (copon_et.getText().toString().isEmpty()) {
+                        Toast.makeText(getActivity(), "ادخل الكوبون", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    ((MainActivity) getActivity()).showDialog(true);
 
-        confirm_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog.dismiss();
-                if (date != null && time != null) {
-                    if (!date.isEmpty() && !time.isEmpty()) {
-                        selected_date.setText(date + " . " + time);
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("coupon", copon_et.getText().toString());
+                    jsonObject.addProperty("total", total.getValue());
+                    viewModel.checkCopon(jsonObject, "Bearer " + token);
+
+                    addCoponDialog.dismiss();
+                }
+            });
+
+
+            btn_add_loc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (selectedShippingType == null) {
+                        Toast.makeText(getActivity(), "ادحل نوع المستلم", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (selectedLocation == null) {
+                        Toast.makeText(getActivity(), "اضف العنوان", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (convertedAddress == null) {
+                        Toast.makeText(getActivity(), "اعد تحديد العنوان", Toast.LENGTH_SHORT).show();
+
+                        return;
+                    }
+
+
+                    selected_address.setText(convertedAddress);
+                    selected_address_type.setText(types[map_spinner.getSelectedItemPosition()]);
+
+                    map_dailog.dismiss();
+                    address_dialog.dismiss();
+
+                    RequestBody delivery_type = RequestBody.create(MediaType.parse("text/plain"), "personal");
+                    RequestBody address = RequestBody.create(MediaType.parse("text/plain"), convertedAddress);
+                    RequestBody lat = RequestBody.create(MediaType.parse("text/plain"), selectedLocation.getLatitude() + "");
+                    RequestBody lng = RequestBody.create(MediaType.parse("text/plain"), selectedLocation.getLongitude() + "");
+
+
+                    requestBodyMap.put("delivery_type", delivery_type);
+                    requestBodyMap.put("address", address);
+                    requestBodyMap.put("lat", lat);
+                    requestBodyMap.put("lng", lng);
+
+                }
+            });
+
+
+            pts_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // your code here
+                }
+
+            });
+
+
+            time_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                    if (times != null) {
+                        if (times.size() > 0) {
+                            String stimw = times.get(position);
+
+                            String[] tarr = stimw.split("-");
+                            RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), tarr[0].replace(" ", "") + ":00");
+                            RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), tarr[1].replace(" ", "") + ":00");
+                            time = stimw;
+                            requestBodyMap.put("delivery_start_time", delivery_start_time);
+                            requestBodyMap.put("delivery_end_time", delivery_end_time);
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // your code here
+                }
+
+            });
+
+
+            day_spinner.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Calendar newCalendar = Calendar.getInstance();
+                    DatePickerDialog StartTime = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            Calendar newDate = Calendar.getInstance();
+                            newDate.set(year, monthOfYear, dayOfMonth);
+
+                            day_spinner.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            JsonObject jsonObject = new JsonObject();
+                            String month = (monthOfYear + 1) + "";
+                            String day = dayOfMonth + "";
+                            if (month.length() == 1)
+                                month = "0" + month;
+                            if (day.length() == 1)
+                                day = "0" + day;
+                            ((MainActivity) getActivity()).showDialog(true);
+
+                            RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), year + "-" + month + "-" + day);
+
+                            requestBodyMap.put("delivery_date", delivery_date);
+
+                            date = year + "-" + month + "-" + day;
+                            jsonObject.addProperty("delivery_date", year + "-" + month + "-" + day);
+                            viewModel.getTimes(jsonObject, "Bearer " + Paper.book().read("token").toString());
+                        }
+
+                    }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+                    StartTime.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                    StartTime.show();
+                }
+            });
+
+            confirm_time.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    timeDialog.dismiss();
+                    if (date != null && time != null) {
+                        if (!date.isEmpty() && !time.isEmpty()) {
+                            selected_date.setText(date + " . " + time);
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).onBackPressed();
-            }
-        });
-        show_products.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ordersDialog.show();
-            }
-        });
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).onBackPressed();
+                }
+            });
+            show_products.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ordersDialog.show();
+                }
+            });
 
-        add_copon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addCoponDialog.show();
-            }
-        });
+            add_copon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addCoponDialog.show();
+                }
+            });
 
-        add_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog.show();
-            }
-        });
+            add_time.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    timeDialog.show();
+                }
+            });
 
-        add_address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                address_dialog.show();
-            }
-        });
+            add_address.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    address_dialog.show();
+                }
+            });
 
-        add_payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                payDialog.show();
-            }
-        });
+            add_payment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    payDialog.show();
+                }
+            });
 
-        show_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedLocation = null;
-                checkLocPermission();
-            }
-        });
+            show_map.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedLocation = null;
+                    checkLocPermission();
+                }
+            });
 
-        set_loc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedLocation = null;
-                checkLocPermission();
-            }
-        });
+            set_loc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedLocation = null;
+                    checkLocPermission();
+                }
+            });
 
-        dismiss_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                map_dailog.dismiss();
-            }
-        });
+            dismiss_map.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    map_dailog.dismiss();
+                }
+            });
 
 
-        p_bank.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentMethod.setValue("تحويل بنكي");
-                selected_payment_method = "bank";
-                confirmDialog.show();
-            }
-        });
-        p_visa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentMethod.setValue("بطاقة مدى / visa");
-                selected_payment_method = "visa";
+            p_bank.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    paymentMethod.setValue("تحويل بنكي");
+                    selected_payment_method = "bank";
+                    confirmDialog.show();
+                }
+            });
+            p_visa.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    paymentMethod.setValue("بطاقة مدى / visa");
+                    selected_payment_method = "visa";
 
-                confirmOrder();
+                    confirmOrder();
 
-            }
-        });
+                }
+            });
 
-        p_deliver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentMethod.setValue("الدفع عن الإستلام");
-                selected_payment_method = "cash";
+            p_deliver.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    paymentMethod.setValue("الدفع عن الإستلام");
+                    selected_payment_method = "cash";
 
-                payDialog.dismiss();
-            }
-        });
+                    payDialog.dismiss();
+                }
+            });
 
-        paymentMethod.observe(getActivity(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                selected_payment.setText(s);
-            }
-        });
-        setDialogsFullScreen();
+            paymentMethod.observe(getActivity(), new Observer<String>() {
+                @Override
+                public void onChanged(String s) {
+                    selected_payment.setText(s);
+                }
+            });
+            setDialogsFullScreen();
+        }
 
 
         return v;
@@ -901,7 +915,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                                 b.putString("html", visaModel.getData().getView());
                                 blankFragment.setArguments(b);
-                                ((MainActivity) getActivity()).fragmentStack.replace(blankFragment);
+                                ((MainActivity) getActivity()).fragmentStack.push(blankFragment);
 
 
                             }
@@ -1244,4 +1258,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             clipboard.setPrimaryClip(clip);
         }
     }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((MainActivity) getActivity()).setPaymentSuccess(false);
+
+    }
+
+
 }

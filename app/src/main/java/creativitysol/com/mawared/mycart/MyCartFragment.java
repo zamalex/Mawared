@@ -30,6 +30,7 @@ import java.util.Iterator;
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import creativitysol.com.mawared.MainActivity;
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.home.HomeFragment;
 import creativitysol.com.mawared.home.model.addmodel.AddCardModel;
 import creativitysol.com.mawared.login.LoginActivity;
 import creativitysol.com.mawared.mycart.model.CardModel;
@@ -82,6 +83,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         total_sum = v.findViewById(R.id.total_sum);
         next = v.findViewById(R.id.btn_next);
         next.setBackgroundResource(R.drawable.next_radius);
+
 
 
 

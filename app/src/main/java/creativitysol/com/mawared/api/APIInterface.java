@@ -33,6 +33,7 @@ import creativitysol.com.mawared.sendorder.model.PaymentModel;
 import creativitysol.com.mawared.sendorder.model.TimesModel;
 import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
+import creativitysol.com.mawared.sendorder.model.paymentmodel.visa.VisaModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
 import creativitysol.com.mawared.update.model.SendCodeModel;
 import creativitysol.com.mawared.update.model.UpdateModel;
@@ -55,7 +56,7 @@ public interface APIInterface {
 
 
     @GET("products")
-    Call<HomeProductModel> getHomeProducts();
+    Call<HomeProductModel> getHomeProducts(@Query("cart_id") String cart_id);
 
     @GET("orders")
     Call<AllOrder> getAllOrders(@Query("page") int pageNumber, @Header("Authorization") String token);
@@ -137,7 +138,7 @@ public interface APIInterface {
 
     @Multipart
     @POST("orders")
-    Call<ResponseBody> sendOrderVisa(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
+    Call<VisaModel> sendOrderVisa(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
     @Multipart
@@ -178,6 +179,10 @@ public interface APIInterface {
 
     @POST("send-mobile-code")
     Call<SendCodeModel> sendCodeMobile(@Body JsonObject jsonObject, @Header("Authorization") String token);
+
+
+    @POST("payment/return")
+    Call<ResponseBody> tstPayment();
 
 
     @GET("carts/{user_id}/user-cart")

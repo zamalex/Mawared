@@ -83,6 +83,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     SharedPreferences pref;
     SharedPreferences.OnSharedPreferenceChangeListener listener;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -114,7 +116,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                     String ccc = Paper.book().read("cid", null);
 
                     viewModel.getHomeProducts(ccc);
-                    Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
 
                 }
 

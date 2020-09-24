@@ -54,7 +54,11 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
                     if (productModel.getQuantity() >= part1 && part2 > 0) {
                         holder.offer_c.setVisibility(View.VISIBLE);
                         holder.tv_productDetailsName2.setText(productModel.getTitle());
-                        holder.tv_productCountDetails2.setText("x"+productModel.getQuantity());
+
+                        int q = Integer.parseInt(productModel.getQuantity() + "") / part1 * part2;
+
+                        holder.tv_productCountDetails2.setText("x"+q);
+
                     } else
                         holder.offer_c.setVisibility(View.GONE);
 

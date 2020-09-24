@@ -50,13 +50,14 @@ public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Ho
                 if (!p.getOffer().isEmpty()) {
                     String o = p.getOffer().replace(" ", "");
                     String[] parts = o.split(c);
-                    int part1 = Integer.parseInt(parts[0]);
-                    int part2 = Integer.parseInt(parts[1]);
+                    int part1 = Integer.parseInt(parts[0]);//7
+                    int part2 = Integer.parseInt(parts[1]);//1
 
                     if (p.getInCartQuantity() >= part1 && part2 > 0) {
                         holder.offer_c.setVisibility(View.VISIBLE);
                         holder.name2.setText(p.getTitle());
-                        holder.count2.setText("x"+p.getInCartQuantity());
+                        int q = Integer.parseInt(p.getInCartQuantity() + "") / part1 * part2;
+                        holder.count2.setText("x"+q);
                     } else
                         holder.offer_c.setVisibility(View.GONE);
 
