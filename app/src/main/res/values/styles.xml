@@ -27,6 +27,10 @@
 
     </style>
 
-
+    <style name="my_time_picker_style">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/urosemi</item>
+        <item name="colorControlNormal">@color/backgrey</item>
+    </style>
 
 </resources>

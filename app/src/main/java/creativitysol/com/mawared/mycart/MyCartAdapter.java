@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import creativitysol.com.mawared.R;
 
@@ -165,10 +166,15 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     }
 
     public void setProducts(ArrayList<Product> products) {
-        for (Product p : products){
-            if (p.getInCartQuantity()==0)
-                products.remove(p);
+
+
+        for (Iterator<Product> it = products.iterator(); it.hasNext(); ) {
+            Product aDrugStrength = it.next();
+            if (aDrugStrength.getInCartQuantity()==0) {
+                it.remove();
+            }
         }
+
         this.products = products;
         notifyDataSetChanged();
     }

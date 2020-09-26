@@ -109,7 +109,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Dialog addCoponDialog, timeDialog, pts_dialog;
     RecyclerView address_rv, products_rv, banks_rv;
 
-    BottomSheetDialog address_dialog, map_dailog, payDialog, ordersDialog, confirmDialog;
+    BottomSheetDialog address_dialog, map_dailog, payDialog, ordersDialog, confirmDialog,datePickerDialog;
 
     AddressAdapter adapter;
     SentOrdersAdapter ordersAdapter;
@@ -151,7 +151,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Double total_before = 0d;
     Double vat = 0d;
 
-    TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv;
+    TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv,done_date;
+    DatePicker datePicker;
 
     SwitchMaterial pts_switch;
 
@@ -159,7 +160,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     String date = "", time = "";
 
-    String selected_payment_method = null;
+    String selected_payment_method = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -239,10 +240,18 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 }
             });
             address_dialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+            datePickerDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
             map_dailog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
             payDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
             ordersDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
             confirmDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+
+
+            datePickerDialog.setContentView(R.layout.date_picker_bottom);
+            done_date = datePickerDialog.findViewById(R.id.done_date);
+            datePicker = datePickerDialog.findViewById(R.id.datePicker);
+
+
 
             payDialog.setContentView(R.layout.payment_dialog);
             payDialog.findViewById(R.id.xpay).setOnClickListener(new View.OnClickListener() {
@@ -408,6 +417,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onClick(View v) {
                     // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
+
 
 
                     if (selected_payment_method.equals("visa")) {
@@ -690,35 +700,43 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             day_spinner.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Calendar newCalendar = Calendar.getInstance();
-                    DatePickerDialog StartTime = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            Calendar newDate = Calendar.getInstance();
-                            newDate.set(year, monthOfYear, dayOfMonth);
 
-                            day_spinner.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                            JsonObject jsonObject = new JsonObject();
-                            String month = (monthOfYear + 1) + "";
-                            String day = dayOfMonth + "";
-                            if (month.length() == 1)
-                                month = "0" + month;
-                            if (day.length() == 1)
-                                day = "0" + day;
-                            ((MainActivity) getActivity()).showDialog(true);
 
-                            RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), year + "-" + month + "-" + day);
+                    datePickerDialog.show();
+                }
 
-                            requestBodyMap.put("delivery_date", delivery_date);
 
-                            date = year + "-" + month + "-" + day;
-                            jsonObject.addProperty("delivery_date", year + "-" + month + "-" + day);
-                            viewModel.getTimes(jsonObject, "Bearer " + Paper.book().read("token").toString());
-                        }
 
-                    }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+            });
+            datePicker.setMinDate(System.currentTimeMillis() - 1000);
+            done_date.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int year = datePicker.getYear();
+                    int dayOfMonth = datePicker.getDayOfMonth();
+                    int monthOfYear = datePicker.getMonth();
 
-                    StartTime.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                    StartTime.show();
+                    Calendar newDate = Calendar.getInstance();
+                    newDate.set(year, monthOfYear, dayOfMonth);
+
+                    day_spinner.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    JsonObject jsonObject = new JsonObject();
+                    String month = (monthOfYear + 1) + "";
+                    String day = dayOfMonth + "";
+                    if (month.length() == 1)
+                        month = "0" + month;
+                    if (day.length() == 1)
+                        day = "0" + day;
+                    ((MainActivity) getActivity()).showDialog(true);
+
+                    RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), year + "-" + month + "-" + day);
+
+                    requestBodyMap.put("delivery_date", delivery_date);
+
+                    date = year + "-" + month + "-" + day;
+                    jsonObject.addProperty("delivery_date", year + "-" + month + "-" + day);
+                    viewModel.getTimes(jsonObject, "Bearer " + Paper.book().read("token").toString());
+                    datePickerDialog.dismiss();
                 }
             });
 
@@ -861,7 +879,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         }
 
 
-        if (selected_payment_method == null) {
+        if (selected_payment_method.isEmpty()) {
             Toast.makeText(getActivity(), "اختر طريقة الدفع", Toast.LENGTH_SHORT).show();
             return;
         }

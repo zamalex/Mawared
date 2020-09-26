@@ -22,6 +22,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.yariksoffice.lingver.Lingver;
 
 import java.util.Locale;
 
@@ -198,4 +199,9 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Lingver.getInstance().setLocale(this, "ar");
+    }
 }
