@@ -51,15 +51,5 @@ public class SupportFragment extends Fragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        ((MainActivity)getActivity()).bottomNavVisibility(true);
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        ((MainActivity)getActivity()).bottomNavVisibility(false);
-    }
 }

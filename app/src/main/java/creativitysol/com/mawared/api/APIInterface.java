@@ -35,6 +35,9 @@ import creativitysol.com.mawared.sendorder.model.copon.CoponModel;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.visa.VisaModel;
 import creativitysol.com.mawared.sendorder.model.points.PointsModel;
+import creativitysol.com.mawared.support.chat.model.SendMsgModel;
+import creativitysol.com.mawared.support.chat.model.received.ReceivedChat;
+import creativitysol.com.mawared.support.chatlist.model.ChatList;
 import creativitysol.com.mawared.update.model.SendCodeModel;
 import creativitysol.com.mawared.update.model.UpdateModel;
 import okhttp3.RequestBody;
@@ -179,6 +182,19 @@ public interface APIInterface {
 
     @POST("send-mobile-code")
     Call<SendCodeModel> sendCodeMobile(@Body JsonObject jsonObject, @Header("Authorization") String token);
+
+
+    @POST("messages/send")
+    Call<SendMsgModel> sendMessage(@Query("message")String message, @Query("conversation_id")String conversation_id, @Query("order_id")String order_id, @Query("title")String title, @Header("Authorization") String token);
+
+
+    @GET("messages")
+    Call<ChatList> getChats(@Header("Authorization") String token);
+
+
+
+    @GET("messages/get-chat")
+    Call<ReceivedChat> receivedChat(@Query("conversation_id")String conversation_id, @Query("order_id")String order_id,@Header("Authorization") String token);
 
 
     @POST("payment/return")

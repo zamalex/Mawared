@@ -19,7 +19,7 @@ public class NotificationViewModel extends ViewModel {
     public MutableLiveData<Notification> getAllNotification(int pageNumber){
         notificationMutableLiveData = new MutableLiveData<>();
         RetrofitClient.getApiInterface().getNotification(pageNumber,
-                "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk5ODQ0MTc2LCJleHAiOjE2MDA0NDg5NzYsIm5iZiI6MTU5OTg0NDE3NiwianRpIjoieXJhUXVmSXllaUtLM0E4TSJ9.2aoJij9XgyyYUU9GQv3LrbB9rU3QP0Wyy2SeUzr6v2w")
+                "Bearer "+Paper.book().read("token","none"))
                 .enqueue(new Callback<Notification>() {
             @Override
             public void onResponse(Call<Notification> call, Response<Notification> response) {

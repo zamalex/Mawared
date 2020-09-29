@@ -36,6 +36,7 @@ import creativitysol.com.mawared.orders.OrderFragment;
 import creativitysol.com.mawared.settings.SettingsFragment;
 import creativitysol.com.mawared.support.SupportFragment;
 import creativitysol.com.mawared.support.chat.ChatFragment;
+import creativitysol.com.mawared.support.chatlist.ChatListFragment;
 import io.paperdb.Paper;
 
 public class MainActivity extends AppCompatActivity {
@@ -112,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.products)
                     fragmentStack.replace(homeFragment);
-                /*else if (item.getItemId() == R.id.support)
-                    fragmentStack.replace(new CSoonFragment());*/
+                else if (item.getItemId() == R.id.support)
+                    fragmentStack.replace(new PusherFragment());
                 else if (item.getItemId() == R.id.settings) {
 
                     String token = Paper.book().read("token", "none");

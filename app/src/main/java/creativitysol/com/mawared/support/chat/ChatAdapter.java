@@ -10,12 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import java.util.ArrayList;
+
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.support.chat.model.received.Message;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
 
+    ArrayList<Message> messages = new ArrayList<>();
+
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -27,11 +36,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.Holder holder, final int position) {
-        if (position % 2 == 0) {
+
+        Message msg = messages.get(position);
+        if (msg.getUserId().equals("2")) {
             holder.me.setVisibility(View.VISIBLE);
             holder.you.setVisibility(View.GONE);
             holder.met.setVisibility(View.VISIBLE);
             holder.yout.setVisibility( View.GONE);
+
+            holder.me.setText(msg.getMessage());
+
 
 
 
@@ -40,6 +54,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
             holder.you.setVisibility(View.VISIBLE);
             holder.met.setVisibility(View.GONE);
             holder.yout.setVisibility(View.VISIBLE);
+
+            holder.you.setText(msg.getMessage());
+
 
         }
 
@@ -50,7 +67,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
     @Override
     public int getItemCount() {
 
-        return 5;
+        if (messages==null)
+            return 0;
+        return messages.size();
     }
 
     class Holder extends RecyclerView.ViewHolder {
