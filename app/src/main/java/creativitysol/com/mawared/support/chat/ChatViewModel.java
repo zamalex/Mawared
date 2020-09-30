@@ -11,10 +11,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChatViewModel extends ViewModel {
-    MutableLiveData<SendMsgModel> sendMsgModelMutableLiveData = new MutableLiveData<>();
+   public MutableLiveData<SendMsgModel> sendMsgModelMutableLiveData = new MutableLiveData<>();
     MutableLiveData<ReceivedChat> receivedChatMutableLiveData = new MutableLiveData<>();
 
-    void sendNsg(String msg, String id ,String order,String title,String token){
+   public void sendNsg(String msg, String id ,String order,String title,String token){
         RetrofitClient.getApiInterface().sendMessage(msg,id,order,title,token).enqueue(new Callback<SendMsgModel>() {
             @Override
             public void onResponse(Call<SendMsgModel> call, Response<SendMsgModel> response) {

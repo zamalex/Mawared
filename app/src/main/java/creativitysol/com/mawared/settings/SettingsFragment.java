@@ -3,6 +3,7 @@ package creativitysol.com.mawared.settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -184,6 +185,16 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
             ((MainActivity)getActivity()).fragmentStack.push(new AboutMawaredFragment());
         else if (settings.itemId==6)
             logout();
+
+        else if (settings.itemId==3||settings.itemId==4){
+            final String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (android.content.ActivityNotFoundException anfe) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+        }
+
     }
 
     void logout(){

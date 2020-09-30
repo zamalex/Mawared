@@ -32,6 +32,7 @@ import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.helpers.FragmentStack;
 import creativitysol.com.mawared.orderdetails.model.OrderDetails;
 import creativitysol.com.mawared.sendorder.model.paymentmodel.ConfirmModel;
+import creativitysol.com.mawared.support.SupportFragment;
 import io.paperdb.Paper;
 
 
@@ -44,6 +45,7 @@ public class OrderDetailsFragment extends Fragment {
     TextView tv_orderDetailsNumber, tv_orderDetailsStatus, tv_totalPrice;
     ConstraintLayout cl_orderStatus;
     double totalPrice;
+    ImageView go_support;
     ImageView ic_BackBtn;
     FragmentStack fragmentStack;
     ImageButton cancel_order;
@@ -72,6 +74,7 @@ public class OrderDetailsFragment extends Fragment {
            }
        });
         rv_productDetails = view.findViewById(R.id.rv_productDetails);
+        go_support = view.findViewById(R.id.imageView6);
         cl_orderStatus = view.findViewById(R.id.cl_orderDetailsStatus);
         tv_orderDetailsNumber = view.findViewById(R.id.tv_orderDetailsNumber);
         tv_orderDetailsStatus = view.findViewById(R.id.tv_orderDetailsStatus);
@@ -125,6 +128,14 @@ public class OrderDetailsFragment extends Fragment {
                 fragmentStack = new FragmentStack(getActivity(), getActivity().getSupportFragmentManager(), R.id.main_container);
                 fragmentStack.back();
 
+            }
+        });
+
+
+        go_support.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).fragmentStack.push(new SupportFragment());
             }
         });
 

@@ -3,8 +3,10 @@ package creativitysol.com.mawared.support.chatlist.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-public class Chat {
+public class Chat implements Serializable {
 
     @SerializedName("created_at")
     private String mCreatedAt;

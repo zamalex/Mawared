@@ -32,7 +32,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:visibility="invisible"
         android:id="@+id/imageView6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

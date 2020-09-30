@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import creativitysol.com.mawared.R;
+import creativitysol.com.mawared.login.model.LoginResponse;
 import creativitysol.com.mawared.support.chat.model.received.Message;
+import io.paperdb.Paper;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
+    String user = ((LoginResponse) Paper.book().read("login")).getUser().getId().toString();
 
     ArrayList<Message> messages = new ArrayList<>();
 
@@ -38,7 +41,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
     public void onBindViewHolder(@NonNull final ChatAdapter.Holder holder, final int position) {
 
         Message msg = messages.get(position);
-        if (msg.getUserId().equals("2")) {
+        if (msg.getUserId().equals(user)) {
             holder.me.setVisibility(View.VISIBLE);
             holder.you.setVisibility(View.GONE);
             holder.met.setVisibility(View.VISIBLE);

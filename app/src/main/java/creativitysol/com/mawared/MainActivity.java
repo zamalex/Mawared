@@ -113,8 +113,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.products)
                     fragmentStack.replace(homeFragment);
-                else if (item.getItemId() == R.id.support)
-                    fragmentStack.replace(new PusherFragment());
+                else if (item.getItemId() == R.id.support) {
+                    String token = Paper.book().read("token", "none");
+
+                    if (token.equals("none")){
+                        Toast.makeText(MainActivity.this, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
+                    }else {
+                        fragmentStack.replace(new ChatListFragment());
+
+                    }
+
+                }
                 else if (item.getItemId() == R.id.settings) {
 
                     String token = Paper.book().read("token", "none");

@@ -3,22 +3,26 @@ package creativitysol.com.mawared.support.chatlist.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class ChatList {
 
     @SerializedName("data")
-    private Data mData;
+    private List<Chat> mChats;
+
+
     @SerializedName("status")
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
 
-    public Data getData() {
-        return mData;
+    public List<Chat> getChats() {
+        return mChats;
     }
 
-    public void setData(Data data) {
-        mData = data;
+    public void setChats(List<Chat> chats) {
+        mChats = chats;
     }
 
     public Long getStatus() {
