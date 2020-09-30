@@ -180,9 +180,11 @@ public class ChatFragment extends Fragment {
                             JSONObject jsonObject = new JSONObject(event.getData());
                             message.setMessage(jsonObject.getString("message"));
                             message.setUserId(jsonObject.getString("user_id"));
+                            message.setCreatedAt(jsonObject.getString("created_at"));
 
                             chatAdapter.messages.add(message);
                             chatAdapter.notifyDataSetChanged();
+                            System.out.println("data is "+event.getData());
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -10,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import creativitysol.com.mawared.R;
 import creativitysol.com.mawared.login.model.LoginResponse;
@@ -41,6 +44,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
     public void onBindViewHolder(@NonNull final ChatAdapter.Holder holder, final int position) {
 
         Message msg = messages.get(position);
+        String newString="00:00 AM";
+        String originalString = msg.getCreatedAt();
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+             newString = new SimpleDateFormat("H:mm a").format(date);
+
+
+
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            newString="00:00 AM";
+        }
+
+
+
+
         if (msg.getUserId().equals(user)) {
             holder.me.setVisibility(View.VISIBLE);
             holder.you.setVisibility(View.GONE);
@@ -49,7 +71,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
             holder.me.setText(msg.getMessage());
 
-
+            holder.met.setText(newString);
 
 
         } else {
@@ -59,6 +81,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
             holder.yout.setVisibility(View.VISIBLE);
 
             holder.you.setText(msg.getMessage());
+            holder.yout.setText(newString);
 
 
         }
