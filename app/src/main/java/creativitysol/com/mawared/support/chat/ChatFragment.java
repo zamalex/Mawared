@@ -69,9 +69,12 @@ public class ChatFragment extends Fragment {
 
         chat_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (getArguments() != null)
-            if (getArguments().getSerializable("chat") != null)
+        if (getArguments() != null){
+            if (getArguments().getSerializable("chat") != null){
                 chat = (Chat) getArguments().getSerializable("chat");
+                connectPusher(chat.getChannelId());
+            }
+        }
         chatAdapter = new ChatAdapter();
 
         chat_rv.setAdapter(chatAdapter);
@@ -95,7 +98,10 @@ public class ChatFragment extends Fragment {
                 if (receivedChat != null) {
                     if (receivedChat.getSuccess()) {
                         chatAdapter.setMessages((ArrayList<Message>) receivedChat.getData().getMessages());
-                        connectPusher(receivedChat.getData().getChannelId());
+
+                        if (chatAdapter.messages.size()>0){
+                            chat_rv.scrollToPosition(chatAdapter.messages.size()-1);
+                        }
 
                     }
                 }
@@ -185,6 +191,10 @@ public class ChatFragment extends Fragment {
                             chatAdapter.messages.add(message);
                             chatAdapter.notifyDataSetChanged();
                             System.out.println("data is "+event.getData());
+
+                            if (chatAdapter.messages.size()>0){
+                                chat_rv.scrollToPosition(chatAdapter.messages.size()-1);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

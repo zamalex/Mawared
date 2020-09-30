@@ -162,6 +162,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     String selected_payment_method = "";
 
+    Double vat_without_pts=null;
+    Double price_without_pts = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -315,11 +318,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                 semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
                 vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+                vat_without_pts = vat;
                 vat_txt.setText(vat + " ر.س ");
                 discount_txt.setText("0 ر.س");
                 orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
                 count_tv.setText(calculateCount(items) + "");
-
+                price_without_pts = (Double) (Math.round((total.getValue()) * 100) / 100.00);
                 total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
             }
 
@@ -465,6 +469,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
                             pts_switch.setChecked(false);
                         }
+                        vat_txt.setText((Double) (Math.round((vat) * 100) / 100.00) + " ر.س ");
+
+                        final_total_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
+
+                    }else {
+                        final_total_txt.setText((Double) (Math.round((price_without_pts) * 100) / 100.00) + " ر.س ");
+                        vat_txt.setText((Double) (Math.round((vat_without_pts) * 100) / 100.00) + " ر.س ");
+
+
+                        discount_txt.setText("0 ر.س ");
                     }
 
 
@@ -492,6 +506,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             discount_txt.setText((Double) (Math.round((total.getValue() * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
 
                             Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
+                            price_without_pts = sum;
                             total.setValue(sum);
                             vat_txt.setText(vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00)) + " ر.س ");
                             vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
@@ -882,6 +897,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         if (selected_payment_method.isEmpty()) {
             Toast.makeText(getActivity(), "اختر طريقة الدفع", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (!pts_switch.isChecked()){
+            requestBodyMap.remove("points");
         }
 
 

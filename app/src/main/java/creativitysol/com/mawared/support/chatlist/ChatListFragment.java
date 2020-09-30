@@ -62,8 +62,8 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
 
                 if (chatList != null) {
                     if (chatList.getSuccess()) {
-                        adapter.setMessages((ArrayList<Chat>) chatList.getChats());
-                        if (chatList.getChats().size() > 0) {
+                        adapter.setMessages((ArrayList<Chat>) chatList.getData());
+                        if (chatList.getData().size() > 0) {
                             msg_txt.setVisibility(View.INVISIBLE);
 
                         } else {

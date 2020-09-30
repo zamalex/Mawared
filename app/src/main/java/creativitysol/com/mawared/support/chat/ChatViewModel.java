@@ -50,7 +50,7 @@ public class ChatViewModel extends ViewModel {
             @Override
             public void onFailure(Call<ReceivedChat> call, Throwable t) {
                 receivedChatMutableLiveData.setValue(null);
-
+                System.out.println("error is "+t.getLocalizedMessage());
             }
         });
     }
