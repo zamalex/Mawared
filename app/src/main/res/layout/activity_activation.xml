@@ -16,7 +16,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="60dp"
-        android:text="رمز التحقيق"
+        android:text="رمز التحقق"
         android:textSize="22sp"
         android:fontFamily="@font/urwbold"
         android:textColor="#0D2142"

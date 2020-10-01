@@ -78,7 +78,24 @@
             android:background="@drawable/custom_spinner"
 
             android:padding="10dp" />
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/radius_et"
+            android:hint="اسم المستلم"
+            android:visibility="gone"
 
+            android:fontFamily="@font/urosemi"
+            android:gravity="right|center_vertical"
+            android:inputType="text"
+            android:padding="10dp"
+            android:textColorHint="#7B92A5" />
         <EditText
             android:id="@+id/editText2"
             android:layout_width="match_parent"
@@ -90,6 +107,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/radius_et"
             android:hint="رقم التواصل"
+            android:visibility="gone"
             android:fontFamily="@font/urosemi"
             android:gravity="right|center_vertical"
             android:inputType="phone"
@@ -105,7 +123,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:gravity="center_horizontal|bottom"
+            android:gravity="center"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/urwbold"

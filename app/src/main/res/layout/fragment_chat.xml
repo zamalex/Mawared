@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/urwbold"
-        android:text="الدعم الفني"
+        android:text="خدمة العملاء"
         android:textColor="#0D2142"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"

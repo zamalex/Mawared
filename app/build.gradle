@@ -1,6 +1,8 @@
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 buildscript {
     repositories {
@@ -34,7 +36,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "creativitysol.com.mawared"
+        applicationId "app.mawared.alhayat"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
@@ -133,6 +135,10 @@ dependencies {
     implementation "org.slf4j:slf4j-simple:1.7.9"
 
     implementation 'com.github.HBiSoft:PickiT:0.1.10'
+
+
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
 
 
 }

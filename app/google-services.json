@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "186909515853",
+    "firebase_url": "https://mawared-8d7a3.firebaseio.com",
+    "project_id": "mawared-8d7a3",
+    "storage_bucket": "mawared-8d7a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186909515853:android:9d3c2c9cd677a66a5d3c04",
+        "android_client_info": {
+          "package_name": "app.mawared.alhayat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186909515853-1bv76ldlacl6mat9d4i022c7hdt8gm2e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.mawared.alhayat",
+            "certificate_hash": "0fabbec44bceffbd512ae102eb7c62d6594a289c"
+          }
+        },
+        {
+          "client_id": "186909515853-vng27euh91q751deucl4rkq9i8kc6hii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5E1dS8gB5_5EiCA2rcfteFFhukoFtIKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186909515853-vng27euh91q751deucl4rkq9i8kc6hii.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "186909515853-d858rf136esd5bp6efd26b7fcvuh9g8q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.mawared.alhayat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

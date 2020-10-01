@@ -62,7 +62,7 @@
         android:textSize="18sp"
         android:fontFamily="@font/urwbold"
         android:text="تم"
-        android:gravity="bottom|center_horizontal"
+        android:gravity="center"
         android:background="@drawable/button_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

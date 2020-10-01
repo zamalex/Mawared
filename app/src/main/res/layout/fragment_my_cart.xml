@@ -62,8 +62,7 @@
             android:background="@drawable/next_radius"
             android:fontFamily="@font/urwbold"
             android:text="التالي"
-            android:gravity="bottom|center_horizontal"
-            android:paddingBottom="5dp"
+            android:gravity="center"
             android:textColor="@color/white"
             android:textSize="18sp"
 
