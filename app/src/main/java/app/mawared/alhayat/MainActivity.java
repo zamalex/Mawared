@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -65,10 +66,14 @@ public class MainActivity extends AppCompatActivity {
                             this,
                             // Include a request code to later monitor this update request.
                             555);
+                    Log.e("updatee","requested");
                 } catch (IntentSender.SendIntentException e) {
                     e.printStackTrace();
+                    Log.e("updatee","catch");
+
                 }
-            }
+            }else   Log.e("updatee","else");
+
         });
 
         setContentView(R.layout.activity_main);

@@ -471,16 +471,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             Toast.makeText(getActivity(), "ليس لديك نقاط كافية", Toast.LENGTH_SHORT).show();
                             pts_switch.setChecked(false);
                         }
-                        vat_txt.setText((Double) (Math.round((vat) * 100) / 100.00) + " ر.س ");
 
-                        final_total_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
+                        ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition())))/50*.05;
+
+                        doCalculations();
+
 
                     } else {
-                        final_total_txt.setText((Double) (Math.round((price_without_pts) * 100) / 100.00) + " ر.س ");
+                       /* final_total_txt.setText((Double) (Math.round((price_without_pts) * 100) / 100.00) + " ر.س ");
                         vat_txt.setText((Double) (Math.round((vat_without_pts) * 100) / 100.00) + " ر.س ");
 
 
-                        discount_txt.setText("0 ر.س ");
+                        discount_txt.setText("0 ر.س ");*/
+                       ptsDiscount=0d;
+
+                        doCalculations();
+
                     }
 
 
@@ -505,13 +511,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             selected_copon.setText(coponModel.getPromocode().getCode());
 
                             coponDiscount = Double.parseDouble(coponModel.getPromocode().getAmount());
-                            discount_txt.setText((Double) (Math.round((total.getValue() * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
+                          /*  discount_txt.setText((Double) (Math.round((total_before * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
 
-                            Double sum = total.getValue() - (total.getValue() * coponDiscount / 100);
-                            price_without_pts = sum;
-                            total.setValue(sum);
+
                             vat_txt.setText(((Double) (Math.round((vat - (vat * coponDiscount / 100)) * 100) / 100.00)) + " ر.س ");
                             vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
+
+                            Double sum = total_before - (total_before * coponDiscount / 100)+vat;*/
+                            // price_without_pts = sum;
+                            //total.setValue(sum);
+
+                            doCalculations();
 
                             RequestBody coupon = RequestBody.create(MediaType.parse("text/plain"), coponModel.getPromocode().getCode());
 
@@ -578,13 +588,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
 
-                        Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
-                        discount_txt.setText((Double) (Math.round((total.getValue() * ptsDiscount) * 100) / 100.00) + " ر.س ");
+                        //  Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
+                       /* discount_txt.setText((Double) (Math.round((total_before * ptsDiscount) * 100) / 100.00) + " ر.س ");
 
-                        Double sum = total.getValue() - (total.getValue() * ptsDiscount);
-                        total.setValue(sum);
+
                         vat_txt.setText(((Double) (Math.round((vat - (vat * ptsDiscount)) * 100) / 100.00)) + " ر.س ");
                         vat = vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00));
+
+                        Double sum = total_before - (total_before * ptsDiscount)+vat;
+                        total.setValue(sum);
+*/
+                        doCalculations();
 
 
                         RequestBody points = RequestBody.create(MediaType.parse("text/plain"), pts_amounts.get(pts_spinner.getSelectedItemPosition()));
@@ -876,6 +890,20 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     private void confirmOrder() {
+
+
+        if (pts_switch.isChecked()) {
+            if (!requestBodyMap.containsKey("points")) {
+                RequestBody points = RequestBody.create(MediaType.parse("text/plain"), pts_amounts.get(pts_spinner.getSelectedItemPosition()));
+
+                requestBodyMap.put("points", points);
+            }
+
+        } else {
+            if (requestBodyMap.containsKey("points"))
+                requestBodyMap.remove("points");
+        }
+
         if (!requestBodyMap.containsKey("address") || !requestBodyMap.containsKey("lng") || !requestBodyMap.containsKey("lat")) {
             Toast.makeText(getActivity(), "ادخل عنوان التوصيل", Toast.LENGTH_SHORT).show();
             return;
@@ -890,7 +918,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 if (rec_name.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "ادخل اسم المستلم", Toast.LENGTH_SHORT).show();
                     return;
-                }else {
+                } else {
                     RequestBody username = RequestBody.create(MediaType.parse("text/plain"), rec_name.getText().toString());
 
                     requestBodyMap.put("username", username);
@@ -898,8 +926,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 if (rec_phone.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "ادخل رقم الجوال للمستلم", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else {
+                } else {
                     RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), rec_phone.getText().toString());
 
                     requestBodyMap.put("mobile", phone);
@@ -1201,6 +1228,19 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude()), 16));
+    }
+
+    void doCalculations() {
+        discount_txt.setText((Double) (Math.round((total_before * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00) + " ر.س ");
+
+
+        vat_txt.setText(((Double) (Math.round((vat - (vat * (ptsDiscount + (coponDiscount / 100)))) * 100) / 100.00)) + " ر.س ");
+        Double v = vat - ((Double) (Math.round((vat * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00));
+
+        Double sum = total_before - (total_before * (ptsDiscount + (coponDiscount / 100))) + v;
+        total.setValue(sum);
+
+
     }
 
     void checkLocPermission() {
