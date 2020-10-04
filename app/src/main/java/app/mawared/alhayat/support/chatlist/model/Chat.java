@@ -26,6 +26,8 @@ public class Chat implements Serializable {
     private String mUserOne;
     @SerializedName("user_two")
     private String mUserTwo;
+    @SerializedName("last_message")
+    public LastMessage lastMessage;
 
     public String getChannelId() {
         return mChannelId;
@@ -99,4 +101,9 @@ public class Chat implements Serializable {
         mUserTwo = userTwo;
     }
 
+
+    public class LastMessage{
+        @SerializedName("message")
+        public String message;
+    }
 }

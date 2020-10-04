@@ -41,10 +41,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
     public void onBindViewHolder(@NonNull final ChatListAdapter.Holder holder, final int position) {
 
         if (chats.get(position).getOrderId() == null)
-            holder.order_no.setText("خدمات اخرى");
+            holder.daam.setText("الدعم الفني");
 
         else
-        holder.order_no.setText(" رقم الطلب " + chats.get(position).getOrderId());
+        holder.daam.setText(" الدعم الفني للطلب " + chats.get(position).getOrderId());
+
+        holder.order_no.setText(chats.get(position).getCreatedAt());
+
+        holder.last_msg.setText(chats.get(position).lastMessage.message);
 
     }
 
@@ -58,7 +62,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView order_no;
+        TextView order_no,daam,last_msg;
         ConstraintLayout item_cons;
 
         public Holder(@NonNull View itemView) {
@@ -66,6 +70,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
 
             item_cons = itemView.findViewById(R.id.item_cons);
             order_no = itemView.findViewById(R.id.order_no);
+            daam = itemView.findViewById(R.id.textView11);
+            last_msg = itemView.findViewById(R.id.last_msg);
 
             item_cons.setOnClickListener(new View.OnClickListener() {
                 @Override
