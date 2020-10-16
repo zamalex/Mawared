@@ -54,6 +54,9 @@ public class OrderDetailsFragment extends Fragment {
     EditText reason_et;
     String status = "none";
 
+
+    TextView one,two,three,four,five,six,seven;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +84,13 @@ public class OrderDetailsFragment extends Fragment {
         tv_totalPrice = view.findViewById(R.id.tv_totalPrice);
         ic_BackBtn = view.findViewById(R.id.ic_BackBtn);
         cancel_order = view.findViewById(R.id.cancel_order);
+        one = view.findViewById(R.id.one);
+        two = view.findViewById(R.id.two);
+        three = view.findViewById(R.id.three);
+        four = view.findViewById(R.id.four);
+        five = view.findViewById(R.id.five);
+        six = view.findViewById(R.id.six);
+        seven = view.findViewById(R.id.seven);
 
         reason_et = dialog.findViewById(R.id.reason_et);
         ccncl_btn = dialog.findViewById(R.id.ccncl_btn);
@@ -118,6 +128,16 @@ public class OrderDetailsFragment extends Fragment {
                     }
 
                     tv_totalPrice.setText(orderDetails.getOrder().getPricing().getTotalWithCouponVat() + " ر.س");
+
+                    one.setText("#"+orderDetails.getOrder().getFormatedNumber());
+                    two.setText(orderDetails.getOrder().getStatus());
+                    three.setText(orderDetails.getOrder().getCustomerName());
+                    four.setText(orderDetails.getOrder().getCustomerPhone());
+                    five.setText(orderDetails.getOrder().getDeliveryDate());
+                    six.setText(orderDetails.getOrder().getPaymentMethod());
+                    seven.setText(orderDetails.getOrder().getAddress());
+
+
                 }
             }
         });

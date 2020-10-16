@@ -26,6 +26,7 @@
         <activity android:name="app.mawared.alhayat.reset.ResetPassActivity"></activity>
         <activity android:name="app.mawared.alhayat.forgot.ForgotPasswordActivity" />
         <activity android:name="app.mawared.alhayat.login.LoginActivity"></activity>
+        <meta-data android:name="com.onesignal.NotificationOpened.DEFAULT" android:value="DISABLE" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

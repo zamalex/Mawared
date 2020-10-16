@@ -163,7 +163,7 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
         viewModel.sendMsgModelMutableLiveData.observe(getViewLifecycleOwner(), new Observer<SendMsgModel>() {
             @Override
             public void onChanged(SendMsgModel sendMsgModel) {
-                ((MainActivity)getActivity()).showDialog(true);
+                ((MainActivity)getActivity()).showDialog(false);
 
                 if (sendMsgModel != null) {
                     if (sendMsgModel.getSuccess()) {

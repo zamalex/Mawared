@@ -141,11 +141,17 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                         Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    for (Product p : viewModel.cardModelMutableLiveData.getValue().getData().getProducts()){
+                 /*   for (Product p : viewModel.cardModelMutableLiveData.getValue().getData().getProducts()){
                         if (p.getInCartQuantity()<10){
                             Toast.makeText(getActivity(), "اقل قيمة للطلب 10 قطع", Toast.LENGTH_SHORT).show();
                             return;
                         }
+                    }
+                   */
+                    if (viewModel.cardModelMutableLiveData.getValue().getData().getItemsCount()<10)
+                    {
+                        Toast.makeText(getActivity(), "اقل قيمة للطلب 10 قطع", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                     ((MainActivity) getActivity()).showDialog(true);
 

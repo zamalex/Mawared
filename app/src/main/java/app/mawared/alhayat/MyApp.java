@@ -9,6 +9,8 @@ import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
 
 import app.mawared.alhayat.api.RetrofitClient;
+import app.mawared.alhayat.onesignal.OneSignalNotificationOpenedHandler;
+import app.mawared.alhayat.onesignal.OneSignalNotificationReceivedHandler;
 import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,6 +35,8 @@ public class MyApp extends android.app.Application {
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
+                .setNotificationOpenedHandler(new OneSignalNotificationOpenedHandler(this))
+                .setNotificationReceivedHandler(new OneSignalNotificationReceivedHandler())
                 .init();
 
       /*  OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {

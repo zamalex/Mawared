@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
@@ -96,6 +97,8 @@ public class ChatFragment extends Fragment {
             public void onChanged(ReceivedChat receivedChat) {
                 if (receivedChat != null) {
                     if (receivedChat.getSuccess()) {
+
+
                         chatAdapter.setMessages((ArrayList<Message>) receivedChat.getData().getMessages());
 
                         if (chatAdapter.messages.size()>0){
@@ -112,6 +115,15 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 if (msg_et.getText().toString().isEmpty()) {
                     return;
+                }
+
+                if (viewModel.receivedChatMutableLiveData.getValue()!=null){
+                    if (viewModel.receivedChatMutableLiveData.getValue().getSuccess()){
+                        if (viewModel.receivedChatMutableLiveData.getValue().getStatus()==0){
+                            Toast.makeText(getActivity(), "تم اغلاق المحادثة", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 }
                 viewModel.sendNsg(msg_et.getText().toString(), ""+chat.getId(), chat.getOrderId()+"", chat.getTitle(), "Bearer " + Paper.book().read("token","none"));
 

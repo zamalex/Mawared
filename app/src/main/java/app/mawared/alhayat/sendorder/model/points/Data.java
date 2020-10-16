@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 public class Data {
 
     @SerializedName("expire_date")
-    private Long mExpireDate;
+    private Long mExpireDate=1l;
     @SerializedName("to_exchange")
     private List<Long> mToExchange;
     @SerializedName("total_points")

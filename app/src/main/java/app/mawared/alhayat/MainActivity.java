@@ -37,14 +37,14 @@ public class MainActivity extends AppCompatActivity {
 
     public FragmentStack fragmentStack;
     BottomNavigationView navigationView;
-    private boolean paymentSuccess  = false;
+    private boolean paymentSuccess = false;
     KProgressHUD dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+/*
         // Creates instance of the manager.
         AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }else   Log.e("updatee","else");
 
         });
-
+*/
         setContentView(R.layout.activity_main);
 
         dialog = KProgressHUD.create(MainActivity.this)
@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentStack = new FragmentStack(this, getSupportFragmentManager(), R.id.main_container);
         fragmentStack.replace(homeFragment);
 
-        if (getIntent().getStringExtra("order")!=null){
-            if (getIntent().getStringExtra("order").equals("order")){
+        if (getIntent().getStringExtra("order") != null) {
+            if (getIntent().getStringExtra("order").equals("order")) {
                 navigationView.setSelectedItemId(R.id.orders);
                 fragmentStack.replace(new OrderFragment());
 
@@ -114,27 +114,26 @@ public class MainActivity extends AppCompatActivity {
                 else if (item.getItemId() == R.id.support) {
                     String token = Paper.book().read("token", "none");
 
-                    if (token.equals("none")){
+                    if (token.equals("none")) {
                         Toast.makeText(MainActivity.this, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
-                    }else {
+                    } else {
                         fragmentStack.replace(new ChatListFragment());
 
                     }
 
-                }
-                else if (item.getItemId() == R.id.settings) {
+                } else if (item.getItemId() == R.id.settings) {
 
                     String token = Paper.book().read("token", "none");
 
-                    if (token.equals("none")){
+                    if (token.equals("none")) {
                         Toast.makeText(MainActivity.this, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
-                    }else {
+                    } else {
                         fragmentStack.replace(new SettingsFragment());
-                       // throw new RuntimeException("Test Crash"); // Force a crash
+                        // throw new RuntimeException("Test Crash"); // Force a crash
 
 
                     }

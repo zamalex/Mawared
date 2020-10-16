@@ -472,7 +472,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             pts_switch.setChecked(false);
                         }
 
-                        ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition())))/50*.05;
+                        if (pts_amounts.size() > 0)
+                            ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
 
                         doCalculations();
 
@@ -483,7 +484,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
                         discount_txt.setText("0 ر.س ");*/
-                       ptsDiscount=0d;
+                        ptsDiscount = 0d;
 
                         doCalculations();
 

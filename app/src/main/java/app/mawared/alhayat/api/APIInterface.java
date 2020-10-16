@@ -167,7 +167,7 @@ public interface APIInterface {
 
 
     @POST("points/calculate-price")
-    Call<ResponseBody> addToCard(@Query("points")String points, @Query("price")String price);
+    Call<ResponseBody> calculatePts(@Query("points")String points, @Query("price")String price);
 
     @POST("carts/{cart_id}/products/{product_id}/remove")
     Call<ResponseBody> removeFromCard(@Path("cart_id")String cart_id,@Path("product_id")String product_id);
