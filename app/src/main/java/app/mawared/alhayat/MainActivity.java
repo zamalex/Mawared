@@ -105,6 +105,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        if (getIntent().getStringExtra("type") != null) {
+            if (getIntent().getStringExtra("type").equals("chat")) {
+                navigationView.setSelectedItemId(R.id.support);
+                ChatListFragment chatListFragment = new ChatListFragment();
+                Bundle b = new Bundle();
+                b.putString("conversation",getIntent().getStringExtra("conversation"));
+                chatListFragment.setArguments(b);
+
+                fragmentStack.replace(chatListFragment);
+
+            }
+        }
+
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

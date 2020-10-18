@@ -8,6 +8,7 @@ import com.onesignal.OSNotificationAction;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import app.mawared.alhayat.MainActivity;
@@ -32,7 +33,27 @@ public class OneSignalNotificationOpenedHandler implements OneSignal.Notificatio
 
         if (data != null) {
 
-                Log.i("OneSignalExample", "on open data: " + data.toString());
+                //Log.i("OneSignalExample", "on open data: " + data.toString());
+            try {
+                String type = data.getString("type");
+                if (type.equals("chat")){
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("type","chat");
+                    intent.putExtra("conversation",data.getString("conversation"));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
+                }else {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
         }
 
         if (actionType == OSNotificationAction.ActionType.ActionTaken)
@@ -40,9 +61,7 @@ public class OneSignalNotificationOpenedHandler implements OneSignal.Notificatio
 
         // The following can be used to open an Activity of your choice.
         // Replace - getApplicationContext() - with any Android Context.
-         Intent intent = new Intent(context, MainActivity.class);
-         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-         context.startActivity(intent);
+
 
         // Add the following to your AndroidManifest.xml to prevent the launching of your main Activity
         //   if you are calling startActivity above.
