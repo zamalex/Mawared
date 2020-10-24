@@ -41,10 +41,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
     public void onBindViewHolder(@NonNull final ChatListAdapter.Holder holder, final int position) {
 
         if (chats.get(position).getOrderId() == null)
-            holder.daam.setText("الدعم الفني");
+            holder.daam.setText("خدمة العملاء");
 
         else
-        holder.daam.setText(" الدعم الفني للطلب " + chats.get(position).getOrderId());
+        holder.daam.setText(" خدمة العملاء للطلب " + chats.get(position).getOrderId());
 
         holder.order_no.setText(chats.get(position).getCreatedAt());
 

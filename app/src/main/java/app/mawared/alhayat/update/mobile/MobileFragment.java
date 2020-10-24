@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,6 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -27,6 +33,7 @@ import java.util.List;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.activiation.ActivationActivity;
+import app.mawared.alhayat.forgot.ForgotPasswordActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.update.UpdateViewModel;
 import app.mawared.alhayat.update.model.SendCodeModel;
@@ -50,7 +57,6 @@ public class MobileFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_mobile, container, false);
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(UpdateViewModel.class);
-        checkSmsPermission();
         confirm = v.findViewById(R.id.confirm_btn);
         phone_et = v.findViewById(R.id.phone_et);
 
@@ -77,6 +83,7 @@ public class MobileFragment extends Fragment {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("mobile", phone_et.getText().toString());
+                jsonObject.addProperty("sms_token","MzRiNzhjOGU");
 
                 viewModel.sendCode(jsonObject, "Bearer " + mLoginResponse.getUser().getToken());
 
@@ -91,11 +98,7 @@ public class MobileFragment extends Fragment {
 
                 if (sendCodeModel != null) {
                     if (sendCodeModel.getSuccess()) {
-                        Intent intent = new Intent(getActivity(), ActivationActivity.class);
-                        intent.putExtra("type", "update");
-                        intent.putExtra("mobNo", phone_et.getText().toString());
-
-                        startActivity(intent);
+                     startSMSListener();
 
                     } else
                         Toast.makeText(getActivity(), "الرقم غير صحيح", Toast.LENGTH_SHORT).show();
@@ -109,34 +112,24 @@ public class MobileFragment extends Fragment {
         return v;
     }
 
+    public void startSMSListener() {
+        SmsRetrieverClient mClient = SmsRetriever.getClient(getActivity());
+        Task<Void> mTask = mClient.startSmsRetriever();
+        mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override public void onSuccess(Void aVoid) {
 
-    void checkSmsPermission() {
-        Dexter.withContext(getActivity())
-                .withPermissions(
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.READ_SMS)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
+                Intent intent = new Intent(getActivity(), ActivationActivity.class);
+                intent.putExtra("type", "update");
+                intent.putExtra("mobNo", phone_et.getText().toString());
 
-                        }
+                startActivity(intent);
 
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-
-
-                    }
-                })
-                .onSameThread()
-                .check();
+            }
+        });
+        mTask.addOnFailureListener(new OnFailureListener() {
+            @Override public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
+
 }

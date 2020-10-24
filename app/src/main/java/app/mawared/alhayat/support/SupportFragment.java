@@ -143,9 +143,9 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
                 }
                 ((MainActivity)getActivity()).showDialog(true);
 
-                String title = "الدعم الفني";
+                String title = "خدمة العملاء";
                 if (order_no!=null)
-                    title =  " الدعم الفني لطلب "+order_no;
+                    title =  " خدمة العملاء لطلب "+order_no;
                 viewModel.sendNsg(details_et.getText().toString(), null, order_no, title, "Bearer " + Paper.book().read("token", "none"));
 
             }

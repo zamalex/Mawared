@@ -46,6 +46,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         final Product product = products.get(position);
         Double p = Double.parseDouble(product.getPrice())+(Double.parseDouble(product.getVat())/100* Double.parseDouble(product.getPrice()));
 
+        if (product.getIncart()!=null)
         if (product.qty==0)
             product.qty=Integer.parseInt(product.getIncart().toString());
 

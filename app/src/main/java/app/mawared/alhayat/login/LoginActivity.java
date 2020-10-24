@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import app.mawared.alhayat.AppSignatureHelper;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.forgot.ForgotPasswordActivity;
@@ -78,6 +80,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        AppSignatureHelper appSignatureHelper = new AppSignatureHelper(LoginActivity.this);
+
+        go_register.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                setClipboard(LoginActivity.this,appSignatureHelper.getAppSignatures().get(0));
+
+
+                return true;
+            }
+        });
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,5 +165,16 @@ public class LoginActivity extends AppCompatActivity {
         });
 */
 
+    }
+
+    private void setClipboard(Context context, String text) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(text);
+        } else {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 }

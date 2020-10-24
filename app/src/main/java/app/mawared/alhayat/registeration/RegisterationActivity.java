@@ -1,5 +1,6 @@
 package app.mawared.alhayat.registeration;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
@@ -16,6 +17,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.karumi.dexter.Dexter;
@@ -58,7 +64,6 @@ public class RegisterationActivity extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
         tv_conditions.setPaintFlags(tv_conditions.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-        checkSmsPermission();
 
         dialog = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -86,6 +91,7 @@ public class RegisterationActivity extends AppCompatActivity {
                 JsonObject jObj = new JsonObject();
 
                     jObj.addProperty("mobile",phoneNumber);
+                    jObj.addProperty("sms_token","MzRiNzhjOGU");
                     dialog.show();
                     registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
                         @Override
@@ -93,11 +99,8 @@ public class RegisterationActivity extends AppCompatActivity {
                             dialog.dismiss();
                             if (loginRegistration != null) {
                                 if (loginRegistration.getStatus() == 200) {
-                                    getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum",phoneNumber).commit();
-                                    Intent activationIntent = new Intent(RegisterationActivity.this,
-                                            ActivationActivity.class);
-                                    activationIntent.putExtra("mobNo",phoneNumber);
-                                    startActivity(activationIntent);
+
+                                    startSMSListener();
                                 }
                             }else {
                                 Toast.makeText(getApplicationContext(),"الرقم الذي أدخلته غير صحيح",Toast.LENGTH_LONG).show();
@@ -108,33 +111,23 @@ public class RegisterationActivity extends AppCompatActivity {
         });
     }
 
-    void checkSmsPermission(){
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.READ_SMS)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
+    public void startSMSListener() {
+        SmsRetrieverClient mClient = SmsRetriever.getClient(this);
+        Task<Void> mTask = mClient.startSmsRetriever();
+        mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override public void onSuccess(Void aVoid) {
 
-                        }
+                getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum",phoneNumber).commit();
+                Intent activationIntent = new Intent(RegisterationActivity.this,
+                        ActivationActivity.class);
+                activationIntent.putExtra("mobNo",phoneNumber);
+                startActivity(activationIntent);
 
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                           // Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-
-
-                    }
-                })
-                .onSameThread()
-                .check();
+            }
+        });
+        mTask.addOnFailureListener(new OnFailureListener() {
+            @Override public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
 }

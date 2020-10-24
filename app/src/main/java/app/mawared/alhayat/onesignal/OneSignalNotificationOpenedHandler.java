@@ -39,18 +39,35 @@ public class OneSignalNotificationOpenedHandler implements OneSignal.Notificatio
                 if (type.equals("chat")){
                     Intent intent = new Intent(context, MainActivity.class);
                     intent.putExtra("type","chat");
-                    intent.putExtra("conversation",data.getString("conversation"));
+                    intent.putExtra("conversation",data.getString("conversation_id"));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
+                }else if(type.equals("change_status")){
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("type","change_status");
+                    intent.putExtra("order_id",data.getString("order_id"));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
+                }else if(type.equals("points")){
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("type","points");
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
 
                 }else {
                     Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("type","general");
+
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
                 Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra("type","general");
+
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

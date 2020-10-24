@@ -150,7 +150,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                    */
                     if (viewModel.cardModelMutableLiveData.getValue().getData().getItemsCount()<10)
                     {
-                        Toast.makeText(getActivity(), "اقل قيمة للطلب 10 قطع", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "الحد الأدنى للطلب 10 منتجات او كراتين", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     ((MainActivity) getActivity()).showDialog(true);

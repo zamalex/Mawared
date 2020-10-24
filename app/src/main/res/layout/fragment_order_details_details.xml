@@ -266,7 +266,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/urosemi"
                 android:gravity="right"
-                android:text="نوع التحويل"
+                android:text="الية السداد"
                 android:textColor="@color/darktxt" />
 
             <TextView

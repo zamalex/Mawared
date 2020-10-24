@@ -1,10 +1,12 @@
 package app.mawared.alhayat.forgot;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.karumi.dexter.Dexter;
@@ -26,6 +33,7 @@ import java.util.List;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.activiation.ActivationActivity;
 import app.mawared.alhayat.forgot.model.ForgotModel;
+import app.mawared.alhayat.registeration.RegisterationActivity;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -49,7 +57,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(ForgotViewModel.class);
 
 
-        checkSmsPermission();
 
         dialog = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -69,6 +76,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     jsonObject.addProperty("country_code", "sa");
                     jsonObject.addProperty("mobile", phone_et.getText().toString());
                     jsonObject.addProperty("method", "mobile");
+                    jsonObject.addProperty("sms_token","MzRiNzhjOGU");
 
                     dialog.show();
                     viewModel.forgotPass(jsonObject);
@@ -83,11 +91,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 dialog.dismiss();
                 if (forgotModel != null) {
                     if (forgotModel.getStatus() == 200) {
-                        Intent intent = new Intent(ForgotPasswordActivity.this, ActivationActivity.class);
-                        intent.putExtra("type", "forgot");
-                        intent.putExtra("mobNo", phone_et.getText().toString());
 
-                        startActivity(intent);
+                        startSMSListener();
 
                     } else
                         Toast.makeText(ForgotPasswordActivity.this, "حدث خطأ", Toast.LENGTH_SHORT).show();
@@ -104,34 +109,24 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
 
     }
+    public void startSMSListener() {
+        SmsRetrieverClient mClient = SmsRetriever.getClient(this);
+        Task<Void> mTask = mClient.startSmsRetriever();
+        mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override public void onSuccess(Void aVoid) {
 
-    void checkSmsPermission(){
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.READ_SMS)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
+                Intent intent = new Intent(ForgotPasswordActivity.this, ActivationActivity.class);
+                intent.putExtra("type", "forgot");
+                intent.putExtra("mobNo", phone_et.getText().toString());
 
-                        }
+                startActivity(intent);
 
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // Toast.makeText(getActivity(), "قم بالسماح للتطبيق للوصول الى موقعك من خلال الاعدادات", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-
-
-                    }
-                })
-                .onSameThread()
-                .check();
+            }
+        });
+        mTask.addOnFailureListener(new OnFailureListener() {
+            @Override public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
+
 }

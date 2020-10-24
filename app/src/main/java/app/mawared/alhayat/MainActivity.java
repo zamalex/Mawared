@@ -3,8 +3,10 @@ package app.mawared.alhayat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,6 +28,8 @@ import app.mawared.alhayat.about.AboutMawaredFragment;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.home.HomeFragment;
 import app.mawared.alhayat.login.LoginActivity;
+import app.mawared.alhayat.notification.NotificationFragments;
+import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.OrderFragment;
 import app.mawared.alhayat.settings.SettingsFragment;
 import app.mawared.alhayat.support.SupportFragment;
@@ -40,11 +44,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean paymentSuccess = false;
     KProgressHUD dialog;
 
+    SharedPreferences.Editor orderIdPref;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-/*
+
         // Creates instance of the manager.
         AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
 
@@ -75,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
             }else   Log.e("updatee","else");
 
         });
-*/
+
+
         setContentView(R.layout.activity_main);
 
         dialog = KProgressHUD.create(MainActivity.this)
@@ -92,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         final SupportFragment supportFragment = new SupportFragment();
         final ChatFragment chatFragment = new ChatFragment();
         final AboutMawaredFragment aboutMawaredFragment = new AboutMawaredFragment();
+
+        orderIdPref = getSharedPreferences("mwared", Context.MODE_PRIVATE).edit();
 
 
         fragmentStack = new FragmentStack(this, getSupportFragmentManager(), R.id.main_container);
@@ -114,6 +124,41 @@ public class MainActivity extends AppCompatActivity {
                 chatListFragment.setArguments(b);
 
                 fragmentStack.replace(chatListFragment);
+
+            }
+
+            else  if (getIntent().getStringExtra("type").equals("change_status")) {
+               // navigationView.setSelectedItemId(R.id.support);
+                OrderDetailsFragment orderDetailsFragment = new OrderDetailsFragment();
+
+                if (getIntent().getStringExtra("order_id")!=null){
+                    orderIdPref.putInt("orderId",Integer.parseInt(getIntent().getStringExtra("order_id"))).apply();
+
+
+                    fragmentStack.push(orderDetailsFragment);
+                }
+
+
+            }
+
+            else  if (getIntent().getStringExtra("type").equals("points")) {
+                navigationView.setSelectedItemId(R.id.settings);
+                SettingsFragment settingsFragment = new SettingsFragment();
+
+
+                    fragmentStack.replace(settingsFragment);
+
+
+
+            }
+
+            else {
+                navigationView.setSelectedItemId(R.id.settings);
+                SettingsFragment settingsFragment = new SettingsFragment();
+
+
+                fragmentStack.replace(settingsFragment);
+                fragmentStack.push(new NotificationFragments());
 
             }
         }
