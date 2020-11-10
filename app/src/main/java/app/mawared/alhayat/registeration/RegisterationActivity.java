@@ -91,7 +91,7 @@ public class RegisterationActivity extends AppCompatActivity {
                 JsonObject jObj = new JsonObject();
 
                     jObj.addProperty("mobile",phoneNumber);
-                    jObj.addProperty("sms_token","MzRiNzhjOGU");
+                    jObj.addProperty("sms_token","3NAjIDnZDcG");
                     dialog.show();
                     registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
                         @Override
