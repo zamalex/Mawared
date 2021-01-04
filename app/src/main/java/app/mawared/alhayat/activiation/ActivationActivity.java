@@ -33,7 +33,6 @@ import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.SmsBroadcastReceiver;
 import app.mawared.alhayat.activiation.model.ActivationiModel;
-import app.mawared.alhayat.helpers.SmsListener;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.register.RegisterBottomSheet;
 import app.mawared.alhayat.registeration.RegisterationActivity;

@@ -137,7 +137,7 @@ public interface APIInterface {
     Call<ResetModel> resetPass(@Body JsonObject jsonObject);
 
     @POST("deliver-time/available-times")
-    Call<TimesModel> getTimes(@Body JsonObject jsonObject,@Header("Authorization") String topen);
+    Call<TimesModel> getTimes(@Body JsonObject jsonObject,@Header("Authorization") String token);
 
     @Multipart
     @POST("orders")

@@ -83,7 +83,7 @@ public class MobileFragment extends Fragment {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("mobile", phone_et.getText().toString());
-                jsonObject.addProperty("sms_token","MzRiNzhjOGU");
+                jsonObject.addProperty("sms_token","3NAjIDnZDcG");
 
                 viewModel.sendCode(jsonObject, "Bearer " + mLoginResponse.getUser().getToken());
 

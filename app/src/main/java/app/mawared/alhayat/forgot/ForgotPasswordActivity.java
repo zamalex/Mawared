@@ -76,7 +76,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     jsonObject.addProperty("country_code", "sa");
                     jsonObject.addProperty("mobile", phone_et.getText().toString());
                     jsonObject.addProperty("method", "mobile");
-                    jsonObject.addProperty("sms_token","MzRiNzhjOGU");
+                    jsonObject.addProperty("sms_token","3NAjIDnZDcG");
 
                     dialog.show();
                     viewModel.forgotPass(jsonObject);
