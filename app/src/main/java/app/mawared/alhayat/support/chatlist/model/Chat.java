@@ -29,6 +29,9 @@ public class Chat implements Serializable {
     @SerializedName("last_message")
     public LastMessage lastMessage;
 
+    @SerializedName("unread_count")
+    public Long unread_count=0l;
+
     public String getChannelId() {
         return mChannelId;
     }

@@ -14,13 +14,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="8dp"
         android:fontFamily="@font/urwbold"
         android:text="خدمة العملاء"
         android:textColor="#0D2142"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/unread_count"
         app:layout_constraintStart_toEndOf="@+id/imageView10"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +38,7 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintTop_toBottomOf="@+id/unread_count" />
 
     <ImageView
         android:id="@+id/imageView10"
@@ -73,6 +71,22 @@
         app:layout_constraintStart_toEndOf="@+id/imageView10"
         app:layout_constraintTop_toTopOf="@+id/order_no"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:visibility="invisible"
+        android:id="@+id/unread_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="0"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:padding="5dp"
+        android:background="@drawable/colored_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

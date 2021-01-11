@@ -1,11 +1,14 @@
 package app.mawared.alhayat.home;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +33,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
@@ -77,6 +88,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
     SharedPreferences pref;
     SharedPreferences.OnSharedPreferenceChangeListener listener;
 
+    ReviewManager manager;
+    ReviewInfo reviewInfo = null;
+    String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
 
 
     @Override
@@ -84,6 +98,39 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_home, container, false);
+        manager = ReviewManagerFactory.create(getActivity());
+        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+                if (task.isSuccessful()) {
+                    reviewInfo = task.getResult();
+                    if (!((MainActivity)getActivity()).didShow){
+
+                        if (reviewInfo != null) {
+                            manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(Exception e) {
+                                    try {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                                    }
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void result) {
+                                    ((MainActivity)getActivity()).didShow = true;
+                                    Log.e("TAG", "onSuccess: ");
+
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+
         adapter = new HomeAdapter(getActivity(), this);
         dialog = new Dialog(getActivity());
 

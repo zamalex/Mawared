@@ -16,6 +16,8 @@ import app.mawared.alhayat.home.model.HomeProductModel;
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
+import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
+import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
 import app.mawared.alhayat.mycart.model.CardModel;
@@ -200,6 +202,9 @@ public interface APIInterface {
     @POST("payment/return")
     Call<ResponseBody> tstPayment();
 
+    @POST("orders/rate")
+    Call<ResponseBody> rateOrder(@Header("Authorization") String token,@Body JsonObject body);
+
 
     @GET("carts/{user_id}/user-cart")
     Call<CheckCardModel> checkUserCard(@Path("user_id")String user_id);
@@ -210,6 +215,12 @@ public interface APIInterface {
     @GET("payment/payment-methods")
     Call<PaymentModel> getPayment();
 
+    @GET("messages/count-unread")
+    Call<NotifyCountModel> getNotifyCount(@Header("Authorization") String token);
+
+
+    @GET("orders/has-new-updates")
+    Call<OrdersCountModel> getOrdersCount(@Header("Authorization") String token);
 
 
 }

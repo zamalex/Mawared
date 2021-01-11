@@ -42,6 +42,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
     @Override
     public void onBindViewHolder(@NonNull ordersHolder holder, int position) {
         Order allOrderModel = allOrderList.get(position);
+
+        holder.unread_count.setText(allOrderModel.unread_count.toString());
+        if (allOrderModel.unread_count > 0) {
+            holder.unread_count.setVisibility(View.VISIBLE);
+        } else {
+            holder.unread_count.setVisibility(View.INVISIBLE);
+
+        }
+
+
         if(allOrderModel != null){
             holder.tv_orderNumber.setText(allOrderModel.getFormatedNumber()+"#");
             holder.tv_orderStatus.setText(allOrderModel.getStatus());
@@ -69,12 +79,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
 
     public class ordersHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_orderNumber,tv_orderStatus,tv_orderDate;
+        TextView tv_orderNumber,tv_orderStatus,tv_orderDate,unread_count;
         ConstraintLayout cl_orderStatus;
 
         public ordersHolder(@NonNull View itemView) {
             super(itemView);
             tv_orderNumber = itemView.findViewById(R.id.tv_orderNumber);
+            unread_count = itemView.findViewById(R.id.unread_count);
             tv_orderStatus = itemView.findViewById(R.id.tv_orderStatus);
             tv_orderDate = itemView.findViewById(R.id.tv_orderDate);
             cl_orderStatus = itemView.findViewById(R.id.cl_orderStatus);

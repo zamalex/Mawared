@@ -1,7 +1,10 @@
 package app.mawared.alhayat.orders;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,18 +17,28 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.google.gson.JsonObject;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.helpers.EndlessRecyclerViewScrollListener;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.helpers.OrderClickListener;
 import app.mawared.alhayat.home.OrderViewModel;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.model.AllOrder;
+import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class OrderFragment extends Fragment implements OrderClickListener {
@@ -38,8 +51,10 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     SharedPreferences.Editor orderIdPref;
     OrderViewModel orderViewModel;
 
-
-
+    Dialog rateDialog;
+    String token = Paper.book().read("token");
+    int orderId = 0;
+    RatingBar ratingBar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,6 +70,48 @@ public class OrderFragment extends Fragment implements OrderClickListener {
         rv_orders.setLayoutManager(gridLayoutManager);
         ordersAdapter = new OrdersAdapter(this);
 
+
+        rateDialog = new Dialog(getActivity());
+
+
+        rateDialog.setContentView(R.layout.rate_dialog);
+        ratingBar = rateDialog.findViewById(R.id.stars);
+
+        rateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Window window3 = rateDialog.getWindow();
+        window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        rateDialog.findViewById(R.id.xrate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateDialog.dismiss();
+            }
+        });
+
+        rateDialog.findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("order_id",orderId+"");
+                jsonObject.addProperty("stars",ratingBar.getRating()+"");
+                RetrofitClient.getApiInterface().rateOrder("Bearer "+token,jsonObject).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        rateDialog.dismiss();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        rateDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
+
+
         ((MainActivity)getActivity()).showDialog(true);
         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
             @Override
@@ -65,6 +122,14 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                     if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
                         ordersAdapter.setList(allOrder.getOrders());
+
+                        if (getArguments()!=null){
+                            if (getArguments().getString("rate",null)!=null){
+                                    rateDialog.show();
+                                    orderId = allOrder.getOrders().get(0).getId();
+                            }
+                        }
+
                     }
                 }
 

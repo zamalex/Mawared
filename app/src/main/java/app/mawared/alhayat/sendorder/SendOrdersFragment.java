@@ -1244,6 +1244,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+    }
+
     void checkLocPermission() {
         Dexter.withContext(getActivity())
                 .withPermissions(

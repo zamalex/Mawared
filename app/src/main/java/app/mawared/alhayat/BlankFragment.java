@@ -71,14 +71,18 @@ public class BlankFragment extends Fragment {
 
                         ((MainActivity)getActivity()).setPaymentSuccess(true);
 
+                        ((MainActivity)getActivity()).fragmentStack.replace(new OrderDoneFragment());
+
+
+
                     } else {
                         Toast.makeText(getActivity(), "status is failed " + status, Toast.LENGTH_SHORT).show();
                         ((MainActivity)getActivity()).setPaymentSuccess(false);
 
 
+                        ((MainActivity)getActivity()).fragmentStack.pop();
 
                     }
-                    ((MainActivity)getActivity()).fragmentStack.pop();
 
                 } catch (JSONException e) {
 

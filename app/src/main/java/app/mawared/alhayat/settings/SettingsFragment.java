@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,10 +14,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.review.testing.FakeReviewManager;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +59,24 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     NotificationViewModel viewModel;
     SendOrderViewModel sendOrderViewModel;
     SharedPreferences pref;
+    ReviewManager manager;
+    ReviewInfo reviewInfo=null;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        manager = ReviewManagerFactory.create(getActivity());
+        manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+                if (task.isSuccessful()){
+                    reviewInfo = task.getResult();
+                }
+            }
+        });
+
+
 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
@@ -177,7 +203,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         super.onStop();
         ((MainActivity) getActivity()).bottomNavVisibility(false);
     }
-
+    String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
     @Override
     public void onSettingsClick(Settings settings) {
         if (settings.itemId==5)
@@ -185,12 +211,31 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         else if (settings.itemId==6)
             logout();
 
-        else if (settings.itemId==3||settings.itemId==4){
-            final String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
+        else if (settings.itemId==3){
+
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
             } catch (android.content.ActivityNotFoundException anfe) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+        }else if (settings.itemId==4){
+            if (reviewInfo != null) {
+                manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        }
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        Log.e("TAG", "onSuccess: " );
+
+                    }
+                });
             }
         }
 

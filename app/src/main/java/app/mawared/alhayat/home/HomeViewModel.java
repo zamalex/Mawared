@@ -10,6 +10,8 @@ import app.mawared.alhayat.home.model.CitiesModel;
 import app.mawared.alhayat.home.model.HomeProductModel;
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
+import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
+import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -17,12 +19,54 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeViewModel extends ViewModel {
+    public MutableLiveData<NotifyCountModel> notifyCount = new MutableLiveData<>();
+    public MutableLiveData<OrdersCountModel> ordersCount = new MutableLiveData<>();
+
 
     MutableLiveData<HomeProductModel> result = new MutableLiveData<>();
     MutableLiveData<HomeSliderModel> slider = new MutableLiveData<>();
     MutableLiveData<MiniModel> minimum = new MutableLiveData<>();
     MutableLiveData<CitiesModel> cities = new MutableLiveData<>();
     MutableLiveData<HomeProductModel> filteredProducts = new MutableLiveData<>();
+
+   public void getNotifyCount(String token) {
+        RetrofitClient.getApiInterface().getNotifyCount(token).enqueue(new Callback<NotifyCountModel>() {
+            @Override
+            public void onResponse(Call<NotifyCountModel> call, Response<NotifyCountModel> response) {
+
+                notifyCount.setValue(response.body());
+                Log.d("rere2", "done");
+            }
+
+            @Override
+            public void onFailure(Call<NotifyCountModel> call, Throwable t) {
+                Log.d("rere2", t.getMessage());
+                notifyCount.setValue(null);
+
+
+            }
+        });
+    }
+
+    public void getOrdersCount(String token) {
+        RetrofitClient.getApiInterface().getOrdersCount(token).enqueue(new Callback<OrdersCountModel>() {
+            @Override
+            public void onResponse(Call<OrdersCountModel> call, Response<OrdersCountModel> response) {
+
+                ordersCount.setValue(response.body());
+                Log.d("rere2", "done");
+            }
+
+            @Override
+            public void onFailure(Call<OrdersCountModel> call, Throwable t) {
+                Log.d("rere2", t.getMessage());
+                ordersCount.setValue(null);
+
+
+            }
+        });
+    }
+
 
     void filterByCity(String id) {
         RetrofitClient.getApiInterface().filterByCity(id).enqueue(new Callback<HomeProductModel>() {

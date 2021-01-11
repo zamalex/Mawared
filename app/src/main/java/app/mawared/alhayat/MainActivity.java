@@ -2,11 +2,14 @@ package app.mawared.alhayat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,6 +23,13 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.ActivityResult;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.review.testing.FakeReviewManager;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.yariksoffice.lingver.Lingver;
@@ -27,7 +37,11 @@ import com.yariksoffice.lingver.Lingver;
 import app.mawared.alhayat.about.AboutMawaredFragment;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.home.HomeFragment;
+import app.mawared.alhayat.home.HomeViewModel;
+import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
+import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.LoginActivity;
+import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.notification.NotificationFragments;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.OrderFragment;
@@ -45,11 +59,17 @@ public class MainActivity extends AppCompatActivity {
     KProgressHUD dialog;
 
     SharedPreferences.Editor orderIdPref;
+    HomeViewModel viewModel;
+    public Boolean didShow = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(HomeViewModel.class);
+
+
 
 
         // Creates instance of the manager.
@@ -73,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
                             this,
                             // Include a request code to later monitor this update request.
                             555);
-                    Log.e("updatee","requested");
+                    Log.e("updatee", "requested");
                 } catch (IntentSender.SendIntentException e) {
                     e.printStackTrace();
-                    Log.e("updatee","catch");
+                    Log.e("updatee", "catch");
 
                 }
-            }else   Log.e("updatee","else");
+            } else Log.e("updatee", "else");
 
         });
 
@@ -95,6 +115,41 @@ public class MainActivity extends AppCompatActivity {
 
 
         navigationView = findViewById(R.id.navigation);
+        String token = Paper.book().read("token", "none");
+
+        if (!token.equals("none")) {
+            viewModel.getNotifyCount("Bearer " + token);
+            viewModel.getOrdersCount("Bearer " + token);
+
+        }
+
+        viewModel.notifyCount.observe(this, new Observer<NotifyCountModel>() {
+            @Override
+            public void onChanged(NotifyCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getUnread() > 0)
+                            navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                    }
+                }
+            }
+        });
+
+        viewModel.ordersCount.observe(this, new Observer<OrdersCountModel>() {
+            @Override
+            public void onChanged(OrdersCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getHasNewUpdates())
+                            navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+                    }
+                }
+            }
+        });
+
+        //  navigationView.getOrCreateBadge(R.id.support).setNumber(5);
+        // navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+
 
         final HomeFragment homeFragment = new HomeFragment();
         final SupportFragment supportFragment = new SupportFragment();
@@ -115,44 +170,49 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        if (getIntent().getStringExtra("order") != null) {
+            if (getIntent().getStringExtra("order").equals("rate")) {
+                navigationView.setSelectedItemId(R.id.orders);
+                OrderFragment orderFragment = new OrderFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("rate","rate");
+                orderFragment.setArguments(bundle);
+                fragmentStack.replace(orderFragment);
+
+            }
+        }
+
         if (getIntent().getStringExtra("type") != null) {
             if (getIntent().getStringExtra("type").equals("chat")) {
                 navigationView.setSelectedItemId(R.id.support);
                 ChatListFragment chatListFragment = new ChatListFragment();
                 Bundle b = new Bundle();
-                b.putString("conversation",getIntent().getStringExtra("conversation"));
+                b.putString("conversation", getIntent().getStringExtra("conversation"));
                 chatListFragment.setArguments(b);
 
                 fragmentStack.replace(chatListFragment);
 
-            }
-
-            else  if (getIntent().getStringExtra("type").equals("change_status")) {
-               // navigationView.setSelectedItemId(R.id.support);
+            } else if (getIntent().getStringExtra("type").equals("change_status")) {
+                // navigationView.setSelectedItemId(R.id.support);
                 OrderDetailsFragment orderDetailsFragment = new OrderDetailsFragment();
 
-                if (getIntent().getStringExtra("order_id")!=null){
-                    orderIdPref.putInt("orderId",Integer.parseInt(getIntent().getStringExtra("order_id"))).apply();
+                if (getIntent().getStringExtra("order_id") != null) {
+                    orderIdPref.putInt("orderId", Integer.parseInt(getIntent().getStringExtra("order_id"))).apply();
 
 
                     fragmentStack.push(orderDetailsFragment);
                 }
 
 
-            }
-
-            else  if (getIntent().getStringExtra("type").equals("points")) {
+            } else if (getIntent().getStringExtra("type").equals("points")) {
                 navigationView.setSelectedItemId(R.id.settings);
                 SettingsFragment settingsFragment = new SettingsFragment();
 
 
-                    fragmentStack.replace(settingsFragment);
+                fragmentStack.replace(settingsFragment);
 
 
-
-            }
-
-            else {
+            } else {
                 navigationView.setSelectedItemId(R.id.settings);
                 SettingsFragment settingsFragment = new SettingsFragment();
 
