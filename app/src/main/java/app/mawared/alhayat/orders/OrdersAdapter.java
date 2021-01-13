@@ -52,20 +52,23 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
         }
 
 
-        if(allOrderModel != null){
-            holder.tv_orderNumber.setText(allOrderModel.getFormatedNumber()+"#");
-            holder.tv_orderStatus.setText(allOrderModel.getStatus());
+        if (allOrderModel != null) {
+            holder.tv_orderNumber.setText(allOrderModel.getFormatedNumber() + "#");
+            if (allOrderModel.getStatus().equals("تم استلام الطلب") || allOrderModel.getStatus().equals("جاري تجهيز طلبك")) {
+                holder.tv_orderStatus.setText("جاري تجهيز طلبك");
+
+            } else
+                holder.tv_orderStatus.setText(allOrderModel.getStatus());
             holder.tv_orderDate.setText("بتاريخ: " + allOrderModel.getCreatedAt());
            /* Drawable unwrappedDrawable = AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg);
             Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);*/
-            if (allOrderModel.getStatus().equals("تم استلام الطلب")){
+            if (allOrderModel.getStatus().equals("تم استلام الطلب") || allOrderModel.getStatus().equals("جاري تجهيز طلبك")) {
                 //DrawableCompat.setTint(wrappedDrawable, Color.BLUE);
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.light_green_bg));
-            }else if(allOrderModel.getStatus().equals("ملغي")){
+            } else if (allOrderModel.getStatus().equals("ملغي")) {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.malghi_bg));
                 //DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#de666b"));
-            }
-            else {
+            } else {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg));
 
             }
@@ -79,7 +82,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
 
     public class ordersHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_orderNumber,tv_orderStatus,tv_orderDate,unread_count;
+        TextView tv_orderNumber, tv_orderStatus, tv_orderDate, unread_count;
         ConstraintLayout cl_orderStatus;
 
         public ordersHolder(@NonNull View itemView) {

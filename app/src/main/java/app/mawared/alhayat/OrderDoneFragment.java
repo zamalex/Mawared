@@ -40,7 +40,7 @@ public class OrderDoneFragment extends Fragment {
 
                 ((MainActivity)getActivity()).setPaymentSuccess(false);
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-               intent.putExtra("order","rate");
+               //intent.putExtra("order","rate");
 
                startActivity(intent);
 

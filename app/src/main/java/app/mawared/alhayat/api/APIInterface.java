@@ -136,7 +136,7 @@ public interface APIInterface {
     Call<ForgotModel> forgotPass(@Body JsonObject jsonObject);
 
     @POST("password/reset")
-    Call<ResetModel> resetPass(@Body JsonObject jsonObject);
+    Call<LoginResponse> resetPass(@Body JsonObject jsonObject);
 
     @POST("deliver-time/available-times")
     Call<TimesModel> getTimes(@Body JsonObject jsonObject,@Header("Authorization") String token);

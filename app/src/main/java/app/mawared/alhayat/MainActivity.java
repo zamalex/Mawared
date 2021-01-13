@@ -31,6 +31,7 @@ import com.google.android.play.core.tasks.OnCompleteListener;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.yariksoffice.lingver.Lingver;
 
@@ -69,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(HomeViewModel.class);
 
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        Bundle bb = new Bundle();
+        bb.putString(FirebaseAnalytics.Param.ITEM_ID, "1");
+        mFirebaseAnalytics.logEvent("start_app", bb);
 
 
 
@@ -254,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
                         // throw new RuntimeException("Test Crash"); // Force a crash
 
 
-                    }
+                    }                   // throw new RuntimeException("Test Crash"); // Force a crash
+
                 } else if (item.getItemId() == R.id.orders)
                     fragmentStack.replace(new OrderFragment());
 
@@ -333,5 +339,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Lingver.getInstance().setLocale(this, "ar");
+
     }
 }

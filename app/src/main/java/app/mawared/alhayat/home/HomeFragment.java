@@ -104,28 +104,31 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             public void onComplete(@NonNull Task<ReviewInfo> task) {
                 if (task.isSuccessful()) {
                     reviewInfo = task.getResult();
-                    if (!((MainActivity)getActivity()).didShow){
+                    if (((MainActivity)getActivity())!=null){
+                        if (!((MainActivity)getActivity()).didShow){
 
-                        if (reviewInfo != null) {
-                            manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(Exception e) {
-                                    try {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                                    } catch (android.content.ActivityNotFoundException anfe) {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            if (reviewInfo != null) {
+                                manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        try {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                                        } catch (android.content.ActivityNotFoundException anfe) {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                                        }
                                     }
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void result) {
-                                    ((MainActivity)getActivity()).didShow = true;
-                                    Log.e("TAG", "onSuccess: ");
+                                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void result) {
+                                        ((MainActivity)getActivity()).didShow = true;
+                                        Log.e("TAG", "onSuccess: ");
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
                     }
+
                 }
             }
         });

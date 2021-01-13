@@ -51,10 +51,8 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     SharedPreferences.Editor orderIdPref;
     OrderViewModel orderViewModel;
 
-    Dialog rateDialog;
     String token = Paper.book().read("token");
-    int orderId = 0;
-    RatingBar ratingBar;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,64 +69,17 @@ public class OrderFragment extends Fragment implements OrderClickListener {
         ordersAdapter = new OrdersAdapter(this);
 
 
-        rateDialog = new Dialog(getActivity());
-
-
-        rateDialog.setContentView(R.layout.rate_dialog);
-        ratingBar = rateDialog.findViewById(R.id.stars);
-
-        rateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        Window window3 = rateDialog.getWindow();
-        window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        rateDialog.findViewById(R.id.xrate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rateDialog.dismiss();
-            }
-        });
-
-        rateDialog.findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("order_id",orderId+"");
-                jsonObject.addProperty("stars",ratingBar.getRating()+"");
-                RetrofitClient.getApiInterface().rateOrder("Bearer "+token,jsonObject).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        rateDialog.dismiss();
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        rateDialog.dismiss();
-
-                    }
-                });
-            }
-        });
-
-
-
-        ((MainActivity)getActivity()).showDialog(true);
+        ((MainActivity) getActivity()).showDialog(true);
         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
             @Override
             public void onChanged(AllOrder allOrder) {
-                ((MainActivity)getActivity()).showDialog(false);
+                ((MainActivity) getActivity()).showDialog(false);
 
-                if (allOrder!=null){
+                if (allOrder != null) {
                     if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
                         ordersAdapter.setList(allOrder.getOrders());
 
-                        if (getArguments()!=null){
-                            if (getArguments().getString("rate",null)!=null){
-                                    rateDialog.show();
-                                    orderId = allOrder.getOrders().get(0).getId();
-                            }
-                        }
 
                     }
                 }
@@ -149,11 +100,11 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                     orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
                         @Override
                         public void onChanged(AllOrder allOrder) {
-                           if (allOrder!=null){
-                               if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
-                                   ordersAdapter.setList(allOrder.getOrders());
-                               }
-                           }
+                            if (allOrder != null) {
+                                if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                                    ordersAdapter.setList(allOrder.getOrders());
+                                }
+                            }
                         }
                     });
                 }
@@ -164,26 +115,26 @@ public class OrderFragment extends Fragment implements OrderClickListener {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    if(et_searchOrder.getText().toString() != null && !et_searchOrder.getText().toString().equals("")) {
+                    if (et_searchOrder.getText().toString() != null && !et_searchOrder.getText().toString().equals("")) {
                         int orderId = Integer.parseInt(et_searchOrder.getText().toString());
 
                         orderViewModel.searchOrder(orderId).observe(getActivity(), new Observer<AllOrder>() {
                             @Override
                             public void onChanged(AllOrder allOrder) {
                                 if (allOrder != null) {
-                                   OrdersAdapter orderAdapter = new OrdersAdapter(OrderFragment.this);
+                                    OrdersAdapter orderAdapter = new OrdersAdapter(OrderFragment.this);
                                     orderAdapter.setList(allOrder.getOrders());
                                     rv_orders.setAdapter(orderAdapter);
                                 }
                             }
                         });
-                    }else {
+                    } else {
                         pageNum = 1;
 
                         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
                             @Override
                             public void onChanged(AllOrder allOrder) {
-                                if (allOrder!=null){
+                                if (allOrder != null) {
                                     if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
                                         ordersAdapter.setList(allOrder.getOrders());
@@ -209,8 +160,8 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     @Override
     public void onClickPressed(int orderId) {
         pageNum = 1;
-        orderIdPref.putInt("orderId",orderId).apply();
-        fragmentStack = new FragmentStack(getActivity(),getActivity().getSupportFragmentManager(),R.id.main_container);
+        orderIdPref.putInt("orderId", orderId).apply();
+        fragmentStack = new FragmentStack(getActivity(), getActivity().getSupportFragmentManager(), R.id.main_container);
         fragmentStack.push(new OrderDetailsFragment());
     }
 

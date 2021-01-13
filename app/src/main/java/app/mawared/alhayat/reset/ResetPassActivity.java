@@ -14,9 +14,12 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.login.LoginActivity;
+import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.reset.model.ResetModel;
+import io.paperdb.Paper;
 
 public class ResetPassActivity extends AppCompatActivity {
     EditText pass_et,repass_et;
@@ -80,15 +83,19 @@ public class ResetPassActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.res.observe(this, new Observer<ResetModel>() {
+        viewModel.res.observe(this, new Observer<LoginResponse>() {
             @Override
-            public void onChanged(ResetModel resetModel) {
+            public void onChanged(LoginResponse resetModel) {
                 dialog.dismiss();
                 if (resetModel!=null){
                     Toast.makeText(ResetPassActivity.this, resetModel.getMessage().getDescription(), Toast.LENGTH_SHORT).show();
 
                     if (resetModel.getStatus()==200){
-                        startActivity(new Intent(ResetPassActivity.this, LoginActivity.class));
+                       // startActivity(new Intent(ResetPassActivity.this, LoginActivity.class));
+                       // ResetPassActivity.this.finish();
+                        Paper.book().write("token", resetModel.getUser().getToken());
+                        Paper.book().write("login", resetModel);
+                        startActivity(new Intent(ResetPassActivity.this, MainActivity.class));
                         ResetPassActivity.this.finish();
                     }
                 }

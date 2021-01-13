@@ -117,7 +117,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <EditText
+    <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
         android:id="@+id/pass_et"
         android:layout_width="0dp"
         android:layout_height="58dp"
@@ -132,6 +132,8 @@
         android:fontFamily="@font/urosemi"
         android:gravity="right|center_vertical"
         android:hint="كلمة المرور"
+
+
         android:inputType="textPassword"
         android:padding="10dp"
         android:textColorHint="@color/backgrey"

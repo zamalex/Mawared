@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +30,16 @@ import com.google.gson.JsonObject;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.orderdetails.model.OrderDetails;
 import app.mawared.alhayat.sendorder.model.paymentmodel.ConfirmModel;
 import app.mawared.alhayat.support.SupportFragment;
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class OrderDetailsFragment extends Fragment {
@@ -53,9 +59,11 @@ public class OrderDetailsFragment extends Fragment {
     Button ccncl_btn;
     EditText reason_et;
     String status = "none";
+    Dialog rateDialog;
+    RatingBar ratingBar;
+    String token = Paper.book().read("token");
 
-
-    TextView one,two,three,four,five,six,seven;
+    TextView one, two, three, four, five, six, seven;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,15 +75,25 @@ public class OrderDetailsFragment extends Fragment {
         dialog.setContentView(R.layout.reason_dialog);
         Window window1 = dialog.getWindow();
         window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-       dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        rateDialog = new Dialog(getActivity());
 
 
-       dialog.findViewById(R.id.xreason).setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               dialog.dismiss();
-           }
-       });
+        rateDialog.setContentView(R.layout.rate_dialog);
+        ratingBar = rateDialog.findViewById(R.id.stars);
+
+        rateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Window window3 = rateDialog.getWindow();
+        window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+        dialog.findViewById(R.id.xreason).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         rv_productDetails = view.findViewById(R.id.rv_productDetails);
         go_support = view.findViewById(R.id.imageView6);
         cl_orderStatus = view.findViewById(R.id.cl_orderDetailsStatus);
@@ -100,6 +118,35 @@ public class OrderDetailsFragment extends Fragment {
 
         orderId = getActivity().getSharedPreferences("mwared", Context.MODE_PRIVATE).getInt("orderId", 0);
 
+        rateDialog.findViewById(R.id.xrate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateDialog.dismiss();
+            }
+        });
+
+        rateDialog.findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("order_id", orderId + "");
+                jsonObject.addProperty("stars", ratingBar.getRating() + "");
+                RetrofitClient.getApiInterface().rateOrder("Bearer " + token, jsonObject).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        rateDialog.dismiss();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        rateDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+
         orderDetailsViewModel = new ViewModelProvider(OrderDetailsFragment.this).get(OrderDetailsViewModel.class);
 
         ((MainActivity) getActivity()).showDialog(true);
@@ -110,12 +157,22 @@ public class OrderDetailsFragment extends Fragment {
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (orderDetails != null) {
+
+
+                    rateDialog.show();
+
+
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());
                     rv_productDetails.setAdapter(orderDetailsAdapter);
                     tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getFormatedNumber());
-                    tv_orderDetailsStatus.setText(orderDetails.getOrder().getStatus());
+
+                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
+                        tv_orderDetailsStatus.setText("جاري تجهيز طلبك");
+                    else
+                        tv_orderDetailsStatus.setText(orderDetails.getOrder().getStatus());
+
                     status = orderDetails.getOrder().getStatus();
-                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب")) {
+                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || orderDetails.getOrder().getStatus().equals("جاري تجهيز طلبك")) {
                         cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.light_green_bg));
                     } else if (orderDetails.getOrder().getStatus().equals("ملغي")) {
                         cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.malghi_bg));
@@ -129,8 +186,13 @@ public class OrderDetailsFragment extends Fragment {
 
                     tv_totalPrice.setText(orderDetails.getOrder().getPricing().getTotalWithCouponVat() + " ر.س");
 
-                    one.setText("#"+orderDetails.getOrder().getFormatedNumber());
-                    two.setText(orderDetails.getOrder().getStatus());
+                    one.setText("#" + orderDetails.getOrder().getFormatedNumber());
+                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
+
+                        two.setText("جاري تجهيز طلبك");
+                    else
+                        two.setText(orderDetails.getOrder().getStatus());
+
                     three.setText(orderDetails.getOrder().getCustomerName());
                     four.setText(orderDetails.getOrder().getCustomerPhone());
                     five.setText(orderDetails.getOrder().getDeliveryDate());
@@ -155,7 +217,7 @@ public class OrderDetailsFragment extends Fragment {
         go_support.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).fragmentStack.push(new SupportFragment());
+                ((MainActivity) getActivity()).fragmentStack.push(new SupportFragment());
             }
         });
 
@@ -175,7 +237,7 @@ public class OrderDetailsFragment extends Fragment {
         cancel_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (status.equals("تم استلام الطلب"))
+                if (status.equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
                     dialog.show();
                 else
                     Toast.makeText(getActivity(), "لا يمكن الغاء الطلب", Toast.LENGTH_SHORT).show();

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.google.gson.JsonObject;
 
 import app.mawared.alhayat.api.RetrofitClient;
+import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.reset.model.ResetModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,18 +16,18 @@ import retrofit2.Response;
 
 public class ResetViewModel extends ViewModel {
 
-    MutableLiveData<ResetModel> res = new MutableLiveData<>();
+    MutableLiveData<LoginResponse> res = new MutableLiveData<>();
 
     void resetPass(JsonObject jsonObject) {
-        RetrofitClient.getApiInterface().resetPass(jsonObject).enqueue(new Callback<ResetModel>() {
+        RetrofitClient.getApiInterface().resetPass(jsonObject).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Call<ResetModel> call, Response<ResetModel> response) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 res.setValue(response.body());
                 Log.d("rere2", "done");
             }
 
             @Override
-            public void onFailure(Call<ResetModel> call, Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
                 Log.d("rere2", t.getMessage());
                 res.setValue(null);
             }
