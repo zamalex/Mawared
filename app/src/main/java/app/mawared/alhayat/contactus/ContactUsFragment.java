@@ -25,7 +25,7 @@ public class ContactUsFragment extends Fragment {
 
     View view;
     ContactUsViewModel contactUsViewModel;
-    EditText et_MessageTitle,et_MessageContent;
+    EditText et_MessageTitle,et_MessageContent,phone_et;
     ConstraintLayout btn_sendMsg;
     ImageView iv_backCBtnFromContactUs;
     FragmentStack fragmentStack;
@@ -37,6 +37,7 @@ public class ContactUsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_contact_us, container, false);
         et_MessageTitle = view.findViewById(R.id.et_MessageTitle);
         et_MessageContent = view.findViewById(R.id.et_MessageContent);
+        phone_et = view.findViewById(R.id.phone_et);
         btn_sendMsg = view.findViewById(R.id.btn_sendMsg);
         iv_backCBtnFromContactUs = view.findViewById(R.id.iv_backCBtnFromContactUs);
 
@@ -45,9 +46,9 @@ public class ContactUsFragment extends Fragment {
         btn_sendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!et_MessageTitle.getText().toString().isEmpty() && !et_MessageContent.getText().toString().isEmpty()){
+                if(!et_MessageTitle.getText().toString().isEmpty() && !et_MessageContent.getText().toString().isEmpty()&& !phone_et.getText().toString().isEmpty()){
                     ((MainActivity)getActivity()).showDialog(true);
-                    contactUsViewModel.contactUs(et_MessageTitle.getText().toString(),et_MessageContent.getText().toString())
+                    contactUsViewModel.contactUs(et_MessageTitle.getText().toString(),et_MessageContent.getText().toString(),phone_et.getText().toString())
                             .observe(getActivity(), new Observer<ContactUsResponse>() {
                                 @Override
                                 public void onChanged(ContactUsResponse contactUsResponse) {
@@ -64,7 +65,7 @@ public class ContactUsFragment extends Fragment {
                                 }
                             });
                 }else {
-                    //Toast.makeText(getActivity(),"",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),"اكمل البيانات المطلوبة",Toast.LENGTH_LONG).show();
 
                 }
             }

@@ -41,4 +41,11 @@ public class Notification {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public Notification() {
+    }
+
+    public Notification(int status) {
+        this.status = status;
+    }
 }

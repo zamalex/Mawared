@@ -70,6 +70,7 @@ import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.OrderDoneFragment;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.api.RetrofitClient;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.mycart.model.Product;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
 import app.mawared.alhayat.sendorder.model.AddressModel;
@@ -416,6 +417,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                     if (addressModel.getStatus() == 200) {
                         adapter.setAddresses((ArrayList<OrderShippingAddress>) addressModel.getOrderShippingAddresses());
+                    } else if (addressModel.getStatus() == 401) {
+                        Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
                     }
                 }
             });
@@ -542,13 +546,23 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 public void onChanged(TimesModel timesModel) {
                     if (isAdded()) {
                         ((MainActivity) getActivity()).showDialog(false);
-                        if (timesModel.getSuccess()) {
-                            times = new ArrayList<>();
-                            for (Time t : timesModel.getTimes())
-                                times.add(t.getName());
-                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, times);
-                            time_spinner.setAdapter(aarrdapter);
+                        if (timesModel!=null){
+                            if (timesModel.getStatus()==401){
+                                Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
+                                return;
+                            }
                         }
+                        if (timesModel!=null){
+                            if (timesModel.getSuccess()) {
+                                times = new ArrayList<>();
+                                for (Time t : timesModel.getTimes())
+                                    times.add(t.getName());
+                                ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, times);
+                                time_spinner.setAdapter(aarrdapter);
+                            }
+                        }
+
                     }
                 }
             });

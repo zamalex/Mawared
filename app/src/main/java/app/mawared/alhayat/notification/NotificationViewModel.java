@@ -29,6 +29,9 @@ public class NotificationViewModel extends ViewModel {
                     notificationMutableLiveData.postValue(null);
 
                 }
+                if (response.code()==401){
+                    notificationMutableLiveData.postValue(new Notification(401));
+                }
             }
             @Override
             public void onFailure(Call<Notification> call, Throwable t) {

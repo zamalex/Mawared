@@ -2,6 +2,7 @@ package app.mawared.alhayat.support.chat;
 
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pusher.client.Pusher;
@@ -48,10 +50,11 @@ public class ChatFragment extends Fragment {
     RecyclerView chat_rv;
     ImageView snd_btn;
     ImageView bck;
-
+    TextView closed;
     ChatAdapter chatAdapter;
     EditText msg_et;
     Chat chat = null;
+    ConstraintLayout chat_box;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +69,10 @@ public class ChatFragment extends Fragment {
         msg_et = v.findViewById(R.id.msg_et);
         snd_btn = v.findViewById(R.id.snd_msg);
         bck = v.findViewById(R.id.imageView);
+        closed = v.findViewById(R.id.closed);
+        chat_box = v.findViewById(R.id.constraintLayout12);
+        closed.setVisibility(View.INVISIBLE);
+        chat_box.setVisibility(View.VISIBLE);
 
         chat_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -98,12 +105,20 @@ public class ChatFragment extends Fragment {
                 if (receivedChat != null) {
                     if (receivedChat.getSuccess()) {
 
+                        if (receivedChat.getData().getStatus().equals("1")){
+                            closed.setVisibility(View.INVISIBLE);
+                            chat_box.setVisibility(View.VISIBLE);
 
+                        }else {
+                            closed.setVisibility(View.VISIBLE);
+                            chat_box.setVisibility(View.INVISIBLE);
+                        }
                         chatAdapter.setMessages((ArrayList<Message>) receivedChat.getData().getMessages());
 
                         if (chatAdapter.messages.size()>0){
                             chat_rv.scrollToPosition(chatAdapter.messages.size()-1);
                         }
+
 
                     }
                 }
@@ -119,7 +134,7 @@ public class ChatFragment extends Fragment {
 
                 if (viewModel.receivedChatMutableLiveData.getValue()!=null){
                     if (viewModel.receivedChatMutableLiveData.getValue().getSuccess()){
-                        if (viewModel.receivedChatMutableLiveData.getValue().getStatus()==0){
+                        if (viewModel.receivedChatMutableLiveData.getValue().getData().getStatus().equals("0")){
                             Toast.makeText(getActivity(), "تم اغلاق المحادثة", Toast.LENGTH_SHORT).show();
                             return;
                         }

@@ -38,4 +38,7 @@ public class TimesModel {
         mTimes = times;
     }
 
+    public TimesModel(Long mStatus) {
+        this.mStatus = mStatus;
+    }
 }

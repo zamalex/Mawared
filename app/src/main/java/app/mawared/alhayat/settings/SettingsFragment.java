@@ -37,6 +37,7 @@ import java.util.List;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.about.AboutMawaredFragment;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.notification.NotificationViewModel;
 import app.mawared.alhayat.notification.model.Notification;
@@ -160,6 +161,11 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
             public void onChanged(Notification notification) {
                 ((MainActivity)getActivity()).showDialog(false);
                 if (notification!=null){
+                    if (notification.getStatus()==401){
+                        Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        return;
+                    }
                     if (notification.getSuccess()){
                         if (notification.getNotifications_messages()!=null){
                             settingsList.get(0).setNotificationCount(notification.getNotifications_messages().size()+"");

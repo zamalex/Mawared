@@ -1,5 +1,6 @@
 package app.mawared.alhayat.support.chatlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,11 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.home.HomeViewModel;
+import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
+import app.mawared.alhayat.home.orderscount.OrdersCountModel;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.support.SupportFragment;
 import app.mawared.alhayat.support.chat.ChatFragment;
 import app.mawared.alhayat.support.chatlist.model.Chat;
@@ -33,6 +39,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
     TextView msg_txt;
     ChatListViewModel viewModel;
     ChatListAdapter adapter;
+    HomeViewModel homeViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,6 +47,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_chat_list, container, false);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(ChatListViewModel.class);
+        homeViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
 
         adapter = new ChatListAdapter(this);
 
@@ -60,6 +68,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (chatList != null) {
+                    if (chatList.getStatus()==401){
+                        Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        return;
+
+                    }
                     if (chatList.getSuccess()) {
                         adapter.setMessages((ArrayList<Chat>) chatList.getData());
                         if (chatList.getData().size() > 0) {
@@ -104,6 +118,38 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
     public void onStart() {
         super.onStart();
         ((MainActivity) getActivity()).bottomNavVisibility(true);
+
+        String token = Paper.book().read("token", "none");
+
+        if (!token.equals("none")) {
+            homeViewModel.getNotifyCount("Bearer " + token);
+            homeViewModel.getOrdersCount("Bearer " + token);
+
+        }
+
+        homeViewModel.notifyCount.observe(this, new Observer<NotifyCountModel>() {
+            @Override
+            public void onChanged(NotifyCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getUnread() > 0&&getActivity()!=null)
+                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                    }
+                }
+            }
+        });
+
+        homeViewModel.ordersCount.observe(this, new Observer<OrdersCountModel>() {
+            @Override
+            public void onChanged(OrdersCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getHasNewUpdates()&&getActivity()!=null)
+                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+                    }
+                }
+            }
+        });
     }
 
     @Override

@@ -93,4 +93,7 @@ public class AllOrder implements Parcelable
         return  0;
     }
 
+    public AllOrder(int status) {
+        this.status = status;
+    }
 }

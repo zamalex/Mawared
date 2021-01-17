@@ -1,5 +1,6 @@
 package app.mawared.alhayat.notification;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.helpers.FragmentStack;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.notification.model.Notification;
 
 
@@ -50,6 +53,12 @@ public class NotificationFragments extends Fragment {
                 ((MainActivity)getActivity()).showDialog(false);
 
                 if (notification!=null){
+                    if (notification.getStatus()==401){
+                        Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        return;
+
+                    }
                     notificationsAdapter = new NotificationsAdapter(notification.getNotifications_messages());
                     rv_notifications.setAdapter(notificationsAdapter);
                 }

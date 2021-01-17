@@ -2,6 +2,7 @@ package app.mawared.alhayat.orders;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -22,6 +23,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
@@ -32,6 +34,7 @@ import app.mawared.alhayat.helpers.EndlessRecyclerViewScrollListener;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.helpers.OrderClickListener;
 import app.mawared.alhayat.home.OrderViewModel;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.model.AllOrder;
 import io.paperdb.Paper;
@@ -76,6 +79,12 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (allOrder != null) {
+                    if (allOrder.getStatus()==401){
+                        Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        return;
+
+                    }
                     if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
 
                         ordersAdapter.setList(allOrder.getOrders());
@@ -83,6 +92,8 @@ public class OrderFragment extends Fragment implements OrderClickListener {
 
                     }
                 }
+
+
 
             }
         });

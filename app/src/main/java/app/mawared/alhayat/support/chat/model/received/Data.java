@@ -9,6 +9,8 @@ public class Data {
 
     @SerializedName("agent_name")
     private String mAgentName;
+    @SerializedName("status")
+    private String status;
     @SerializedName("channel_id")
     private String mChannelId;
     @SerializedName("conversation_id")
@@ -68,4 +70,11 @@ public class Data {
         mMessages = messages;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

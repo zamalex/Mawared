@@ -55,7 +55,7 @@ import io.paperdb.Paper;
 public class MainActivity extends AppCompatActivity {
 
     public FragmentStack fragmentStack;
-    BottomNavigationView navigationView;
+   public BottomNavigationView navigationView;
     private boolean paymentSuccess = false;
     KProgressHUD dialog;
 
@@ -120,37 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         navigationView = findViewById(R.id.navigation);
-        String token = Paper.book().read("token", "none");
 
-        if (!token.equals("none")) {
-            viewModel.getNotifyCount("Bearer " + token);
-            viewModel.getOrdersCount("Bearer " + token);
-
-        }
-
-        viewModel.notifyCount.observe(this, new Observer<NotifyCountModel>() {
-            @Override
-            public void onChanged(NotifyCountModel notifyCountModel) {
-                if (notifyCountModel != null) {
-                    if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getUnread() > 0)
-                            navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
-                    }
-                }
-            }
-        });
-
-        viewModel.ordersCount.observe(this, new Observer<OrdersCountModel>() {
-            @Override
-            public void onChanged(OrdersCountModel notifyCountModel) {
-                if (notifyCountModel != null) {
-                    if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getHasNewUpdates())
-                            navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
-                    }
-                }
-            }
-        });
 
         //  navigationView.getOrCreateBadge(R.id.support).setNumber(5);
         // navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
@@ -339,6 +309,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Lingver.getInstance().setLocale(this, "ar");
+        String token = Paper.book().read("token", "none");
 
+        if (!token.equals("none")) {
+            viewModel.getNotifyCount("Bearer " + token);
+            viewModel.getOrdersCount("Bearer " + token);
+
+        }
+
+        viewModel.notifyCount.observe(this, new Observer<NotifyCountModel>() {
+            @Override
+            public void onChanged(NotifyCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getUnread() > 0)
+                            navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                    }
+                }
+            }
+        });
+
+        viewModel.ordersCount.observe(this, new Observer<OrdersCountModel>() {
+            @Override
+            public void onChanged(OrdersCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getHasNewUpdates())
+                            navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+                    }
+                }
+            }
+        });
     }
 }

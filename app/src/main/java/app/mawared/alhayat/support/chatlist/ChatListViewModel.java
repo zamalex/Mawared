@@ -23,6 +23,7 @@ public class ChatListViewModel extends ViewModel {
                 }else {
                     chatListMutableLiveData.setValue(null);
                 }
+                if (response.code()==401){chatListMutableLiveData.setValue(new ChatList(Long.parseLong(401+"")));}
             }
 
             @Override

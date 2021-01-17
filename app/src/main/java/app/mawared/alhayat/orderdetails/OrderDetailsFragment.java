@@ -26,6 +26,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.JsonObject;
 
 import app.mawared.alhayat.MainActivity;
@@ -56,10 +57,11 @@ public class OrderDetailsFragment extends Fragment {
     FragmentStack fragmentStack;
     ImageButton cancel_order;
     Dialog dialog;
+    Dialog done;
     Button ccncl_btn;
     EditText reason_et;
     String status = "none";
-    Dialog rateDialog;
+    BottomSheetDialog rateDialog;
     RatingBar ratingBar;
     String token = Paper.book().read("token");
 
@@ -72,12 +74,16 @@ public class OrderDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_order_details_details, container, false);
 
         dialog = new Dialog(getActivity());
+        done = new Dialog(getActivity());
         dialog.setContentView(R.layout.reason_dialog);
+        done.setContentView(R.layout.done_dialog);
         Window window1 = dialog.getWindow();
         window1.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        rateDialog = new Dialog(getActivity());
+        rateDialog = new BottomSheetDialog(getActivity());
+
+        done.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
         rateDialog.setContentView(R.layout.rate_dialog);
@@ -135,6 +141,8 @@ public class OrderDetailsFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         rateDialog.dismiss();
+                        done.show();
+
 
                     }
 

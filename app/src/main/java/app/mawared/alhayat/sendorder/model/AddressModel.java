@@ -40,4 +40,8 @@ public class AddressModel {
         mSuccess = success;
     }
 
+    public AddressModel(Long mStatus) {
+        this.mStatus = mStatus;
+    }
+
 }

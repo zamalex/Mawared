@@ -38,4 +38,7 @@ public class ChatList {
         mSuccess = success;
     }
 
+    public ChatList(Long mStatus) {
+        this.mStatus = mStatus;
+    }
 }

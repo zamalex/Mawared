@@ -50,7 +50,7 @@ public class RegisterationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String languageToLoad  = "ar"; // your language
+        String languageToLoad = "ar"; // your language
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
@@ -78,10 +78,9 @@ public class RegisterationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
 
-                termsBottomSheet.show(getSupportFragmentManager(),"tag");
+                termsBottomSheet.show(getSupportFragmentManager(), "tag");
             }
         });
-
 
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -90,23 +89,26 @@ public class RegisterationActivity extends AppCompatActivity {
                 phoneNumber = et_phoneNumber.getText().toString();
                 JsonObject jObj = new JsonObject();
 
-                    jObj.addProperty("mobile",phoneNumber);
-                    jObj.addProperty("sms_token","3NAjIDnZDcG");
-                    dialog.show();
-                    registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
-                        @Override
-                        public void onChanged(LoginRegistration loginRegistration) {
-                            dialog.dismiss();
-                            if (loginRegistration != null) {
-                                if (loginRegistration.getStatus() == 200) {
+                jObj.addProperty("mobile", phoneNumber);
+                jObj.addProperty("sms_token", "3NAjIDnZDcG");
+                dialog.show();
+                registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
+                    @Override
+                    public void onChanged(LoginRegistration loginRegistration) {
+                        dialog.dismiss();
+                        if (loginRegistration != null) {
+                            if (loginRegistration.getStatus() == 200) {
+                                if (loginRegistration.getData().getExists()) {
+                                    Toast.makeText(getApplicationContext(), "الرقم الذي أدخلته مسجل مسبقا", Toast.LENGTH_LONG).show();
 
+                                } else
                                     startSMSListener();
-                                }
-                            }else {
-                                Toast.makeText(getApplicationContext(),"الرقم الذي أدخلته غير صحيح",Toast.LENGTH_LONG).show();
                             }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "الرقم الذي أدخلته غير صحيح", Toast.LENGTH_LONG).show();
                         }
-                    });
+                    }
+                });
             }
         });
     }
@@ -115,18 +117,20 @@ public class RegisterationActivity extends AppCompatActivity {
         SmsRetrieverClient mClient = SmsRetriever.getClient(this);
         Task<Void> mTask = mClient.startSmsRetriever();
         mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override public void onSuccess(Void aVoid) {
+            @Override
+            public void onSuccess(Void aVoid) {
 
-                getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum",phoneNumber).commit();
+                getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum", phoneNumber).commit();
                 Intent activationIntent = new Intent(RegisterationActivity.this,
                         ActivationActivity.class);
-                activationIntent.putExtra("mobNo",phoneNumber);
+                activationIntent.putExtra("mobNo", phoneNumber);
                 startActivity(activationIntent);
 
             }
         });
         mTask.addOnFailureListener(new OnFailureListener() {
-            @Override public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
             }
         });
     }

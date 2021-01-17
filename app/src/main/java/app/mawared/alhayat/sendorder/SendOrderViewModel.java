@@ -36,6 +36,9 @@ public class SendOrderViewModel extends ViewModel {
                 if (response.isSuccessful()) {
                     addresses.setValue(response.body());
                 }
+                if (response.code()==401){
+                    addresses.setValue(new AddressModel(Long.parseLong(401+"")));
+                }
             }
 
             @Override
@@ -71,6 +74,9 @@ public class SendOrderViewModel extends ViewModel {
             public void onResponse(Call<TimesModel> call, Response<TimesModel> response) {
                 if (response.isSuccessful()) {
                     times.setValue(response.body());
+                }
+                if (response.code()==401){
+                    times.setValue(new TimesModel(Long.parseLong(401+"")));
                 }
             }
 

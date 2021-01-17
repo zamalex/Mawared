@@ -76,7 +76,7 @@ public interface APIInterface {
     Call<Notification> getNotification(@Query("page") int pageNumber, @Header("Authorization") String token);
 
     @POST("contact-us")
-    Call<ContactUsResponse> getFromContact(@Query("title") String messageTitle, @Query("info") String messagesContent, @Header("Authorization") String token);
+    Call<ContactUsResponse> getFromContact(@Query("title") String messageTitle, @Query("info") String messagesContent,@Query("mobile")String mobile, @Header("Authorization") String token);
 
     @POST("register/check-mobile")
     Call<LoginRegistration> checkMobile(@Body JsonObject mobileNumber);

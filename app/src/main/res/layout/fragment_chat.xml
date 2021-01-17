@@ -43,7 +43,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+    <TextView
+        android:visibility="invisible"
+        android:id="@+id/closed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="شكرا لتواصلك, تمت خدمتك من قبل ممثل خدمة العملاء, بإمكانك فتح محادثة جديدة &#128077;&#127995;"
+        android:textColor="#E91E1E"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="visible"
         android:id="@+id/constraintLayout12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
