@@ -145,7 +145,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
                         if (notifyCountModel.getData().getHasNewUpdates()&&getActivity()!=null)
-                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
                     }
                 }
             }

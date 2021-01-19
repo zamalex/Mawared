@@ -62,7 +62,7 @@ public class OrderDetailsFragment extends Fragment {
     EditText reason_et;
     String status = "none";
     BottomSheetDialog rateDialog;
-    RatingBar ratingBar;
+    RatingBar ratingBar,shipping_bar;
     String token = Paper.book().read("token");
 
     TextView one, two, three, four, five, six, seven;
@@ -88,6 +88,7 @@ public class OrderDetailsFragment extends Fragment {
 
         rateDialog.setContentView(R.layout.rate_dialog);
         ratingBar = rateDialog.findViewById(R.id.stars);
+        shipping_bar = rateDialog.findViewById(R.id.shipping_stars);
 
         rateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         Window window3 = rateDialog.getWindow();
@@ -137,6 +138,7 @@ public class OrderDetailsFragment extends Fragment {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("order_id", orderId + "");
                 jsonObject.addProperty("stars", ratingBar.getRating() + "");
+                jsonObject.addProperty("driver_rating_stars", shipping_bar.getRating() + "");
                 RetrofitClient.getApiInterface().rateOrder("Bearer " + token, jsonObject).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -167,7 +169,8 @@ public class OrderDetailsFragment extends Fragment {
                 if (orderDetails != null) {
 
 
-                    rateDialog.show();
+                    if (orderDetails.getOrder().isShowRating())
+                        rateDialog.show();
 
 
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());

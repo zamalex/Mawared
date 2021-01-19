@@ -29,6 +29,11 @@ public class Order implements Parcelable
     @SerializedName("unread_count")
     @Expose
     public Long unread_count=0l;
+
+    @SerializedName("new_updates")
+    @Expose
+    public boolean new_updates;
+
     public final static Creator<Order> CREATOR = new Creator<Order>() {
 
 

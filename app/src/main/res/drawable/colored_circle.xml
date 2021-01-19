@@ -4,6 +4,6 @@
     android:shape="oval">
 
     <solid
-        android:color="@color/darkgrey"/>
+        android:color="#de666b"/>
 
 </shape>

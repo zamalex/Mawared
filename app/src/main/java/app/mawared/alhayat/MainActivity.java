@@ -32,10 +32,13 @@ import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
 
 import app.mawared.alhayat.about.AboutMawaredFragment;
+import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.home.HomeFragment;
 import app.mawared.alhayat.home.HomeViewModel;
@@ -44,6 +47,8 @@ import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.notification.NotificationFragments;
+import app.mawared.alhayat.onesignal.OneSignalNotificationOpenedHandler;
+import app.mawared.alhayat.onesignal.OneSignalNotificationReceivedHandler;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.OrderFragment;
 import app.mawared.alhayat.settings.SettingsFragment;
@@ -51,6 +56,10 @@ import app.mawared.alhayat.support.SupportFragment;
 import app.mawared.alhayat.support.chat.ChatFragment;
 import app.mawared.alhayat.support.chatlist.ChatListFragment;
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor orderIdPref;
     HomeViewModel viewModel;
     public Boolean didShow = false;
-
+    String token;
+    String UUID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +84,38 @@ public class MainActivity extends AppCompatActivity {
         Bundle bb = new Bundle();
         bb.putString(FirebaseAnalytics.Param.ITEM_ID, "1");
         mFirebaseAnalytics.logEvent("start_app", bb);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// start one signal
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+
+        // OneSignal Initialization
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .setNotificationOpenedHandler(new OneSignalNotificationOpenedHandler(this))
+                .setNotificationReceivedHandler(new OneSignalNotificationReceivedHandler(this,getApplication()))
+                .init();
 
 
+        UUID = OneSignal.getPermissionSubscriptionState().getSubscriptionStatus().getUserId();
+        token = Paper.book().read("token",null);
 
+        if (UUID!=null&&token!=null){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("player_id",UUID);
+            RetrofitClient.getApiInterface().sendNotificationToken(jsonObject,"Bearer "+token).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////// end one signal
         // Creates instance of the manager.
         AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
 
@@ -123,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //  navigationView.getOrCreateBadge(R.id.support).setNumber(5);
-        // navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+        //navigationView.getOrCreateBadge(R.id.orders);
 
 
         final HomeFragment homeFragment = new HomeFragment();
@@ -335,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
                         if (notifyCountModel.getData().getHasNewUpdates())
-                            navigationView.getOrCreateBadge(R.id.orders).setNumber(1);
+                            navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
                     }
                 }
             }

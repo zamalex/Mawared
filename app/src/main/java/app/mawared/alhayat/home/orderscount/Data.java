@@ -9,6 +9,18 @@ public class Data {
     @SerializedName("has_new_updates")
     private Boolean mHasNewUpdates;
 
+    @SerializedName("count")
+    private int count;
+
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public Boolean getHasNewUpdates() {
         return mHasNewUpdates;
     }

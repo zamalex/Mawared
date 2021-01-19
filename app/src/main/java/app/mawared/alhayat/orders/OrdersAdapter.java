@@ -43,8 +43,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
     public void onBindViewHolder(@NonNull ordersHolder holder, int position) {
         Order allOrderModel = allOrderList.get(position);
 
-        holder.unread_count.setText(allOrderModel.unread_count.toString());
-        if (allOrderModel.unread_count > 0) {
+       // holder.unread_count.setText(allOrderModel.unread_count.toString());
+        if (allOrderModel.new_updates) {
             holder.unread_count.setVisibility(View.VISIBLE);
         } else {
             holder.unread_count.setVisibility(View.INVISIBLE);
