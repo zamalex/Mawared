@@ -8,11 +8,11 @@ import com.google.gson.annotations.SerializedName;
 public class CitiesModel {
 
     @SerializedName("data")
-    private List<Datum> mData;
+    public List<Datum> mData;
     @SerializedName("message")
-    private String mMessage;
+    public String mMessage;
     @SerializedName("status_code")
-    private Long mStatusCode;
+    public Long mStatusCode;
 
     public List<Datum> getData() {
         return mData;

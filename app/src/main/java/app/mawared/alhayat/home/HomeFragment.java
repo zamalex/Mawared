@@ -1,8 +1,10 @@
 package app.mawared.alhayat.home;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,19 +15,25 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,6 +41,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
@@ -63,7 +73,7 @@ import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
 
-public class HomeFragment extends Fragment implements HomeAdapter.addListener {
+public class HomeFragment extends Fragment implements HomeAdapter.addListener, CitiesAdapter.onCity {
 
     View v;
     RecyclerView recyclerView;
@@ -83,15 +93,18 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
     Dialog dialog;
     Button q_btn;
-    EditText q_et;
+    EditText q_et, et_city;
 
     SharedPreferences pref;
     SharedPreferences.OnSharedPreferenceChangeListener listener;
-
+    TextView all;
+    RecyclerView cities_rv;
+    CitiesAdapter citiesAdapter;
     ReviewManager manager;
     ReviewInfo reviewInfo = null;
     String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
 
+    BottomSheetDialog citiesDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,8 +117,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
             public void onComplete(@NonNull Task<ReviewInfo> task) {
                 if (task.isSuccessful()) {
                     reviewInfo = task.getResult();
-                    if (((MainActivity)getActivity())!=null){
-                        if (!((MainActivity)getActivity()).didShow){
+                    if (((MainActivity) getActivity()) != null) {
+                        if (!((MainActivity) getActivity()).didShow) {
 
                             if (reviewInfo != null) {
                                 manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
@@ -120,7 +133,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void result) {
-                                        ((MainActivity)getActivity()).didShow = true;
+                                        ((MainActivity) getActivity()).didShow = true;
                                         Log.e("TAG", "onSuccess: ");
 
                                     }
@@ -135,7 +148,65 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
 
 
         adapter = new HomeAdapter(getActivity(), this);
+        citiesAdapter = new CitiesAdapter(this);
+
         dialog = new Dialog(getActivity());
+
+        citiesDialog = new BottomSheetDialog(getActivity(), R.style.AppBottomSheetDialogTheme);
+        citiesDialog.setContentView(R.layout.cities_dialog);
+        Window window3 = citiesDialog.getWindow();
+        window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        citiesDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+                // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+                FrameLayout bottomSheet = dialogc.findViewById(R.id.design_bottom_sheet);
+
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                setupFullHeight(bottomSheet);
+                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+
+
+        cities_rv = citiesDialog.findViewById(R.id.rv_cities);
+        et_city = citiesDialog.findViewById(R.id.et_city);
+        all = citiesDialog.findViewById(R.id.all);
+
+        cities_rv.setAdapter(citiesAdapter);
+
+        et_city.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                citiesAdapter.filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                citiesDialog.dismiss();
+                ((MainActivity)getActivity()).showDialog(true);
+                viewModel.getHomeProducts(card_id);
+            }
+        });
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(),
+                LinearLayoutManager.VERTICAL);
+        cities_rv.addItemDecoration(dividerItemDecoration);
+
 
         dialog.setContentView(R.layout.count_dialog);
 
@@ -160,7 +231,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                     String ccc = Paper.book().read("cid", null);
 
                     viewModel.getHomeProducts(ccc);
-                 //   Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
+                    //   Toast.makeText(getActivity(), "again", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -399,7 +470,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
                             }
                             ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
                             spinner.setAdapter(aarrdapter);
+                            citiesAdapter.setList((ArrayList<Datum>) citiesModel.getData());
 
+                           // citiesDialog.show();
                         }
                     }
                 });
@@ -506,8 +579,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
 
 
-
-
     }
 
     Product p = null;
@@ -543,5 +614,22 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener {
         pref.unregisterOnSharedPreferenceChangeListener(listener);
 
         super.onPause();
+    }
+
+    private void setupFullHeight(View bottomSheet) {
+        ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        bottomSheet.setLayoutParams(layoutParams);
+    }
+
+    @Override
+    public void onSelect(Datum city) {
+        ((MainActivity) getActivity()).showDialog(true);
+
+
+        viewModel.filterByCity(city.getId().toString());
+
+        citiesDialog.dismiss();
+
     }
 }
