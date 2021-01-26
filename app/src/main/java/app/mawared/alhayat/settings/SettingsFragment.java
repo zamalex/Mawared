@@ -55,13 +55,14 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     Settings settingsModel;
     List<Settings> settingsList;
     RecyclerView rv_settings;
-    TextView tv_collectPoints,tv_profileName,tv_userPhone,tv_userMail,tv_profilePoints;
+    TextView tv_collectPoints, tv_profileName, tv_userPhone, tv_userMail, tv_profilePoints;
     SettingsAdapter settingsAdapter;
     NotificationViewModel viewModel;
     SendOrderViewModel sendOrderViewModel;
     SharedPreferences pref;
     ReviewManager manager;
-    ReviewInfo reviewInfo=null;
+    ReviewInfo reviewInfo = null;
+    String token = Paper.book().read("token", "none");
 
 
     @Override
@@ -71,12 +72,11 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
             @Override
             public void onComplete(@NonNull Task<ReviewInfo> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     reviewInfo = task.getResult();
                 }
             }
         });
-
 
 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
@@ -87,7 +87,6 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-
         tv_collectPoints = view.findViewById(R.id.tv_collectPoints);
         tv_profilePoints = view.findViewById(R.id.tv_profilePoints);
         tv_collectPoints.setPaintFlags(tv_collectPoints.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -96,48 +95,52 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         tv_userMail = view.findViewById(R.id.tv_userMail);
         tv_profileName = view.findViewById(R.id.tv_profileName);
         settingsList = new ArrayList<>();
-        settingsModel = new Settings(1,R.drawable.bell,"التنبيهات","0");
+        settingsModel = new Settings(1, R.drawable.bell, "التنبيهات", "0");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(2,R.drawable.phonecall,"تواصل معنا","3");
+        settingsModel = new Settings(2, R.drawable.phonecall, "تواصل معنا", "3");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(3,R.drawable.share2,"شارك التطبيق","3");
+        settingsModel = new Settings(3, R.drawable.share2, "شارك التطبيق", "3");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(4,R.drawable.star,"قيم التطبيق","3");
+        settingsModel = new Settings(4, R.drawable.star, "قيم التطبيق", "3");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(5,R.drawable.combinedshape,"نبذة عن مياة موارد","3");
+        settingsModel = new Settings(5, R.drawable.combinedshape, "نبذة عن مياة موارد", "3");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(6,R.drawable.logout,"تسجيل خروج","3");
-        settingsList.add(settingsModel);
-        settingsAdapter = new SettingsAdapter(settingsList,getActivity(),this);
+        if (token.equals("none")) {
+            settingsModel = new Settings(6, R.drawable.logout, "الرئيسية", "3");
 
-        LoginResponse loginResponse = Paper.book().read("login",null);
+        } else settingsModel = new Settings(6, R.drawable.logout, "تسجيل خروج", "3");
 
-        if (loginResponse!=null){
+        settingsList.add(settingsModel);
+        settingsAdapter = new SettingsAdapter(settingsList, getActivity(), this,getActivity());
+
+        LoginResponse loginResponse = Paper.book().read("login", null);
+
+        if (loginResponse != null) {
             tv_profileName.setText(loginResponse.getUser().getName());
             tv_userPhone.setText(loginResponse.getUser().getMobile());
             tv_userMail.setText(loginResponse.getUser().getEmail());
-            sendOrderViewModel.getPoints("Bearer "+loginResponse.getUser().getToken());
+            sendOrderViewModel.getPoints("Bearer " + loginResponse.getUser().getToken());
         }
 
 
         tv_userMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).fragmentStack.push(new EmailFragment());
+                ((MainActivity) getActivity()).fragmentStack.push(new EmailFragment());
             }
         });
 
         tv_profileName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).fragmentStack.push(new NameFragment());
+                ((MainActivity) getActivity()).fragmentStack.push(new NameFragment());
             }
         });
 
         tv_userPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).fragmentStack.push(new MobileFragment());
+                ((MainActivity) getActivity()).fragmentStack.push(new MobileFragment());
             }
         });
 
@@ -145,37 +148,36 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         sendOrderViewModel.points.observe(getViewLifecycleOwner(), new Observer<PointsModel>() {
             @Override
             public void onChanged(PointsModel pointsModel) {
-                if (pointsModel!=null){
-                    if (pointsModel.getSuccess()){
-                        if (pointsModel.getData().getExpireDate()>0){
-                            tv_profilePoints.setText(pointsModel.getData().getTotalPoints()+" نقطة ");
+                if (pointsModel != null) {
+                    if (pointsModel.getSuccess()) {
+                        if (pointsModel.getData().getExpireDate() > 0) {
+                            tv_profilePoints.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
                         }
                     }
                 }
             }
         });
 
-        ((MainActivity)getActivity()).showDialog(true);
+        ((MainActivity) getActivity()).showDialog(true);
         viewModel.getAllNotification(1).observe(getViewLifecycleOwner(), new Observer<Notification>() {
             @Override
             public void onChanged(Notification notification) {
-                ((MainActivity)getActivity()).showDialog(false);
-                if (notification!=null){
-                    if (notification.getStatus()==401){
+                ((MainActivity) getActivity()).showDialog(false);
+                if (notification != null) {
+                    if (notification.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
                     }
-                    if (notification.getSuccess()){
-                        if (notification.getNotifications_messages()!=null){
-                            settingsList.get(0).setNotificationCount(notification.getNotifications_messages().size()+"");
+                    if (notification.getSuccess()) {
+                        if (notification.getNotifications_messages() != null) {
+                            settingsList.get(0).setNotificationCount(notification.getNotifications_messages().size() + "");
                             settingsAdapter.notifyDataSetChanged();
                         }
                     }
                 }
             }
         });
-
 
 
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
@@ -188,11 +190,10 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
             public void onClick(View v) {
                 TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
 
-                termsBottomSheet.show(getActivity().getSupportFragmentManager(),"tag");
+                termsBottomSheet.show(getActivity().getSupportFragmentManager(), "tag");
 
             }
         });
-
 
 
         return view;
@@ -209,22 +210,24 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         super.onStop();
         ((MainActivity) getActivity()).bottomNavVisibility(false);
     }
+
     String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
+
     @Override
     public void onSettingsClick(Settings settings) {
-        if (settings.itemId==5)
-            ((MainActivity)getActivity()).fragmentStack.push(new AboutMawaredFragment());
-        else if (settings.itemId==6)
+        if (settings.itemId == 5)
+            ((MainActivity) getActivity()).fragmentStack.push(new AboutMawaredFragment());
+        else if (settings.itemId == 6)
             logout();
 
-        else if (settings.itemId==3){
+        else if (settings.itemId == 3) {
 
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
             } catch (android.content.ActivityNotFoundException anfe) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
             }
-        }else if (settings.itemId==4){
+        } else if (settings.itemId == 4) {
             if (reviewInfo != null) {
                 manager.launchReviewFlow(getActivity(), reviewInfo).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -238,7 +241,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        Log.e("TAG", "onSuccess: " );
+                        Log.e("TAG", "onSuccess: ");
 
                     }
                 });
@@ -247,16 +250,15 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
 
     }
 
-    void logout(){
+    void logout() {
         Paper.book().delete("token");
         Paper.book().delete("login");
         Paper.book().delete("cid");
 
         SharedPreferences.Editor editor = pref.edit();
-       editor.remove("ccc");
+        editor.remove("ccc");
 
         editor.apply();
-
 
 
         getActivity().finishAffinity();

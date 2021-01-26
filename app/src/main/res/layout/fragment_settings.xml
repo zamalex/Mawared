@@ -43,7 +43,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="28dp"
-        android:text="موضي الدوسري"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout6"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,7 +53,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="0568966230"
         android:textColor="#00A896"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout6"
         app:layout_constraintTop_toBottomOf="@+id/tv_profileName" />
@@ -66,7 +64,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="aaa@aaa.aaa"
         android:textColor="#00A896"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout6"
         app:layout_constraintTop_toBottomOf="@+id/tv_userPhone" />

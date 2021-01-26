@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
     HomeViewModel viewModel;
     CartViewModel cartViewModel;
     HomeAdapter adapter;
-    Spinner spinner;
+    EditText spinner;
     ImageView go_cart;
     SliderView flipper_layout;
     ArrayList<String> cities;
@@ -197,6 +197,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                spinner.setText("الكل");
+
                 citiesDialog.dismiss();
                 ((MainActivity)getActivity()).showDialog(true);
                 viewModel.getHomeProducts(card_id);
@@ -294,7 +296,14 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                     }
                 });
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                citiesDialog.show();
+            }
+        });
+
+      /*  spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
                                        int position, long id) {
@@ -314,7 +323,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
             }
 
         });
-
+*/
 
         recyclerView.setLayoutManager(new
 
@@ -460,19 +469,19 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                         if (isAdded()) {
                             if (citiesModel != null) {
                                 if (citiesModel.getStatusCode() == 200) {
+                                    /*
                                     for (Datum d : citiesModel.getData()) {
                                         cities.add(d.getName());
                                         cityIds.add(d.getId() + "");
-                                    }
+                                    }*/
+                                    citiesAdapter.setList((ArrayList<Datum>) citiesModel.getData());
 
                                 }
 
                             }
-                            ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
-                            spinner.setAdapter(aarrdapter);
-                            citiesAdapter.setList((ArrayList<Datum>) citiesModel.getData());
+                           // ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
+                           // spinner.setAdapter(aarrdapter);
 
-                           // citiesDialog.show();
                         }
                     }
                 });
@@ -626,6 +635,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
     public void onSelect(Datum city) {
         ((MainActivity) getActivity()).showDialog(true);
 
+        spinner.setText(city.getName());
 
         viewModel.filterByCity(city.getId().toString());
 

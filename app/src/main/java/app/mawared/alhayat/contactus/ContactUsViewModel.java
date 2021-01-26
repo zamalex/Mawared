@@ -15,9 +15,9 @@ public class ContactUsViewModel extends ViewModel {
     APIInterface apiInterface;
     MutableLiveData<ContactUsResponse> contactUsResponseMutableLiveData;
 
-    public MutableLiveData<ContactUsResponse> contactUs(String title,String content,String mobile){
+    public MutableLiveData<ContactUsResponse> contactUs(String title,String content,String mobile,String username){
         contactUsResponseMutableLiveData = new MutableLiveData<>();
-        RetrofitClient.getApiInterface().getFromContact(title,content,mobile,"Bearer "+ Paper.book().read("token","none"))
+        RetrofitClient.getApiInterface().getFromContact(title,content,mobile,username,"Bearer "+ Paper.book().read("token","none"))
                 .enqueue(new Callback<ContactUsResponse>() {
                     @Override
                     public void onResponse(Call<ContactUsResponse> call, Response<ContactUsResponse> response) {

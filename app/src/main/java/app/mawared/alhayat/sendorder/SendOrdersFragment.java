@@ -149,6 +149,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv, done_date;
     DatePicker datePicker;
 
+    ImageView copy_account, copy_iban;
+
     SwitchMaterial pts_switch;
 
     Bank selected_bank = null;
@@ -261,6 +263,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             confirmDialog.setContentView(R.layout.confirm_dialog);
             map_dailog.setContentView(R.layout.map_dialog);
             map_dailog.setCancelable(false);
+
+            copy_account = confirmDialog.findViewById(R.id.copy_account);
+            copy_iban = confirmDialog.findViewById(R.id.copy_iban);
 
             address_dialog.setContentView(R.layout.address_dialog);
             address_dialog.findViewById(R.id.xaddress).setOnClickListener(new View.OnClickListener() {
@@ -546,14 +551,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 public void onChanged(TimesModel timesModel) {
                     if (isAdded()) {
                         ((MainActivity) getActivity()).showDialog(false);
-                        if (timesModel!=null){
-                            if (timesModel.getStatus()==401){
+                        if (timesModel != null) {
+                            if (timesModel.getStatus() == 401) {
                                 Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(getActivity(), LoginActivity.class));
                                 return;
                             }
                         }
-                        if (timesModel!=null){
+                        if (timesModel != null) {
                             if (timesModel.getSuccess()) {
                                 times = new ArrayList<>();
                                 for (Time t : timesModel.getTimes())
@@ -1362,6 +1367,30 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             }
 
         }
+
+        copy_iban.setVisibility(View.VISIBLE);
+        copy_account.setVisibility(View.VISIBLE);
+
+        copy_account.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!bank_acc_no.getText().toString().isEmpty()) {
+                    setClipboard(getActivity(), bank_acc_no.getText().toString());
+                    Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        copy_iban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!bank_iban.getText().toString().isEmpty()) {
+                    setClipboard(getActivity(), bank_iban.getText().toString());
+                    Toast.makeText(getActivity(), "تم النسخ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         selected_bank = bank;
         bankAdapter.setBanks((ArrayList<Bank>) viewModel.banks.getValue().getBanks());
 

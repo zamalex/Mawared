@@ -33,7 +33,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
+        <EditText
+            android:text="الكل"
+            android:editable="false"
+            android:focusable="false"
+            android:fontFamily="@font/urosemi"
             android:id="@+id/city_spinner"
             android:layout_width="110dp"
             android:layout_height="wrap_content"

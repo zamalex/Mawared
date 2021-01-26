@@ -25,7 +25,8 @@ public class OneSignalNotificationReceivedHandler implements OneSignal.Notificat
     Application application;
 
     HomeViewModel homeViewModel;
-    public OneSignalNotificationReceivedHandler(Context context,Application application) {
+
+    public OneSignalNotificationReceivedHandler(Context context, Application application) {
         this.context = context;
         this.application = application;
 
@@ -39,8 +40,8 @@ public class OneSignalNotificationReceivedHandler implements OneSignal.Notificat
         Log.i("OneSignalExample", "on recive data " + notification.payload.toJSONObject().toString());
         Log.i("OneSignalExample", "recieved");
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// start
-        if (context instanceof MainActivity){
-            if (((MainActivity)context).navigationView!=null){
+        if (context instanceof MainActivity) {
+            if (((MainActivity) context).navigationView != null) {
                 String token = Paper.book().read("token", "none");
 
                 if (!token.equals("none")) {
@@ -49,25 +50,39 @@ public class OneSignalNotificationReceivedHandler implements OneSignal.Notificat
 
                 }
 
-                homeViewModel.notifyCount.observe(((MainActivity)context), new Observer<NotifyCountModel>() {
+                homeViewModel.notifyCount.observe(((MainActivity) context), new Observer<NotifyCountModel>() {
                     @Override
                     public void onChanged(NotifyCountModel notifyCountModel) {
                         if (notifyCountModel != null) {
                             if (notifyCountModel.getSuccess()) {
-                                if (notifyCountModel.getData().getUnread() > 0&&context!=null)
-                                    ((MainActivity)context).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                                if (context != null) {
+                                    if (notifyCountModel.getData().getUnread() > 0 && context != null)
+                                        ((MainActivity) context).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                                    else {
+                                        if (context != null)
+                                            ((MainActivity) context).navigationView.removeBadge(R.id.support);
+                                    }
+                                }
+
                             }
                         }
                     }
                 });
 
-                homeViewModel.ordersCount.observe(((MainActivity)context), new Observer<OrdersCountModel>() {
+                homeViewModel.ordersCount.observe(((MainActivity) context), new Observer<OrdersCountModel>() {
                     @Override
                     public void onChanged(OrdersCountModel notifyCountModel) {
                         if (notifyCountModel != null) {
                             if (notifyCountModel.getSuccess()) {
-                                if (notifyCountModel.getData().getHasNewUpdates()&&context!=null)
-                                    ((MainActivity)context).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
+                                if (context != null) {
+                                    if (notifyCountModel.getData().getHasNewUpdates() && context != null)
+                                        ((MainActivity) context).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
+                                    else {
+                                        if (context != null)
+                                            ((MainActivity) context).navigationView.removeBadge(R.id.orders);
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -78,7 +93,7 @@ public class OneSignalNotificationReceivedHandler implements OneSignal.Notificat
 ////////////////////////////////////////////////////////////////////////////////////////////// end
         if (data != null) {
 
-                Log.i("OneSignalExample", "on recive data " + data.toString());
+            Log.i("OneSignalExample", "on recive data " + data.toString());
         }
     }
 }

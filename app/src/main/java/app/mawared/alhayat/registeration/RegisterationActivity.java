@@ -105,7 +105,7 @@ public class RegisterationActivity extends AppCompatActivity {
                                     startSMSListener();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "الرقم الذي أدخلته غير صحيح", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "حدث خطأ", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

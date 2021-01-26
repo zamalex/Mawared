@@ -170,6 +170,7 @@ public class OrderDetailsFragment extends Fragment {
 
 
                     if (orderDetails.getOrder().isShowRating())
+                        if (orderDetails.getOrder().getStatus().equals("تم التسليم"))
                         rateDialog.show();
 
 

@@ -1,11 +1,14 @@
 package app.mawared.alhayat.settings;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,10 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.contactus.ContactUsFragment;
 import app.mawared.alhayat.helpers.FragmentStack;
+import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.notification.NotificationFragments;
+import io.paperdb.Paper;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settingsHolder> {
 
@@ -25,11 +31,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
     FragmentStack fragmentStack;
     FragmentActivity fragmentActivity;
     SeetingsListener listener;
+    Context context;
+    String token = Paper.book().read("token", "none");
 
-    public SettingsAdapter(List<Settings> settingsList, FragmentActivity fragmentActivity,SeetingsListener listener) {
+    public SettingsAdapter(List<Settings> settingsList, FragmentActivity fragmentActivity,SeetingsListener listener,Context context) {
         this.settingsList = settingsList;
         this.listener = listener;
         this.fragmentActivity = fragmentActivity;
+        this.context = context;
     }
 
     @NonNull
@@ -74,7 +83,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (settingsList.get(getAdapterPosition()).getItemId() == 1){
+                    if (settingsList.get(getAdapterPosition()).getItemId() == 1&&token.equals("none")){
+                        Toast.makeText(context, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                        return;
+                    }
+                    if (settingsList.get(getAdapterPosition()).getItemId() == 1&&!token.equals("none")){
                         fragmentStack = new FragmentStack(fragmentActivity,fragmentActivity.getSupportFragmentManager(),R.id.main_container);
                         fragmentStack.push(new NotificationFragments());
                     }else if(settingsList.get(getAdapterPosition()).getItemId() == 2){

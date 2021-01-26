@@ -33,7 +33,10 @@ import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.helpers.EndlessRecyclerViewScrollListener;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.helpers.OrderClickListener;
+import app.mawared.alhayat.home.HomeViewModel;
 import app.mawared.alhayat.home.OrderViewModel;
+import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
+import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.model.AllOrder;
@@ -53,6 +56,7 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     FragmentStack fragmentStack;
     SharedPreferences.Editor orderIdPref;
     OrderViewModel orderViewModel;
+    HomeViewModel homeViewModel;
 
     String token = Paper.book().read("token");
 
@@ -65,6 +69,7 @@ public class OrderFragment extends Fragment implements OrderClickListener {
         et_searchOrder = view.findViewById(R.id.et_searchOrder);
         orderIdPref = getActivity().getSharedPreferences("mwared", Context.MODE_PRIVATE).edit();
         orderViewModel = new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        homeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
 
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
 
@@ -79,7 +84,7 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (allOrder != null) {
-                    if (allOrder.getStatus()==401){
+                    if (allOrder.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
@@ -92,7 +97,6 @@ public class OrderFragment extends Fragment implements OrderClickListener {
 
                     }
                 }
-
 
 
             }
@@ -180,6 +184,46 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     public void onStart() {
         super.onStart();
         ((MainActivity) getActivity()).bottomNavVisibility(true);
+
+        String token = Paper.book().read("token", "none");
+
+        if (!token.equals("none")) {
+            homeViewModel.getNotifyCount("Bearer " + token);
+            homeViewModel.getOrdersCount("Bearer " + token);
+
+        }
+
+        homeViewModel.notifyCount.observe(this, new Observer<NotifyCountModel>() {
+            @Override
+            public void onChanged(NotifyCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess()) {
+                        if (notifyCountModel.getData().getUnread() > 0 && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        else {
+                            if (getActivity()!=null)
+                            ((MainActivity) getActivity()).navigationView.removeBadge(R.id.support);
+                        }
+                    }
+                }
+            }
+        });
+
+        homeViewModel.ordersCount.observe(this, new Observer<OrdersCountModel>() {
+            @Override
+            public void onChanged(OrdersCountModel notifyCountModel) {
+                if (notifyCountModel != null) {
+                    if (notifyCountModel.getSuccess() && getActivity() != null) {
+                        if (notifyCountModel.getData().getHasNewUpdates() && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
+                        else {
+                            if (getActivity() != null)
+                                ((MainActivity) getActivity()).navigationView.removeBadge(R.id.orders);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override

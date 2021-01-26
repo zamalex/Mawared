@@ -258,8 +258,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.settings) {
 
                     String token = Paper.book().read("token", "none");
+                    fragmentStack.replace(new SettingsFragment());
 
-                    if (token.equals("none")) {
+                   /* if (token.equals("none")) {
                         Toast.makeText(MainActivity.this, "يجب عليك تسجيل الدخول اولا", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                         // throw new RuntimeException("Test Crash"); // Force a crash
 
 
-                    }                   // throw new RuntimeException("Test Crash"); // Force a crash
+                    }*/                   // throw new RuntimeException("Test Crash"); // Force a crash
 
                 } else if (item.getItemId() == R.id.orders)
                     fragmentStack.replace(new OrderFragment());
@@ -363,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
                     if (notifyCountModel.getSuccess()) {
                         if (notifyCountModel.getData().getUnread() > 0)
                             navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        else
+                            navigationView.removeBadge(R.id.support);
+
                     }
                 }
             }
@@ -375,7 +379,8 @@ public class MainActivity extends AppCompatActivity {
                     if (notifyCountModel.getSuccess()) {
                         if (notifyCountModel.getData().getHasNewUpdates())
                             navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
-                    }
+                    }else
+                        navigationView.removeBadge(R.id.orders);
                 }
             }
         });

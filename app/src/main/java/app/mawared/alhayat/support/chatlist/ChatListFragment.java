@@ -68,7 +68,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (chatList != null) {
-                    if (chatList.getStatus()==401){
+                    if (chatList.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
@@ -79,10 +79,10 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                         if (chatList.getData().size() > 0) {
                             msg_txt.setVisibility(View.INVISIBLE);
 
-                            if (getArguments()!=null){
-                                if (getArguments().getString("conversation")!=null){
-                                    for (Chat chat : chatList.getData()){
-                                        if (chat.getId().toString().equals(getArguments().getString("conversation"))){
+                            if (getArguments() != null) {
+                                if (getArguments().getString("conversation") != null) {
+                                    for (Chat chat : chatList.getData()) {
+                                        if (chat.getId().toString().equals(getArguments().getString("conversation"))) {
                                             onChatClick(chat);
                                             getArguments().remove("conversation");
                                             break;
@@ -132,8 +132,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
             public void onChanged(NotifyCountModel notifyCountModel) {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getUnread() > 0&&getActivity()!=null)
-                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        if (notifyCountModel.getData().getUnread() > 0 && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        else {
+                            if (getActivity() != null)
+                                ((MainActivity) getActivity()).navigationView.removeBadge(R.id.support);
+                        }
                     }
                 }
             }
@@ -144,8 +148,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
             public void onChanged(OrdersCountModel notifyCountModel) {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getHasNewUpdates()&&getActivity()!=null)
-                            ((MainActivity)getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
+                        if (notifyCountModel.getData().getHasNewUpdates() && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
+                        else {
+                            if (getActivity() != null)
+                                ((MainActivity) getActivity()).navigationView.removeBadge(R.id.orders);
+                        }
                     }
                 }
             }

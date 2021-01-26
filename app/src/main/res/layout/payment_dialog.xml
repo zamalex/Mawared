@@ -32,19 +32,19 @@
 
     </LinearLayout>
 
+
     <Button
-        android:id="@+id/p_deliver"
+        android:id="@+id/p_visa"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp"
         android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/car"
+        android:drawableRight="@drawable/ppay"
         android:drawablePadding="10dp"
         android:fontFamily="@font/urwbold"
         android:gravity="right"
-
         android:padding="10dp"
-        android:text="الدفع عن الإستلام"
+        android:text="بطاقة مدى / visa"
         android:textColor="#0D2142"
         android:textSize="18sp" />
 
@@ -62,20 +62,22 @@
         android:text="تحويل بنكي"
         android:textColor="#0D2142"
         android:textSize="18sp" />
-
     <Button
-        android:id="@+id/p_visa"
+        android:id="@+id/p_deliver"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp"
         android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/ppay"
+        android:drawableRight="@drawable/car"
         android:drawablePadding="10dp"
         android:fontFamily="@font/urwbold"
         android:gravity="right"
+
         android:padding="10dp"
-        android:text="بطاقة مدى / visa"
+        android:text="الدفع عن الإستلام"
         android:textColor="#0D2142"
         android:textSize="18sp" />
+
+
 
 </LinearLayout>

@@ -39,7 +39,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:fontFamily="@font/urwbold"
-                android:text="إرسال الطلب"
+                android:text="إرسال طلبك"
                 android:textColor="#0D2142"
                 android:textSize="22sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -686,14 +686,14 @@
             android:id="@+id/snd_order"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:text="ارسال الطلب"
-
-            android:fontFamily="@font/urwbold"
+            android:layout_margin="16dp"
             android:background="@drawable/next_radius"
-            android:layout_margin="16dp"/>
+            android:fontFamily="@font/urwbold"
+            android:gravity="center"
+
+            android:text="ارسال الطلب"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     </LinearLayout>
 </FrameLayout>
