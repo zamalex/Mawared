@@ -29,11 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/urosemi"
+        android:text=" يرجى ادخال رمز التحقق المرسل الى  جوالك"
         android:textColor="#7B92A5"
         android:textSize="15sp"
-        android:layout_marginTop="8dp"
-        android:text=" يرجى اضافة رمز التحقق المرسل الى رقم الجوال"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 

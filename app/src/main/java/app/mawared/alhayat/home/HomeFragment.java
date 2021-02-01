@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
     ReviewManager manager;
     ReviewInfo reviewInfo = null;
     String appPackageName = "app.mawared.alhayat"; // getPackageName() from Context or Activity object
+    Long city_id = 0l;
 
     BottomSheetDialog citiesDialog;
 
@@ -110,6 +111,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        city_id = 0l;
         v = inflater.inflate(R.layout.fragment_home, container, false);
         manager = ReviewManagerFactory.create(getActivity());
         manager.requestReviewFlow().addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
@@ -198,7 +200,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
             @Override
             public void onClick(View v) {
                 spinner.setText("الكل");
-
+                city_id = 0l;
                 citiesDialog.dismiss();
                 ((MainActivity)getActivity()).showDialog(true);
                 viewModel.getHomeProducts(card_id);
@@ -268,6 +270,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         viewModel.getHomeSlider();
         recyclerView = v.findViewById(R.id.home_p_rv);
         spinner = v.findViewById(R.id.city_spinner);
+        spinner.setText("الكل");
         card_linear = v.findViewById(R.id.card_linear);
         linear_txt = v.findViewById(R.id.linear_txt);
         progressBar_cyclic = v.findViewById(R.id.progressBar_cyclic);
@@ -635,6 +638,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
     public void onSelect(Datum city) {
         ((MainActivity) getActivity()).showDialog(true);
 
+        city_id = city.getId();
         spinner.setText(city.getName());
 
         viewModel.filterByCity(city.getId().toString());

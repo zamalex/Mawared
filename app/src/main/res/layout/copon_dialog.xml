@@ -15,7 +15,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/urwbold"
-        android:text="رمز الكوبون"
+        android:text="رمز الخصم"
         android:textColor="#0D2142"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
