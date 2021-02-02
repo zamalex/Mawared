@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.ArrayList;
 
 import app.mawared.alhayat.MainActivity;
@@ -46,6 +48,15 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_chat_list, container, false);
+
+        if (getActivity()!=null){
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+            Bundle bb = new Bundle();
+            bb.putString("screen", "Chat screen Android");
+            mFirebaseAnalytics.logEvent("user_location", bb);
+        }
+
+
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(ChatListViewModel.class);
         homeViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
 

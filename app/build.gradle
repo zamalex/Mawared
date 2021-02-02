@@ -143,6 +143,7 @@ dependencies {
     // Declare the dependency for the Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-dynamic-links'
 
 
     implementation 'com.google.android.gms:play-services-auth:17.0.0'

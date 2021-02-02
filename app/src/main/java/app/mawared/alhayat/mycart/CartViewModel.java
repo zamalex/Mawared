@@ -19,8 +19,8 @@ public class CartViewModel extends ViewModel {
     public MutableLiveData<AddCardModel> addResponse = new MutableLiveData<>();
     public MutableLiveData<ResponseBody> removeResponse = new MutableLiveData<>();
 
-    public void addToCard(String product_id, String amount, String device_id, String cart_id,String math_type) {
-        RetrofitClient.getApiInterface().addToCard(product_id, amount, device_id, cart_id,math_type).enqueue(new Callback<AddCardModel>() {
+    public void addToCard(String product_id, String amount, String device_id, String cart_id,String math_type,String city_id) {
+        RetrofitClient.getApiInterface().addToCard(product_id, amount, device_id, cart_id,math_type,city_id).enqueue(new Callback<AddCardModel>() {
             @Override
             public void onResponse(Call<AddCardModel> call, Response<AddCardModel> response) {
                 addResponse.setValue(response.body());

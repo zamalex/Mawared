@@ -997,6 +997,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             RequestBody quantity1 = RequestBody.create(MediaType.parse("text/plain"), items.get(i).getInCartQuantity() + "");
             requestBodyMap.put("products[" + i + "][id]", id1);
             requestBodyMap.put("products[" + i + "][quantity]", quantity1);
+            if (items.get(i).getCity_id() != null) {
+                RequestBody city_id1 = RequestBody.create(MediaType.parse("text/plain"), items.get(i).getCity_id());
+                requestBodyMap.put("products[" + i + "][city_id]", city_id1);
+
+
+            }
         }
 
 

@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -28,10 +30,10 @@ import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.android.play.core.review.testing.FakeReviewManager;
 import com.google.android.play.core.tasks.OnCompleteListener;
-import com.google.android.play.core.tasks.OnFailureListener;
-import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.onesignal.OneSignal;
@@ -64,7 +66,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     public FragmentStack fragmentStack;
-   public BottomNavigationView navigationView;
+    public BottomNavigationView navigationView;
     private boolean paymentSuccess = false;
     KProgressHUD dialog;
 
@@ -82,9 +84,31 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bb = new Bundle();
-        bb.putString(FirebaseAnalytics.Param.ITEM_ID, "1");
-        mFirebaseAnalytics.logEvent("start_app", bb);
+        bb.putString("screen", "Main screen Android");
+        mFirebaseAnalytics.logEvent("user_location", bb);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// start one signal
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        Uri deepLink = null;
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.getLink();
+
+                            if (deepLink != null)
+                                if (deepLink.getQueryParameter("id") != null)
+                                    Toast.makeText(MainActivity.this, "lonk is " + deepLink.getQueryParameter("id"), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
 
         // OneSignal Initialization
@@ -92,17 +116,17 @@ public class MainActivity extends AppCompatActivity {
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .setNotificationOpenedHandler(new OneSignalNotificationOpenedHandler(this))
-                .setNotificationReceivedHandler(new OneSignalNotificationReceivedHandler(this,getApplication()))
+                .setNotificationReceivedHandler(new OneSignalNotificationReceivedHandler(this, getApplication()))
                 .init();
 
 
         UUID = OneSignal.getPermissionSubscriptionState().getSubscriptionStatus().getUserId();
-        token = Paper.book().read("token",null);
+        token = Paper.book().read("token", null);
 
-        if (UUID!=null&&token!=null){
+        if (UUID != null && token != null) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("player_id",UUID);
-            RetrofitClient.getApiInterface().sendNotificationToken(jsonObject,"Bearer "+token).enqueue(new Callback<ResponseBody>() {
+            jsonObject.addProperty("player_id", UUID);
+            RetrofitClient.getApiInterface().sendNotificationToken(jsonObject, "Bearer " + token).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
@@ -189,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.setSelectedItemId(R.id.orders);
                 OrderFragment orderFragment = new OrderFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("rate","rate");
+                bundle.putString("rate", "rate");
                 orderFragment.setArguments(bundle);
                 fragmentStack.replace(orderFragment);
 
@@ -379,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                     if (notifyCountModel.getSuccess()) {
                         if (notifyCountModel.getData().getHasNewUpdates())
                             navigationView.getOrCreateBadge(R.id.orders).setNumber(notifyCountModel.getData().getCount());
-                    }else
+                    } else
                         navigationView.removeBadge(R.id.orders);
                 }
             }

@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import app.mawared.alhayat.sendorder.AddressAdapter;
 import app.mawared.alhayat.sendorder.BankAdapter;
 import app.mawared.alhayat.sendorder.SentOrdersAdapter;
@@ -26,6 +28,15 @@ public class OrderDoneFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        if (getActivity()!=null){
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+            Bundle bb = new Bundle();
+            bb.putString("screen", "order placed screen Android");
+            mFirebaseAnalytics.logEvent("user_location", bb);
+        }
+
+
 
         v = inflater.inflate(R.layout.fragment_order_done, container, false);
         go_orders = v.findViewById(R.id.go_orders);

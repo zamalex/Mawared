@@ -44,7 +44,17 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
         </activity>
-        <activity android:name="app.mawared.alhayat.MainActivity" />
+        <activity android:name="app.mawared.alhayat.MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:host="mawaredal-hayat.com" android:scheme="https"/>
+                <data android:host="mawaredal-hayat.com" android:scheme="http"/>
+            </intent-filter>
+        </activity>
         <activity android:name="app.mawared.alhayat.activiation.ActivationActivity" />
         <activity android:name="app.mawared.alhayat.registeration.RegisterationActivity" />
         <activity android:name="app.mawared.alhayat.SplashActivity">

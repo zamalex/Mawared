@@ -39,7 +39,12 @@ public class Product implements Parcelable {
     @SerializedName("vat")
     private Long mVat;
 
+    @SerializedName("city_id")
+    private String city_id;
+
+
     protected Product(Parcel in) {
+        qty = in.readInt();
         if (in.readByte() == 0) {
             mAvailable = null;
         } else {
@@ -94,6 +99,7 @@ public class Product implements Parcelable {
         } else {
             mVat = in.readLong();
         }
+        city_id = in.readString();
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -220,6 +226,15 @@ public class Product implements Parcelable {
         mVat = vat;
     }
 
+    public String getCity_id() {
+        return city_id;
+    }
+
+    public void setCity_id(String city_id) {
+        this.city_id = city_id;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -227,6 +242,7 @@ public class Product implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(qty);
         if (mAvailable == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -291,5 +307,6 @@ public class Product implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(mVat);
         }
+        dest.writeString(city_id);
     }
 }

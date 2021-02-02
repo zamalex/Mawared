@@ -547,7 +547,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 dialog.dismiss();
 
                 card_id = Paper.book().read("cid", null);
-                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance");
+                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance",p.getCity_id());
                 adapter.products.get(pos).qty = Integer.parseInt(q_et.getText().toString());
                 adapter.notifyDataSetChanged();
                 q_et.setText("");
@@ -578,7 +578,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus");
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus",product.getCity_id());
 
 
     }
@@ -588,7 +588,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus");
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus",product.getCity_id());
 
 
     }

@@ -194,7 +194,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
                 next.startAnimation();
                 isLoading = true;
-                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance");
+                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance",p.getCity_id());
                 q_et.setText("");
 
 
@@ -215,7 +215,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     public void increase(Product item, int qty) {
         next.startAnimation();
         isLoading = true;
-        viewModel.addToCard(item.getId() + "", "1", null, cid, "plus");
+        viewModel.addToCard(item.getId() + "", "1", null, cid, "plus",item.getCity_id());
 
     }
 
@@ -227,7 +227,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         if (qty == 0)
             viewModel.removeFromCard(cid + "", item.getId().toString());
         else
-            viewModel.addToCard(item.getId() + "", "1", null, cid, "minus");
+            viewModel.addToCard(item.getId() + "", "1", null, cid, "minus",item.getCity_id());
 
     }
 

@@ -1,6 +1,7 @@
 package app.mawared.alhayat.home;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.home.model.Product;
 
@@ -150,6 +153,18 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         Picasso.get().load(product.getImg()).fit().into(holder.img);
         Log.d("imgg", product.getImg());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("product",product.getId().toString());
+                bundle.putString("city",product.getCity_id());
+                ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+                productDetailsFragment.setArguments(bundle);
+
+                ((MainActivity)context).fragmentStack.push(productDetailsFragment);
+            }
+        });
     }
 
     public void setProducts(ArrayList<Product> products) {
