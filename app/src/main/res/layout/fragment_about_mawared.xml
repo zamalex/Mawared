@@ -26,7 +26,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:fontFamily="@font/urwbold"
-        android:text="نبذه عن مياة موارد"
+        android:text="نبذه عن مياه موارد"
         android:textColor="#0D2142"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/imageView"

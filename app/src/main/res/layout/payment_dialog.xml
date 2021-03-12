@@ -39,7 +39,7 @@
         android:layout_height="55dp"
         android:layout_margin="8dp"
         android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/vicon"
+        android:drawableRight="@drawable/iicon"
         android:drawablePadding="10dp"
         android:fontFamily="@font/urwbold"
         android:gravity="right"

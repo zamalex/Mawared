@@ -12,7 +12,7 @@
         android:id="@+id/chat_list_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/hello_blank_fragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,5 +40,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/urwbold"
+        android:text="خدمة العملاء"
+        android:textColor="#0D2142"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/go_support"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/go_support"
+        android:layout_marginLeft="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

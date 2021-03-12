@@ -44,6 +44,7 @@ import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.home.HomeFragment;
 import app.mawared.alhayat.home.HomeViewModel;
+import app.mawared.alhayat.home.ProductDetailsFragment;
 import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
 import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.LoginActivity;
@@ -97,8 +98,23 @@ public class MainActivity extends AppCompatActivity {
                             deepLink = pendingDynamicLinkData.getLink();
 
                             if (deepLink != null)
-                                if (deepLink.getQueryParameter("id") != null)
+                                if (deepLink.getQueryParameter("id") != null) {
                                     Toast.makeText(MainActivity.this, "lonk is " + deepLink.getQueryParameter("id"), Toast.LENGTH_SHORT).show();
+
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("product", deepLink.getQueryParameter("id"));
+                                    bundle.putString("city", null);
+                                    ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+                                    productDetailsFragment.setArguments(bundle);
+
+                                    if (fragmentStack == null) {
+                                        fragmentStack = new FragmentStack(MainActivity.this, getSupportFragmentManager(), R.id.main_container);
+
+                                    }
+
+                                    fragmentStack.push(productDetailsFragment);
+
+                                }
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -197,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
         orderIdPref = getSharedPreferences("mwared", Context.MODE_PRIVATE).edit();
 
 
-        fragmentStack = new FragmentStack(this, getSupportFragmentManager(), R.id.main_container);
+        if (fragmentStack == null)
+            fragmentStack = new FragmentStack(this, getSupportFragmentManager(), R.id.main_container);
         fragmentStack.replace(homeFragment);
 
         if (getIntent().getStringExtra("order") != null) {

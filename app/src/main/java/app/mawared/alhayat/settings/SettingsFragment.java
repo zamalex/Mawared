@@ -103,7 +103,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         settingsList.add(settingsModel);
         settingsModel = new Settings(4, R.drawable.star, "قيم التطبيق", "3");
         settingsList.add(settingsModel);
-        settingsModel = new Settings(5, R.drawable.combinedshape, "نبذة عن مياة موارد", "3");
+        settingsModel = new Settings(5, R.drawable.combinedshape, "نبذة عن مياه موارد", "3");
         settingsList.add(settingsModel);
         if (token.equals("none")) {
             settingsModel = new Settings(6, R.drawable.logout, "الرئيسية", "3");

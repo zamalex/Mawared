@@ -15,8 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
+import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
@@ -53,11 +57,24 @@ public class ProductDetailsFragment extends Fragment {
         itemView = inflater.inflate(R.layout.fragment_product_details, container, false);
         initView();
 
+        itemView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) Objects.requireNonNull(getActivity())).onBackPressed();
+            }
+        });
+
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+        Bundle bb = new Bundle();
+        bb.putString("screen", "Product details Android");
+        mFirebaseAnalytics.logEvent("user_location", bb);
+
 
         assert getArguments() != null;
         product_id = getArguments().getString("product", null);
         assert getArguments() != null;
         city_id = getArguments().getString("city", null);
+
         card_id = Paper.book().read("cid", null);
 
         cartViewModel.addResponse.observe(
