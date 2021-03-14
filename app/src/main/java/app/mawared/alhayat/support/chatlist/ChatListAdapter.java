@@ -50,13 +50,24 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
 
         holder.last_msg.setText(chats.get(position).lastMessage.message);
 
-        holder.unread_count.setText(chats.get(position).unread_count.toString());
-        if (chats.get(position).unread_count > 0) {
+      //  holder.unread_count.setText(chats.get(position).unread_count.toString());
+        if (chats.get(position).getStatus().equals("0"))
+        {
             holder.unread_count.setVisibility(View.VISIBLE);
-        } else {
-            holder.unread_count.setVisibility(View.INVISIBLE);
 
+            holder.read_count.setVisibility(View.INVISIBLE);
         }
+        else {
+            if (chats.get(position).unread_count > 0) {
+                holder.read_count.setVisibility(View.VISIBLE);
+                holder.read_count.setText(chats.get(position).unread_count+"");
+
+            } else {
+                holder.read_count.setVisibility(View.INVISIBLE);
+
+            }
+        }
+
 
 
     }
@@ -71,7 +82,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView order_no, daam, last_msg, unread_count;
+        TextView order_no, daam, last_msg, unread_count,read_count;
         ConstraintLayout item_cons;
 
         public Holder(@NonNull View itemView) {
@@ -82,6 +93,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
             daam = itemView.findViewById(R.id.textView11);
             last_msg = itemView.findViewById(R.id.last_msg);
             unread_count = itemView.findViewById(R.id.unread_count);
+            read_count = itemView.findViewById(R.id.read_count);
 
             item_cons.setOnClickListener(new View.OnClickListener() {
                 @Override

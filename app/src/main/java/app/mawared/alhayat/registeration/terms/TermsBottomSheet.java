@@ -47,19 +47,40 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
         btn_confirmTerms = view.findViewById(R.id.btn_confirmTerms);
         tv_termsContent = view.findViewById(R.id.tv_termsContent);
         termsViewModel = new ViewModelProvider(this).get(TermsViewModel.class);
-        termsViewModel.getTermsAndConditions("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk4ODIzMDExLCJleHAiOjE1OTk0Mjc4MTEsIm5iZiI6MTU5ODgyMzAxMSwianRpIjoiVGpBYTRHRnk4UUJjYURLbCJ9.SsbMQcp3lV8kUPmRyC5g1oTJStskrlwj4URiXfJ8oIo")
-                .observe(getActivity(), new Observer<Terms>() {
-                    @Override
-                    public void onChanged(Terms terms) {
-                        if (terms.getStatus() == 200) {
-                            tv_termsTitle.setText(terms.getData().getTitle());
-                            String content = terms.getData().getContent();
-                            tv_termsContent.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY));
-                            tv_termsContent.setMovementMethod(new ScrollingMovementMethod());
-                        }
-                    }
 
-                });
+        this.setCancelable(false);
+
+      if (getArguments()==null)
+              termsViewModel.getTermsAndConditions("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI3LCJpc3MiOiJodHRwOi8vbWF3YXJlZC5iYWRlZS5jb20uc2EvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNTk4ODIzMDExLCJleHAiOjE1OTk0Mjc4MTEsIm5iZiI6MTU5ODgyMzAxMSwianRpIjoiVGpBYTRHRnk4UUJjYURLbCJ9.SsbMQcp3lV8kUPmRyC5g1oTJStskrlwj4URiXfJ8oIo")
+                      .observe(getActivity(), new Observer<Terms>() {
+                          @Override
+                          public void onChanged(Terms terms) {
+                              if (terms.getStatus() == 200) {
+                                  tv_termsTitle.setText(terms.getData().getTitle());
+                                  String content = terms.getData().getContent();
+                                  tv_termsContent.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY));
+                                  tv_termsContent.setMovementMethod(new ScrollingMovementMethod());
+                              }
+                          }
+
+                      });
+
+
+        else
+            termsViewModel.getPrivacyTerms()
+                    .observe(getActivity(), new Observer<Terms>() {
+                        @Override
+                        public void onChanged(Terms terms) {
+                            if (terms!=null)
+                            if (terms.getStatus() == 200) {
+                                tv_termsTitle.setText(terms.getData().getTitle());
+                                String content = terms.getData().getContent();
+                                tv_termsContent.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY));
+                                tv_termsContent.setMovementMethod(new ScrollingMovementMethod());
+                            }
+                        }
+
+                    });
 
 
         btn_confirmTerms.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +100,8 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
+                dialog.setCancelable(false);
+
                 BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
                 setupRatio(bottomSheetDialog);
             }
@@ -95,6 +118,7 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
         ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
         layoutParams.height = getBottomSheetDialogDefaultHeight();
         bottomSheet.setLayoutParams(layoutParams);
+
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 

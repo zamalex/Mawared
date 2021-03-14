@@ -77,7 +77,10 @@ public class RegisterationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 TermsBottomSheet termsBottomSheet = new TermsBottomSheet();
+                Bundle bundle = new Bundle();
+                bundle.putString("privacy","privacy");
 
+                termsBottomSheet.setArguments(bundle);
                 termsBottomSheet.show(getSupportFragmentManager(), "tag");
             }
         });

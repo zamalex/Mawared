@@ -16,6 +16,7 @@ import app.mawared.alhayat.home.model.HomeProductModel;
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
+import app.mawared.alhayat.home.model.checkrate.CheckRate;
 import app.mawared.alhayat.home.model.prodetails.ProductDetails;
 import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
 import app.mawared.alhayat.home.orderscount.OrdersCountModel;
@@ -93,6 +94,9 @@ public interface APIInterface {
 
     @GET("points/terms")
     Call<Terms> getTermsPoints(@Header("Authorization") String token);
+
+    @GET("privacy-terms")
+    Call<Terms> getPrivacyTerms();
 
     @GET("settings/slider")
     Call<HomeSliderModel> getHomeSlider();
@@ -226,6 +230,9 @@ public interface APIInterface {
     @GET("products/{id}/show")
     Call<ProductDetails> getProDetails(@Path("id") String id,@Query("cart_id")String cart_id,@Query("city_id")String city_id);
 
+
+    @GET("orders/has-new-updates")
+    Call<CheckRate> checkRate(@Header("Authorization") String token);
 
 }
 

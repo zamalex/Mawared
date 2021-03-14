@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +28,7 @@ import app.mawared.alhayat.home.model.addmodel.AddCardModel;
 import app.mawared.alhayat.home.model.prodetails.Product;
 import app.mawared.alhayat.home.model.prodetails.ProductDetails;
 import app.mawared.alhayat.mycart.CartViewModel;
+import app.mawared.alhayat.mycart.MyCartFragment;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +43,8 @@ public class ProductDetailsFragment extends Fragment {
 
     View itemView;
     String product_id = null;
+
+    Button go_cart;
 
     Product product = null;
     CartViewModel cartViewModel;
@@ -57,10 +61,19 @@ public class ProductDetailsFragment extends Fragment {
         itemView = inflater.inflate(R.layout.fragment_product_details, container, false);
         initView();
 
+        go_cart = itemView.findViewById(R.id.go_cart);
+
         itemView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MainActivity) Objects.requireNonNull(getActivity())).onBackPressed();
+            }
+        });
+
+        go_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) Objects.requireNonNull(getActivity())).fragmentStack.push(new MyCartFragment());
             }
         });
 

@@ -64,6 +64,7 @@ import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
 import app.mawared.alhayat.home.model.Product;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
+import app.mawared.alhayat.home.model.checkrate.CheckRate;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
 import app.mawared.alhayat.mycart.CartViewModel;
@@ -202,7 +203,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 spinner.setText("الكل");
                 city_id = 0l;
                 citiesDialog.dismiss();
-                ((MainActivity)getActivity()).showDialog(true);
+                ((MainActivity) getActivity()).showDialog(true);
                 viewModel.getHomeProducts(card_id);
             }
         });
@@ -264,6 +265,19 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         viewModel.getMin();
         viewModel.getCities();
         viewModel.getHomeProducts(card_id);
+
+       if (loginResponse!=null)
+        if (loginResponse.getSuccess())
+            viewModel.checkRate(loginResponse.getUser().getToken()).observe(getViewLifecycleOwner(), new Observer<CheckRate>() {
+                @Override
+                public void onChanged(CheckRate checkRate) {
+                    if (checkRate!=null){
+                        if (checkRate.getSuccess()){
+                            //////////////////////////////////////////////
+                        }
+                    }
+                }
+            });
 
         card_size.setValue(0);
 
@@ -482,8 +496,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                 }
 
                             }
-                           // ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
-                           // spinner.setAdapter(aarrdapter);
+                            // ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, cities);
+                            // spinner.setAdapter(aarrdapter);
 
                         }
                     }
@@ -547,7 +561,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 dialog.dismiss();
 
                 card_id = Paper.book().read("cid", null);
-                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance",p.getCity_id());
+                cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance", p.getCity_id());
                 adapter.products.get(pos).qty = Integer.parseInt(q_et.getText().toString());
                 adapter.notifyDataSetChanged();
                 q_et.setText("");
@@ -578,7 +592,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus",product.getCity_id());
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus", product.getCity_id());
 
 
     }
@@ -588,7 +602,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus",product.getCity_id());
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus", product.getCity_id());
 
 
     }

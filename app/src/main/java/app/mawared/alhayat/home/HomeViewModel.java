@@ -10,6 +10,7 @@ import app.mawared.alhayat.home.model.CitiesModel;
 import app.mawared.alhayat.home.model.HomeProductModel;
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
+import app.mawared.alhayat.home.model.checkrate.CheckRate;
 import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
 import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
@@ -29,7 +30,29 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData<CitiesModel> cities = new MutableLiveData<>();
     MutableLiveData<HomeProductModel> filteredProducts = new MutableLiveData<>();
 
-   public void getNotifyCount(String token) {
+
+    public MutableLiveData<CheckRate> checkRate(String token) {
+        MutableLiveData<CheckRate> mutableLiveData = new MutableLiveData<CheckRate>();
+
+        RetrofitClient.getApiInterface().checkRate("Bearer " + token).enqueue(new Callback<CheckRate>() {
+            @Override
+            public void onResponse(Call<CheckRate> call, Response<CheckRate> response) {
+                if (response.isSuccessful()) {
+                    mutableLiveData.setValue(response.body());
+                } else mutableLiveData.setValue(null);
+
+            }
+
+            @Override
+            public void onFailure(Call<CheckRate> call, Throwable t) {
+                mutableLiveData.setValue(null);
+            }
+        });
+
+        return mutableLiveData;
+    }
+
+    public void getNotifyCount(String token) {
         RetrofitClient.getApiInterface().getNotifyCount(token).enqueue(new Callback<NotifyCountModel>() {
             @Override
             public void onResponse(Call<NotifyCountModel> call, Response<NotifyCountModel> response) {
@@ -158,8 +181,9 @@ public class HomeViewModel extends ViewModel {
     }
 
     MutableLiveData<ResponseBody> bindResponse = new MutableLiveData<>();
-    public  void bindUserCard(String card_id,String user_id) {
-        RetrofitClient.getApiInterface().bindUserCard(card_id,user_id).enqueue(new Callback<ResponseBody>() {
+
+    public void bindUserCard(String card_id, String user_id) {
+        RetrofitClient.getApiInterface().bindUserCard(card_id, user_id).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 bindResponse.setValue(response.body());

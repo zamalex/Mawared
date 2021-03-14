@@ -11,6 +11,7 @@ import retrofit2.Response;
 
 public class TermsViewModel extends ViewModel {
     MutableLiveData<Terms> termsMutableLiveData;
+    MutableLiveData<Terms> privacyMutableLiveData;
     public MutableLiveData<Terms> getTermsAndConditions(String token){
         termsMutableLiveData = new MutableLiveData<>();
         RetrofitClient.getApiInterface().getTermsPoints(token).enqueue(new Callback<Terms>() {
@@ -28,5 +29,24 @@ public class TermsViewModel extends ViewModel {
 
 
         return termsMutableLiveData;
+    }
+
+    public MutableLiveData<Terms> getPrivacyTerms(){
+        privacyMutableLiveData = new MutableLiveData<>();
+        RetrofitClient.getApiInterface().getPrivacyTerms().enqueue(new Callback<Terms>() {
+            @Override
+            public void onResponse(Call<Terms> call, Response<Terms> response) {
+                privacyMutableLiveData.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Terms> call, Throwable t) {
+                privacyMutableLiveData.postValue(null);
+            }
+        });
+
+
+
+        return privacyMutableLiveData;
     }
 }
