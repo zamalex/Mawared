@@ -94,6 +94,19 @@ public class OrderFragment extends Fragment implements OrderClickListener {
 
                         ordersAdapter.setList(allOrder.getOrders());
 
+                        if (getArguments()!=null)
+                            if (getArguments().getString("has",null).equals("has")){
+                                if (allOrder.getOrders().size()>0){
+
+                                    getArguments().putString("has","clear");
+                                    orderIdPref.putInt("orderId", allOrder.getOrders().get(0).getId()).apply();
+                                    fragmentStack = new FragmentStack(getActivity(), getActivity().getSupportFragmentManager(), R.id.main_container);
+
+                                    ((MainActivity)getActivity()).navigationView.setSelectedItemId(R.id.orders);
+                                    fragmentStack.push(new OrderDetailsFragment());
+                                }
+
+                            }
 
                     }
                 }

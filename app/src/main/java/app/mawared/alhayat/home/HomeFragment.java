@@ -70,6 +70,7 @@ import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
 import app.mawared.alhayat.mycart.CartViewModel;
 import app.mawared.alhayat.mycart.MyCartFragment;
 import app.mawared.alhayat.mycart.model.CardModel;
+import app.mawared.alhayat.orders.OrderFragment;
 import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 
@@ -273,7 +274,13 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 public void onChanged(CheckRate checkRate) {
                     if (checkRate!=null){
                         if (checkRate.getSuccess()){
-                            //////////////////////////////////////////////
+                            if (checkRate.getData().getHasNewUpdates()){
+                                OrderFragment orderFragment = new OrderFragment();
+                                Bundle b = new Bundle();
+                                b.putString("has","has");
+                                orderFragment.setArguments(b);
+                                ((MainActivity)getActivity()).fragmentStack.push(orderFragment);
+                            }
                         }
                     }
                 }
