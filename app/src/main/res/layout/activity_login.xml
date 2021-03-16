@@ -16,28 +16,33 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="100dp"
-        android:fontFamily="@font/urwbold"
+        android:fontFamily="@font/uroextra"
         android:text="تسجيل دخول"
         android:textSize="22dp"
+        android:textColor="#0d2142"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="لتسجيل الدخول يرجى ادخال رقم جوالك"
+        android:text="لتسجيل الدخول يرجى اضافة رقم جوالك"
         android:textColor="@color/lightgrey"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -140,7 +145,7 @@
         android:fontFamily="@font/urosemi"
         android:gravity="right|center_vertical"
         android:hint="كلمة المرور"
-
+        android:layoutDirection="ltr"
 
         android:inputType="textPassword"
         android:padding="10dp"
@@ -153,23 +158,19 @@
 
     <TextView
         android:id="@+id/forgot"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:text="نسيت كلمة المرور؟"
-        android:textColor="#6DA544"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        android:textColor="@color/lightgrey"
+        app:layout_constraintEnd_toEndOf="@+id/pass_et"
         app:layout_constraintTop_toBottomOf="@+id/pass_et" />
 
     <TextView
         android:id="@+id/go_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" تسجيل جديد"
+        android:text=" انشاء حساب جديد"
         android:fontFamily="@font/uroextra"
         android:textColor="@color/lightgrey"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
@@ -182,15 +183,17 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/urosemi"
-        android:text=" ليس لديك حساب؟"
+        android:text="لا تملك حساب؟"
         android:textColor="@color/lightgrey"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/go_register"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/forgot" />
+        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
     <Button
         android:id="@+id/login_btn"
@@ -198,20 +201,17 @@
         android:layout_height="58dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/button_bg"
         android:backgroundTint="@color/darkgrey"
         android:fontFamily="@font/urwbold"
         android:text="دخول"
         android:textColor="@color/white"
         android:textSize="22dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/forgot" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

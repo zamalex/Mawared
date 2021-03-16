@@ -267,9 +267,11 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         viewModel.getCities();
         viewModel.getHomeProducts(card_id);
 
-       if (loginResponse!=null)
-        if (loginResponse.getSuccess())
-            viewModel.checkRate(loginResponse.getUser().getToken()).observe(getViewLifecycleOwner(), new Observer<CheckRate>() {
+
+        LoginResponse aloginResponse = Paper.book().read("login", null);
+       if (aloginResponse!=null)
+        if (aloginResponse.getSuccess())
+            viewModel.checkRate(aloginResponse.getUser().getToken()).observe(getViewLifecycleOwner(), new Observer<CheckRate>() {
                 @Override
                 public void onChanged(CheckRate checkRate) {
                     if (checkRate!=null){
@@ -561,7 +563,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
             public void onClick(View v) {
                 if (q_et.getText().toString().isEmpty())
                     return;
-                if (p == null || Integer.parseInt(q_et.getText().toString()) == 0)
+                if (p == null )//|| Integer.parseInt(q_et.getText().toString()) == 0)
                     return;
 
 
@@ -570,6 +572,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 card_id = Paper.book().read("cid", null);
                 cartViewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, card_id, "balance", p.getCity_id());
                 adapter.products.get(pos).qty = Integer.parseInt(q_et.getText().toString());
+                adapter.products.get(pos).setIncart(Long.parseLong(q_et.getText().toString()));
                 adapter.notifyDataSetChanged();
                 q_et.setText("");
 

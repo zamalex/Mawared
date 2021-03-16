@@ -25,7 +25,10 @@ public class ForgotViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ForgotModel> call, Response<ForgotModel> response) {
 
+                if (response.isSuccessful())
                 res.setValue(response.body());
+                else
+                    res.setValue(null);
                 Log.d("rere2", "done");
             }
 

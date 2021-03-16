@@ -106,7 +106,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         settingsModel = new Settings(5, R.drawable.combinedshape, "نبذة عن مياه موارد", "3");
         settingsList.add(settingsModel);
         if (token.equals("none")) {
-            settingsModel = new Settings(6, R.drawable.logout, "الرئيسية", "3");
+            settingsModel = new Settings(10, R.drawable.logout, "تسجيل دخول", "3");
 
         } else settingsModel = new Settings(6, R.drawable.logout, "تسجيل خروج", "3");
 
@@ -246,6 +246,10 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
                     }
                 });
             }
+        }
+        else if (settings.itemId==10){
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+
         }
 
     }

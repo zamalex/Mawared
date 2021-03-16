@@ -24,7 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import app.mawared.alhayat.SwipeHelper;
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
@@ -91,7 +93,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
         cid = Paper.book().read("cid");
         // ((MainActivity)getActivity()).showDialog(true);
-        next.startAnimation();
+      //  next.startAnimation();
         viewModel.getCard(cid + "");
 
 
@@ -115,6 +117,27 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
             }
         });
+
+        SwipeHelper swipeHelper = new SwipeHelper(getActivity(), cartRv) {
+            @Override
+            public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons) {
+                underlayButtons.add(new SwipeHelper.UnderlayButton(
+                        "ازالة",
+                        0,
+                        Color.parseColor("#FF3C30"),
+                        new SwipeHelper.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                               // Toast.makeText(getActivity(), ""+pos, Toast.LENGTH_SHORT).show();
+                                viewModel.removeFromCard(cid + "", adapter.products.get(pos).getId().toString());
+                                next.startAnimation();
+                            }
+                        }
+                ));
+
+
+            }
+        };
 
         viewModel.addResponse.observe(getActivity(), new Observer<AddCardModel>() {
             @Override
@@ -186,13 +209,13 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             public void onClick(View v) {
                 if (q_et.getText().toString().isEmpty())
                     return;
-                if (p==null||Integer.parseInt(q_et.getText().toString())==0)
+                if (p==null)//||Integer.parseInt(q_et.getText().toString())==0)
                     return;
 
 
                 dialog.dismiss();
 
-                next.startAnimation();
+               // next.startAnimation();
                 isLoading = true;
                 viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance",p.getCity_id());
                 q_et.setText("");
@@ -213,9 +236,9 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
     @Override
     public void increase(Product item, int qty) {
-        next.startAnimation();
+      //  next.startAnimation();
         isLoading = true;
-        viewModel.addToCard(item.getId() + "", "1", null, cid, "plus",item.getCity_id());
+        viewModel.addToCard(item.getId() + "", qty+"", null, cid, "balance",item.getCity_id());
 
     }
 
@@ -223,11 +246,11 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     public void decrease(Product item, int qty) {
         isLoading = true;
 
-        next.startAnimation();
+      //  next.startAnimation();
         if (qty == 0)
             viewModel.removeFromCard(cid + "", item.getId().toString());
         else
-            viewModel.addToCard(item.getId() + "", "1", null, cid, "minus",item.getCity_id());
+            viewModel.addToCard(item.getId() + "", ""+qty, null, cid, "balance",item.getCity_id());
 
     }
 

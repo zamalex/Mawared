@@ -56,6 +56,13 @@ public class OneSignalNotificationOpenedHandler implements OneSignal.Notificatio
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
 
+                }
+                else if(type.equals("rate_order")){
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("type","rate_order");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
                 }else {
                     Intent intent = new Intent(context, MainActivity.class);
                     intent.putExtra("type","general");

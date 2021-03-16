@@ -638,6 +638,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearLayout8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -672,6 +673,18 @@
                     android:textSize="22sp" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/dareba"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="القيمة الاجمالية شامل رسوم الضريبة"
+                android:textColor="#7B92A5"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout8"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

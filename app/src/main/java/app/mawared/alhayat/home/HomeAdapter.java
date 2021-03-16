@@ -83,7 +83,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
                 holder.total_qty.setText(products.get(position).qty + "");
                 notifyDataSetChanged();
 
-                notifyDataSetChanged();
 
                 listener.onAddClick(position,product);
 

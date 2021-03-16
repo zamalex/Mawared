@@ -267,7 +267,13 @@ public class MainActivity extends AppCompatActivity {
                 fragmentStack.replace(settingsFragment);
 
 
-            } else {
+            } else if(getIntent().getStringExtra("type").equals("rate_order")){
+                OrderFragment orderFragment = new OrderFragment();
+                Bundle b = new Bundle();
+                b.putString("has","has");
+                orderFragment.setArguments(b);
+                fragmentStack.push(orderFragment);
+            }else {
                 navigationView.setSelectedItemId(R.id.settings);
                 SettingsFragment settingsFragment = new SettingsFragment();
 

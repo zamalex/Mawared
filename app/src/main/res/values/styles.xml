@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/text_views</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="badgeStyle">@style/CustomBadge</item>
 
     </style>
 
@@ -31,6 +32,12 @@
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">@font/urosemi</item>
         <item name="colorControlNormal">@color/backgrey</item>
+    </style>
+
+
+
+    <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/darkgrey</item>
     </style>
 
 </resources>

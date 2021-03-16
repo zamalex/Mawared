@@ -18,6 +18,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import app.mawared.alhayat.R;
 
@@ -31,6 +33,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
 
     sumListener sumListener;
     UpdateListener updateListener;
+    Timer timer;
 
 
     public MyCartAdapter(MyCartAdapter.sumListener sumListener, UpdateListener updateListener) {
@@ -46,11 +49,12 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         return new MyCartAdapter.Holder(itemView);
     }
 
-    long mLastClickTime = 0;
+   // long mLastClickTime = 0;
 
     @Override
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
 
+        Product item = products.get(position);
         holder.price.setText(products.get(position).getPriceWithVat() + " " + "ر.س");
         holder.name.setText(products.get(position).getTitle());
         holder.total_qty.setText(products.get(position).getInCartQuantity() + "");
@@ -77,23 +81,30 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             public void onClick(View v) {
 
                 if (((MyCartFragment) updateListener).isLoading)
-                    return;
-
-              /*  if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return;
-                }*/
-                mLastClickTime = SystemClock.elapsedRealtime();
+                    //return;
+                    System.out.println("");
 
 
-                products.get(position).qty++;
-                holder.total_qty.setText(products.get(position).qty + "");
+                //mLastClickTime = SystemClock.elapsedRealtime();
 
-                Long amount = Long.parseLong(products.get(position).getInCartQuantity().toString());
-                products.get(position).setInCartQuantity((amount + 1));
+                if (timer!=null)
+                    timer.cancel();
+                timer = new Timer();
+                products.get(position).setInCartQuantity(1+item.getInCartQuantity());
+                holder.total_qty.setText(products.get(position).getInCartQuantity() + "");
                 sumListener.doSum(calculateTotal());
-                updateListener.increase(products.get(position), products.get(position).qty);
-
                 notifyDataSetChanged();
+
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        updateListener.increase(products.get(position), Integer.parseInt(products.get(position).getInCartQuantity()+""));
+
+                    }
+                },1000);
+
+
 
 
             }
@@ -104,32 +115,34 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             @Override
             public void onClick(View v) {
                 if (((MyCartFragment) updateListener).isLoading)
-                    return;
+                    System.out.println("");
 
 
-              /*  if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return;
-                }*/
-                mLastClickTime = SystemClock.elapsedRealtime();
+                if (timer!=null)
+                    timer.cancel();
+                timer = new Timer();
 
                 Long amount = Long.parseLong(products.get(position).getInCartQuantity().toString());
-                if (amount > 1)
+                if (amount > 1) {
                     products.get(position).setInCartQuantity((amount - 1));
-                products.get(position).setInCartQuantity(amount);
-
-                if (products.get(position).qty != 1) {
-
                     holder.total_qty.setText(products.get(position).qty + "");
-                    updateListener.decrease(products.get(position), products.get(position).qty);
 
-                    notifyDataSetChanged();
-                } else {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            updateListener.decrease(products.get(position),  Integer.parseInt(products.get(position).getInCartQuantity()+""));
+
+                        }
+                    },1000);
+                }
+               else {
                     updateListener.decrease(products.get(position), 0);
-                    notifyDataSetChanged();
                 }
 
 
                 sumListener.doSum(calculateTotal());
+                notifyDataSetChanged();
+
             }
         });
 

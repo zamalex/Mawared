@@ -102,7 +102,7 @@ public class RegisterationActivity extends AppCompatActivity {
                         if (loginRegistration != null) {
                             if (loginRegistration.getStatus() == 200) {
                                 if (loginRegistration.getData().getExists()) {
-                                    Toast.makeText(getApplicationContext(), "الرقم الذي أدخلته مسجل مسبقا", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "هذا الرقم مسجل مسبقا يمكنك الرجوع لتسجبل الدخول", Toast.LENGTH_LONG).show();
 
                                 } else
                                     startSMSListener();
