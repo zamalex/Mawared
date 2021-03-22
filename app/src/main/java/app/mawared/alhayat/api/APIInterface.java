@@ -90,7 +90,7 @@ public interface APIInterface {
     Call<Cities> getCities();
 
     @POST("register/profile")
-    Call<RegisterModel> registerNewAccount(@Body RegisterBody registerBody);
+    Call<LoginResponse> registerNewAccount(@Body RegisterBody registerBody);
 
     @GET("points/terms")
     Call<Terms> getTermsPoints(@Header("Authorization") String token);

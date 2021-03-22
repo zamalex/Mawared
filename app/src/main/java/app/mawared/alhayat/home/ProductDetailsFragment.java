@@ -19,6 +19,9 @@ import android.widget.TextView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Objects;
 
 import app.mawared.alhayat.MainActivity;
@@ -79,7 +82,7 @@ public class ProductDetailsFragment extends Fragment {
 
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
         Bundle bb = new Bundle();
-        bb.putString("screen", "Product details Android");
+        bb.putString("screen", "Product details screen Android");
         mFirebaseAnalytics.logEvent("user_location", bb);
 
 
@@ -120,7 +123,8 @@ public class ProductDetailsFragment extends Fragment {
                             if (product.getInCartQuantity()==0)
                                 product.qty=Integer.parseInt(product.getIncart().toString());
 */
-                        price.setText(p + " " + "ر.س");
+
+                        price.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
                         name.setText(product.getTitle());
                         total_qty.setText(product.getInCartQuantity() + "");
 

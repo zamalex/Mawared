@@ -1,6 +1,8 @@
 package app.mawared.alhayat.mycart;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -23,8 +25,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import app.mawared.alhayat.SwipeHelper;
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
@@ -109,7 +114,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 if (cardModel != null) {
                     if (cardModel.getStatus() == 200) {
                         adapter.setProducts((ArrayList<Product>) cardModel.getData().getProducts());
-                        total_sum.setText((Double) (Math.round(cardModel.getData().getItemsSumFinalPrices() * 100) / 100.00) + " ر.س");
+                        total_sum.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(cardModel.getData().getItemsSumFinalPrices()) + " ر.س");
 
                     }
                 }
@@ -122,15 +127,36 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             @Override
             public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons) {
                 underlayButtons.add(new SwipeHelper.UnderlayButton(
-                        "ازالة",
+                        getActivity(),
+                        "إزالة",
                         0,
                         Color.parseColor("#FF3C30"),
                         new SwipeHelper.UnderlayButtonClickListener() {
                             @Override
                             public void onClick(int pos) {
                                // Toast.makeText(getActivity(), ""+pos, Toast.LENGTH_SHORT).show();
-                                viewModel.removeFromCard(cid + "", adapter.products.get(pos).getId().toString());
-                                next.startAnimation();
+
+
+                                new AlertDialog.Builder(getActivity())
+                                        .setTitle("حذف المنتج")
+                                        .setMessage("هل انت متأكد من حذف المنتج؟")
+                                        .setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                viewModel.removeFromCard(cid + "", adapter.products.get(pos).getId().toString());
+                                                next.startAnimation();
+                                            }
+                                        })
+
+                                        // A null listener allows the button to dismiss the dialog and take no further action.
+                                        .setNegativeButton("لا", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_info  )
+                                        .show();
                             }
                         }
                 ));

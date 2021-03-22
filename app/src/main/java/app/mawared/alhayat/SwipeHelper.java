@@ -8,12 +8,14 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -217,11 +219,13 @@ public abstract class SwipeHelper extends ItemTouchHelper.SimpleCallback {
         private RectF clickRegion;
         private UnderlayButtonClickListener clickListener;
 
-        public UnderlayButton(String text, int imageResId, int color, UnderlayButtonClickListener clickListener) {
+        Context context;
+        public UnderlayButton(Context context,String text, int imageResId, int color, UnderlayButtonClickListener clickListener) {
             this.text = text;
             this.imageResId = imageResId;
             this.color = color;
             this.clickListener = clickListener;
+            this.context= context;
         }
 
         public boolean onClick(float x, float y){
@@ -245,7 +249,8 @@ public abstract class SwipeHelper extends ItemTouchHelper.SimpleCallback {
            // p.setTextSize(20);
             p.setTextSize(50);
 
-
+            Typeface typeface = ResourcesCompat.getFont(context, R.font.urosemi);
+                p.setTypeface(typeface);
 
             Rect r = new Rect();
             float cHeight = rect.height();

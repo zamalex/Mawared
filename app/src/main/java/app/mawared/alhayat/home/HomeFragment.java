@@ -53,7 +53,10 @@ import com.google.android.play.core.tasks.Task;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
@@ -524,7 +527,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                     if (cardModel.getData().getItemsCount() > 0) {
                                         card_linear.setVisibility(View.VISIBLE);
 
-                                        linear_txt.setText((Double) (Math.round((cardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00) + " ر.س ");
+                                        linear_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((cardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
+
 
 
                                     } else
@@ -547,7 +551,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                             card_size.setValue(addCardModel.getData().getItemsCount().intValue());
                             if (addCardModel.getData().getItemsCount() > 0) {
                                 card_linear.setVisibility(View.VISIBLE);
-                                linear_txt.setText((Double) (Math.round((addCardModel.getData().getItemsSumFinalPrices()) * 100) / 100.00) + " ر.س ");
+
+                                linear_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((addCardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
+
                             } else
                                 card_linear.setVisibility(View.GONE);
 

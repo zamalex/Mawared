@@ -127,7 +127,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
 
-        <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+        <app.mawared.alhayat.PasswordEText
             android:id="@+id/et_regiPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

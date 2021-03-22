@@ -17,7 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
@@ -53,7 +56,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         if (product.qty==0)
             product.qty=Integer.parseInt(product.getIncart().toString());
 
-        holder.price.setText(p + " " + "ر.س");
+        holder.price.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
+
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
 

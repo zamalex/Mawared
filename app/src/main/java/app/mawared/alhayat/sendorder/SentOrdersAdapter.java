@@ -9,7 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.mycart.model.Product;
@@ -38,7 +41,7 @@ public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Ho
 
         holder.count.setText("X"+p.getInCartQuantity());
         holder.name.setText(p.getTitle());
-        holder.peice.setText(p.getPriceWithVat().toString()+" ر.س");
+        holder.peice.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p.getPriceWithVat())+" ر.س");
 
 
 

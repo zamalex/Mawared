@@ -32,12 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.cities.Cities;
 import app.mawared.alhayat.helpers.CustomeSpinnerAdapter;
 import app.mawared.alhayat.login.LoginActivity;
+import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.register.model.RegisterBody;
 import app.mawared.alhayat.register.model.RegisterModel;
+import io.paperdb.Paper;
 
 public class RegisterBottomSheet extends BottomSheetDialogFragment {
 
@@ -140,16 +143,20 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
                     registerBody.setName(et_regiFullName.getText().toString());
 
                     load.show();
-                    registerViewModel.setNewAccount(registerBody).observe(getActivity(), new Observer<RegisterModel>() {
+                    registerViewModel.setNewAccount(registerBody).observe(getActivity(), new Observer<LoginResponse>() {
                         @Override
-                        public void onChanged(RegisterModel responseBody) {
+                        public void onChanged(LoginResponse responseBody) {
                            // Log.e("happen", responseBody.toString() );
                             load.dismiss();
                             if (responseBody!=null){
                                 Toast.makeText(getActivity(), responseBody.getMessage().getDescription(), Toast.LENGTH_SHORT).show();
                                 if (responseBody.getStatus()==200){
-                                    Intent mainIntent = new Intent(getActivity(), LoginActivity.class);
+                                    Paper.book().write("login",responseBody);
+                                    Paper.book().write("token", responseBody.getUser().getToken());
+
+                                    Intent mainIntent = new Intent(getActivity(), MainActivity.class);
                                     startActivity(mainIntent);
+                                    getActivity().finish();
                                     dialog.dismiss();
                                 }
                             }

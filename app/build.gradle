@@ -15,6 +15,8 @@ buildscript {
 
 repositories {
     maven { url 'https://maven.google.com' }
+    mavenCentral()
+
 }
 android {
     signingConfigs {
@@ -152,5 +154,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-tagmanager:17.0.0'
 
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
+
+    implementation 'com.appsflyer:af-android-sdk:6.2.3'
+    implementation 'com.android.installreferrer:installreferrer:2.2'
+
 
 }

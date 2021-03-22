@@ -58,6 +58,8 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -318,12 +320,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                 ordersAdapter.setProducts(items);
 
-                semi_final_txt.setText((Double) (Math.round(calculateTotal(items) * 100) / 100.00) + " ر.س ");
+                semi_final_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items)) + " ر.س ");
                 vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+                vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
+                //new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items))
                 vat_without_pts = vat;
-                vat_txt.setText(vat + " ر.س ");
+                vat_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(vat) + " ر.س ");
                 discount_txt.setText("0 ر.س");
-                orders_total_dialog_txt.setText((Double) (Math.round((total.getValue()) * 100) / 100.00) + " ر.س ");
+                orders_total_dialog_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(total.getValue()) + " ر.س ");
                 count_tv.setText(calculateCount(items) + "");
                 price_without_pts = (Double) (Math.round((total.getValue()) * 100) / 100.00);
                 total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
@@ -488,11 +492,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
                     } else {
-                       /* final_total_txt.setText((Double) (Math.round((price_without_pts) * 100) / 100.00) + " ر.س ");
-                        vat_txt.setText((Double) (Math.round((vat_without_pts) * 100) / 100.00) + " ر.س ");
 
-
-                        discount_txt.setText("0 ر.س ");*/
                         ptsDiscount = 0d;
 
                         doCalculations();
@@ -507,7 +507,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             total.observe(getViewLifecycleOwner(), new Observer<Double>() {
                 @Override
                 public void onChanged(Double aDouble) {
-                    final_total_txt.setText((Double) (Math.round(aDouble * 100) / 100.00) + " ر.س ");
+                    final_total_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(aDouble)+ " ر.س ");
                 }
             });
 
@@ -521,15 +521,6 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             selected_copon.setText(coponModel.getPromocode().getCode());
 
                             coponDiscount = Double.parseDouble(coponModel.getPromocode().getAmount());
-                          /*  discount_txt.setText((Double) (Math.round((total_before * coponDiscount / 100) * 100) / 100.00) + " ر.س ");
-
-
-                            vat_txt.setText(((Double) (Math.round((vat - (vat * coponDiscount / 100)) * 100) / 100.00)) + " ر.س ");
-                            vat = vat - ((Double) (Math.round((vat * coponDiscount / 100) * 100) / 100.00));
-
-                            Double sum = total_before - (total_before * coponDiscount / 100)+vat;*/
-                            // price_without_pts = sum;
-                            //total.setValue(sum);
 
                             doCalculations();
 
@@ -608,16 +599,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         ptsDiscount = (Double.parseDouble(pts_amounts.get(pts_spinner.getSelectedItemPosition()))) / 50 * .05;
 
-                        //  Toast.makeText(getActivity(), ptsDiscount.toString(), Toast.LENGTH_SHORT).show();
-                       /* discount_txt.setText((Double) (Math.round((total_before * ptsDiscount) * 100) / 100.00) + " ر.س ");
 
-
-                        vat_txt.setText(((Double) (Math.round((vat - (vat * ptsDiscount)) * 100) / 100.00)) + " ر.س ");
-                        vat = vat - ((Double) (Math.round((vat * ptsDiscount) * 100) / 100.00));
-
-                        Double sum = total_before - (total_before * ptsDiscount)+vat;
-                        total.setValue(sum);
-*/
                         doCalculations();
 
 
@@ -953,7 +935,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 }
             }
 
-            Toast.makeText(getContext(), types_e[map_spinner.getSelectedItemPosition()], Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getContext(), types_e[map_spinner.getSelectedItemPosition()], Toast.LENGTH_SHORT).show();
         }
         if (!requestBodyMap.containsKey("delivery_date")) {
             Toast.makeText(getActivity(), "ادخل تاريخ الاستلام", Toast.LENGTH_SHORT).show();
@@ -1257,10 +1239,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     void doCalculations() {
-        discount_txt.setText((Double) (Math.round((total_before * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00) + " ر.س ");
+        discount_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((total_before * (ptsDiscount + (coponDiscount / 100)))) + " ر.س ");
 
 
-        vat_txt.setText(((Double) (Math.round((vat - (vat * (ptsDiscount + (coponDiscount / 100)))) * 100) / 100.00)) + " ر.س ");
+        vat_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((vat - (vat * (ptsDiscount + (coponDiscount / 100))))) + " ر.س ");
         Double v = vat - ((Double) (Math.round((vat * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00));
 
         Double sum = total_before - (total_before * (ptsDiscount + (coponDiscount / 100))) + v;

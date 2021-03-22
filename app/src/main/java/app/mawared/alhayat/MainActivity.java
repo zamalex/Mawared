@@ -16,6 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.appsflyer.AFInAppEventParameterName;
+import com.appsflyer.AFInAppEventType;
+import com.appsflyer.AppsFlyerLib;
+import com.appsflyer.attribution.AppsFlyerRequestListener;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,6 +44,9 @@ import com.google.gson.JsonObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import app.mawared.alhayat.about.AboutMawaredFragment;
 import app.mawared.alhayat.api.RetrofitClient;
@@ -80,6 +89,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Map<String,Object> eventValues = new HashMap<>();
+        eventValues.put(AFInAppEventParameterName.DESCRIPTION, "MainActivity");
+
+        AppsFlyerLib.getInstance().logEvent(this, AFInAppEventType.CONTENT_VIEW, eventValues, new AppsFlyerRequestListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("flyer", "Event sent successfully");
+            }
+            @Override
+            public void onError(int i, @NonNull String s) {
+                Log.d("flyer", "Event failed to be sent:\n" +
+                        "Error code: " + i + "\n"
+                        + "Error description: " + s);
+            }
+        });
+
+
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(HomeViewModel.class);
 
@@ -189,6 +216,19 @@ public class MainActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    MapView mv = new MapView(getApplicationContext());
+                    mv.onCreate(null);
+                    mv.onPause();
+                    mv.onDestroy();
+                }catch (Exception ignored){
+
+                }
+            }
+        }).start();
 
         dialog = KProgressHUD.create(MainActivity.this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)

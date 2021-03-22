@@ -9,7 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.orderdetails.model.Product;
@@ -36,7 +39,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         Product productModel = productList.get(position);
         holder.tv_productCountDetails.setText("x"+productModel.getQuantity());
         holder.tv_productDetailsName.setText(productModel.getTitle());
-        holder.tv_productDetailsPrice.setText(productModel.getTotal()+" ر.س");
+        holder.tv_productDetailsPrice.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(productModel.getTotal())+" ر.س");
 
 
         String c = "\\u002B";

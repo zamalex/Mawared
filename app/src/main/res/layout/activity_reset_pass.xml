@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+    <app.mawared.alhayat.PasswordEText
         android:id="@+id/pass_et"
         android:layout_width="0dp"
         android:layout_height="58dp"
@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 
-    <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+    <app.mawared.alhayat.PasswordEText
         android:id="@+id/repass_et"
         android:layout_width="0dp"
         android:layout_height="58dp"
