@@ -4,10 +4,17 @@ package app.mawared.alhayat;
 import android.content.res.Configuration;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
@@ -36,6 +43,7 @@ public class MyApp extends android.app.Application {
 
         Paper.init(this);
 
+        startSMSListener();
         MapsInitializer.initialize(this);
 
 
@@ -81,5 +89,18 @@ public class MyApp extends android.app.Application {
         super.onConfigurationChanged(newConfig);
         Lingver.getInstance().setLocale(this, "ar");
 
+    }
+    public void startSMSListener() {
+        SmsRetrieverClient mClient = SmsRetriever.getClient(this);
+        Task<Void> mTask = mClient.startSmsRetriever();
+        mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override public void onSuccess(Void aVoid) {
+
+            }
+        });
+        mTask.addOnFailureListener(new OnFailureListener() {
+            @Override public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
 }

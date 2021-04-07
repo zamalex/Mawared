@@ -62,6 +62,7 @@ public class ActivationActivity extends AppCompatActivity implements SmsBroadcas
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startSMSListener();
         String languageToLoad = "ar"; // your language
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);

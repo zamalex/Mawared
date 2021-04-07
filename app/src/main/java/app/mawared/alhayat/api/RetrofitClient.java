@@ -42,8 +42,8 @@ public class RetrofitClient {
 
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                   .baseUrl("http://mawared.badee.com.sa/api/v1/") //test
-                    //.baseUrl("http://mawaredal-hayat.com/api/v1/")//production
+                  // .baseUrl("http://mawared.badee.com.sa/api/v1/") //test
+                    .baseUrl("http://mawaredal-hayat.com/api/v1/")//production
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();

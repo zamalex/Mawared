@@ -83,7 +83,7 @@ public class MobileFragment extends Fragment {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("mobile", phone_et.getText().toString());
-                jsonObject.addProperty("sms_token","3NAjIDnZDcG");
+                jsonObject.addProperty("sms_token","NLeMjm76BfQ");
 
                 viewModel.sendCode(jsonObject, "Bearer " + mLoginResponse.getUser().getToken());
 
@@ -118,11 +118,7 @@ public class MobileFragment extends Fragment {
         mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override public void onSuccess(Void aVoid) {
 
-                Intent intent = new Intent(getActivity(), ActivationActivity.class);
-                intent.putExtra("type", "update");
-                intent.putExtra("mobNo", phone_et.getText().toString());
 
-                startActivity(intent);
 
             }
         });
@@ -130,6 +126,11 @@ public class MobileFragment extends Fragment {
             @Override public void onFailure(@NonNull Exception e) {
             }
         });
+        Intent intent = new Intent(getActivity(), ActivationActivity.class);
+        intent.putExtra("type", "update");
+        intent.putExtra("mobNo", phone_et.getText().toString());
+
+        startActivity(intent);
     }
 
 }

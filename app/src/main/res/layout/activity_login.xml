@@ -130,7 +130,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+    <app.mawared.alhayat.PasswordEText
         android:id="@+id/pass_et"
         android:layout_width="0dp"
         android:layout_height="58dp"
@@ -143,7 +143,7 @@
         android:backgroundTint="@color/white"
         android:elevation="8dp"
         android:fontFamily="@font/urosemi"
-        android:gravity="right|center_vertical"
+        android:gravity="left|center_vertical"
         android:hint="كلمة المرور"
         android:layoutDirection="ltr"
 
@@ -170,7 +170,7 @@
         android:id="@+id/go_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" انشاء حساب جديد"
+        android:text=" إنشاء حساب جديد"
         android:fontFamily="@font/uroextra"
         android:textColor="@color/lightgrey"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"

@@ -16,9 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.appsflyer.AFInAppEventParameterName;
+import com.appsflyer.AFInAppEventType;
+import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
@@ -55,6 +60,11 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
             bb.putString("screen", "Chat screen Android");
             mFirebaseAnalytics.logEvent("user_location", bb);
         }
+
+        Map<String,Object> eventValues = new HashMap<>();
+        eventValues.put(AFInAppEventParameterName.DESCRIPTION, "Chat screen Android");
+
+        AppsFlyerLib.getInstance().logEvent(getActivity(), "chat_opened",eventValues);
 
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(ChatListViewModel.class);

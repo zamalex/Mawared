@@ -35,6 +35,7 @@ import java.util.Locale;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.activiation.ActivationActivity;
+import app.mawared.alhayat.forgot.ForgotPasswordActivity;
 import app.mawared.alhayat.registeration.model.LoginRegistration;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
 
@@ -93,12 +94,13 @@ public class RegisterationActivity extends AppCompatActivity {
                 JsonObject jObj = new JsonObject();
 
                 jObj.addProperty("mobile", phoneNumber);
-                jObj.addProperty("sms_token", "3NAjIDnZDcG");
+                jObj.addProperty("sms_token", "NLeMjm76BfQ");
                 dialog.show();
                 registerationViewModel.checkMobile(jObj).observe(RegisterationActivity.this, new Observer<LoginRegistration>() {
                     @Override
                     public void onChanged(LoginRegistration loginRegistration) {
                         dialog.dismiss();
+
                         if (loginRegistration != null) {
                             if (loginRegistration.getStatus() == 200) {
                                 if (loginRegistration.getData().getExists()) {
@@ -106,6 +108,9 @@ public class RegisterationActivity extends AppCompatActivity {
 
                                 } else
                                     startSMSListener();
+                            }
+                            else{                                                    Toast.makeText(getApplicationContext(), "حدث خطأ", Toast.LENGTH_LONG).show();
+
                             }
                         } else {
                             Toast.makeText(getApplicationContext(), "حدث خطأ", Toast.LENGTH_LONG).show();
@@ -123,11 +128,7 @@ public class RegisterationActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
 
-                getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum", phoneNumber).commit();
-                Intent activationIntent = new Intent(RegisterationActivity.this,
-                        ActivationActivity.class);
-                activationIntent.putExtra("mobNo", phoneNumber);
-                startActivity(activationIntent);
+
 
             }
         });
@@ -136,5 +137,11 @@ public class RegisterationActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
             }
         });
+
+        getSharedPreferences("mwared", Context.MODE_PRIVATE).edit().putString("mobNum", phoneNumber).commit();
+        Intent activationIntent = new Intent(RegisterationActivity.this,
+                ActivationActivity.class);
+        activationIntent.putExtra("mobNo", phoneNumber);
+        startActivity(activationIntent);
     }
 }

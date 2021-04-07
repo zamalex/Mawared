@@ -2,6 +2,7 @@ package app.mawared.alhayat.home;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,12 +17,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.appsflyer.AFInAppEventParameterName;
+import com.appsflyer.AppsFlyerLib;
+import com.appsflyer.attribution.AppsFlyerRequestListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import app.mawared.alhayat.MainActivity;
@@ -84,6 +90,22 @@ public class ProductDetailsFragment extends Fragment {
         Bundle bb = new Bundle();
         bb.putString("screen", "Product details screen Android");
         mFirebaseAnalytics.logEvent("user_location", bb);
+
+        Map<String,Object> eventValues = new HashMap<>();
+        eventValues.put(AFInAppEventParameterName.DESCRIPTION, "Product_details_screen_Android");
+
+        AppsFlyerLib.getInstance().logEvent(getActivity(), "product_details",eventValues, new AppsFlyerRequestListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("flyer", "Event sent successfully");
+            }
+            @Override
+            public void onError(int i, @NonNull String s) {
+                Log.d("flyer", "Event failed to be sent:\n" +
+                        "Error code: " + i + "\n"
+                        + "Error description: " + s);
+            }
+        });
 
 
         assert getArguments() != null;

@@ -76,7 +76,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     jsonObject.addProperty("country_code", "sa");
                     jsonObject.addProperty("mobile", phone_et.getText().toString());
                     jsonObject.addProperty("method", "mobile");
-                    jsonObject.addProperty("sms_token","3NAjIDnZDcG");
+                    jsonObject.addProperty("sms_token","NLeMjm76BfQ");
 
                     dialog.show();
                     viewModel.forgotPass(jsonObject);
@@ -89,6 +89,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             @Override
             public void onChanged(ForgotModel forgotModel) {
                 dialog.dismiss();
+              //  startSMSListener();
                 if (forgotModel != null) {
                     if (forgotModel.getStatus() == 200) {
 
@@ -96,7 +97,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                     } else
                         Toast.makeText(ForgotPasswordActivity.this, "حدث خطأ", Toast.LENGTH_SHORT).show();
-                }
+                }else                         Toast.makeText(ForgotPasswordActivity.this, "حدث خطأ", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -115,11 +117,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         mTask.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override public void onSuccess(Void aVoid) {
 
-                Intent intent = new Intent(ForgotPasswordActivity.this, ActivationActivity.class);
+               /* Intent intent = new Intent(ForgotPasswordActivity.this, ActivationActivity.class);
                 intent.putExtra("type", "forgot");
                 intent.putExtra("mobNo", phone_et.getText().toString());
 
-                startActivity(intent);
+                startActivity(intent);*/
 
             }
         });
@@ -127,6 +129,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             @Override public void onFailure(@NonNull Exception e) {
             }
         });
+        Intent intent = new Intent(ForgotPasswordActivity.this, ActivationActivity.class);
+        intent.putExtra("type", "forgot");
+        intent.putExtra("mobNo", phone_et.getText().toString());
+
+        startActivity(intent);
     }
 
 }

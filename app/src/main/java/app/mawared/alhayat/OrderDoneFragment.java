@@ -14,7 +14,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.appsflyer.AFInAppEventParameterName;
+import com.appsflyer.AppsFlyerLib;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import app.mawared.alhayat.sendorder.AddressAdapter;
 import app.mawared.alhayat.sendorder.BankAdapter;
@@ -34,6 +39,13 @@ public class OrderDoneFragment extends Fragment {
             Bundle bb = new Bundle();
             bb.putString("screen", "order placed screen Android");
             mFirebaseAnalytics.logEvent("user_location", bb);
+
+            Map<String,Object> eventValues = new HashMap<>();
+            eventValues.put(AFInAppEventParameterName.DESCRIPTION, "order_placed_screen_Android");
+
+            AppsFlyerLib.getInstance().logEvent(getActivity(), "order_placed",eventValues);
+
+
         }
 
 
