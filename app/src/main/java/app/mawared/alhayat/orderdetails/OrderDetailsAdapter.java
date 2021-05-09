@@ -39,7 +39,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         Product productModel = productList.get(position);
         holder.tv_productCountDetails.setText("x"+productModel.getQuantity());
         holder.tv_productDetailsName.setText(productModel.getTitle());
-        holder.tv_productDetailsPrice.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(productModel.getTotal())+" ر.س");
+        holder.tv_productDetailsPrice.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(productModel.getTotal())+" ر.س");
 
 
         String c = "\\u002B";

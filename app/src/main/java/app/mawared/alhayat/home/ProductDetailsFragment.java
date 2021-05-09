@@ -146,7 +146,7 @@ public class ProductDetailsFragment extends Fragment {
                                 product.qty=Integer.parseInt(product.getIncart().toString());
 */
 
-                        price.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
+                        price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
                         name.setText(product.getTitle());
                         total_qty.setText(product.getInCartQuantity() + "");
 

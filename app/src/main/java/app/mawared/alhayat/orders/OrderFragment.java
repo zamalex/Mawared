@@ -144,7 +144,7 @@ public class OrderFragment extends Fragment implements OrderClickListener {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     if (et_searchOrder.getText().toString() != null && !et_searchOrder.getText().toString().equals("")) {
-                        int orderId = Integer.parseInt(et_searchOrder.getText().toString());
+                        long orderId = Long.parseLong(et_searchOrder.getText().toString());
 
                         orderViewModel.searchOrder(orderId).observe(getActivity(), new Observer<AllOrder>() {
                             @Override

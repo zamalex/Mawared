@@ -164,6 +164,7 @@ public class OrderDetailsFragment extends Fragment {
         orderDetailsViewModel.getOrderDetails(orderId).observe(getActivity(), new Observer<OrderDetails>() {
             @Override
             public void onChanged(OrderDetails orderDetails) {
+                if (getActivity()!=null)
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (orderDetails != null) {

@@ -140,8 +140,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void result) {
+                                        if (getActivity()!=null)
+                                            if (((MainActivity) getActivity()).didShow!=null)
                                         ((MainActivity) getActivity()).didShow = true;
-                                        Log.e("TAG", "onSuccess: ");
 
                                     }
                                 });
@@ -272,12 +273,18 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
 
         LoginResponse aloginResponse = Paper.book().read("login", null);
-       if (aloginResponse!=null)
-        if (aloginResponse.getSuccess())
+       if (aloginResponse!=null){
+        if (aloginResponse.getSuccess()){
+            ((MainActivity) getActivity()).showDialog(true);
+
             viewModel.checkRate(aloginResponse.getUser().getToken()).observe(getViewLifecycleOwner(), new Observer<CheckRate>() {
                 @Override
                 public void onChanged(CheckRate checkRate) {
-                    if (checkRate!=null){
+                    if (isAdded()){
+                        if (getActivity()!=null)
+                        ((MainActivity) getActivity()).showDialog(false);
+
+                        if (checkRate!=null){
                         if (checkRate.getSuccess()){
                             if (checkRate.getData().getHasNewUpdates()){
                                 OrderFragment orderFragment = new OrderFragment();
@@ -287,9 +294,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                 ((MainActivity)getActivity()).fragmentStack.push(orderFragment);
                             }
                         }
-                    }
+                    }}
                 }
-            });
+            });}}
 
         card_size.setValue(0);
 
@@ -473,6 +480,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 if (cid == null) {
                     Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                 } else
+                    if (getActivity()!=null)
                     ((MainActivity) getActivity()).fragmentStack.push(new MyCartFragment());
             }
         });
@@ -485,6 +493,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 if (cid == null) {
                     Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                 } else
+                    if (getActivity()!=null)
                     ((MainActivity) getActivity()).fragmentStack.push(new MyCartFragment());
             }
         });
@@ -527,7 +536,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                     if (cardModel.getData().getItemsCount() > 0) {
                                         card_linear.setVisibility(View.VISIBLE);
 
-                                        linear_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((cardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
+                                        linear_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format((cardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
 
 
 
@@ -552,7 +561,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                             if (addCardModel.getData().getItemsCount() > 0) {
                                 card_linear.setVisibility(View.VISIBLE);
 
-                                linear_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((addCardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
+                                linear_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format((addCardModel.getData().getItemsSumFinalPrices())) + " ر.س ");
 
                             } else
                                 card_linear.setVisibility(View.GONE);

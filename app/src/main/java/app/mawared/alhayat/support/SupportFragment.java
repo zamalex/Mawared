@@ -115,6 +115,7 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
             public void onChanged(AllOrder allOrder) {
 
 
+                if (getActivity()!=null)
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (allOrder != null) {
@@ -141,6 +142,7 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
                     Toast.makeText(getActivity(), "ادخل التفاصيل", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if (getActivity()!=null)
                 ((MainActivity)getActivity()).showDialog(true);
 
                 String title = "خدمة العملاء";
@@ -155,6 +157,7 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
         ic_BackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getActivity()!=null)
                 ((MainActivity)getActivity()).onBackPressed();
 
             }

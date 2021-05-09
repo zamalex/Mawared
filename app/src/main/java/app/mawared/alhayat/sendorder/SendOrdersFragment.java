@@ -73,6 +73,8 @@ import app.mawared.alhayat.OrderDoneFragment;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.login.LoginActivity;
+import app.mawared.alhayat.mycart.CartViewModel;
+import app.mawared.alhayat.mycart.model.CardModel;
 import app.mawared.alhayat.mycart.model.Product;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
 import app.mawared.alhayat.sendorder.model.AddressModel;
@@ -99,6 +101,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
     SendOrderViewModel viewModel;
+    CartViewModel cartViewModel;
 
     View v;
 
@@ -172,6 +175,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
         if (v == null) {
             v = inflater.inflate(R.layout.fragment_send_orders, container, false);
+
+            cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
             back = v.findViewById(R.id.imageView);
             final_total_txt = v.findViewById(R.id.final_total_txt);
@@ -320,14 +325,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                 ordersAdapter.setProducts(items);
 
-                semi_final_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items)) + " ر.س ");
+                semi_final_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items)) + " ر.س ");
                 vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
                 vat = (Double) (Math.round((total.getValue() - calculateTotal(items)) * 100) / 100.00);
-                //new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items))
+                //new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(calculateTotal(items))
                 vat_without_pts = vat;
-                vat_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(vat) + " ر.س ");
+                vat_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(vat) + " ر.س ");
                 discount_txt.setText("0 ر.س");
-                orders_total_dialog_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(total.getValue()) + " ر.س ");
+                orders_total_dialog_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(total.getValue()) + " ر.س ");
                 count_tv.setText(calculateCount(items) + "");
                 price_without_pts = (Double) (Math.round((total.getValue()) * 100) / 100.00);
                 total_before = (Double) (Math.round(calculateTotal(items) * 100) / 100.00);
@@ -507,7 +512,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             total.observe(getViewLifecycleOwner(), new Observer<Double>() {
                 @Override
                 public void onChanged(Double aDouble) {
-                    final_total_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(aDouble)+ " ر.س ");
+                    final_total_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(aDouble)+ " ر.س ");
                 }
             });
 
@@ -1033,9 +1038,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
                     Log.d("resooo", response.message());
+                    if (getActivity()!=null)
                     ((MainActivity) getActivity()).showDialog(false);
                     if (response != null) {
                         if (response.code() == 200) {
+
 
 
                             ((MainActivity) getActivity()).fragmentStack.replace(new OrderDoneFragment());
@@ -1184,27 +1191,40 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void onResume() {
-        mapView.onResume();
         super.onResume();
+
+        if (mapView!=null)
+
+            mapView.onResume();
+
     }
 
 
     @Override
     public void onPause() {
-        super.onPause();
+
+            super.onPause();
+        if (mapView!=null)
         mapView.onPause();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
+
+
+            super.onDestroy();
+        if (mapView!=null)
+
+            mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+
+            super.onLowMemory();
+        if (mapView!=null)
+
+            mapView.onLowMemory();
     }
 
     @Override
@@ -1224,6 +1244,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         Log.d("sele", address.getLat() + " + " + address.getLng());
         map_dailog.show();
 
+        if (map!=null)
         map.clear();
 
         MarkerOptions mp = new MarkerOptions();
@@ -1239,10 +1260,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     void doCalculations() {
-        discount_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((total_before * (ptsDiscount + (coponDiscount / 100)))) + " ر.س ");
+        discount_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format((total_before * (ptsDiscount + (coponDiscount / 100)))) + " ر.س ");
 
 
-        vat_txt.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format((vat - (vat * (ptsDiscount + (coponDiscount / 100))))) + " ر.س ");
+        vat_txt.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format((vat - (vat * (ptsDiscount + (coponDiscount / 100))))) + " ر.س ");
         Double v = vat - ((Double) (Math.round((vat * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00));
 
         Double sum = total_before - (total_before * (ptsDiscount + (coponDiscount / 100))) + v;
@@ -1254,6 +1275,29 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onStart() {
         super.onStart();
+
+       String cid = Paper.book().read("cid");
+        // ((MainActivity)getActivity()).showDialog(true);
+        //  next.startAnimation();
+        cartViewModel.getCard(cid + "");
+
+        cartViewModel.cardModelMutableLiveData.observe(getViewLifecycleOwner(), new Observer<CardModel>() {
+            @Override
+            public void onChanged(CardModel cardModel) {
+                if (cardModel!=null){
+                    if (cardModel.getSuccess()){
+                        if (cardModel.getData().getItemsCount()==0){
+                            if (getActivity()!=null){
+                                ((MainActivity) getActivity()).fragmentStack.replace(new OrderDoneFragment());
+
+                            }
+
+                        }
+                        Log.e("cart","cart is "+cardModel.getData().getItemsCount().toString());
+                    }
+                }
+            }
+        });
 
 
     }
@@ -1277,6 +1321,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
 
                                             mapprogressBar.setVisibility(View.GONE);
+                                            if (map!=null)
                                             map.clear();
 
                                             MarkerOptions mp = new MarkerOptions();

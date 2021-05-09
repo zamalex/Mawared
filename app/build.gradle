@@ -41,8 +41,8 @@ android {
         applicationId "app.mawared.alhayat"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 900000013
-        versionName "90000.0.13"
+        versionCode 900000016
+        versionName "90000.0.16"
         multiDexEnabled true
 
 

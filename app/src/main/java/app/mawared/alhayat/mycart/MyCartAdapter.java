@@ -58,7 +58,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
     public void onBindViewHolder(@NonNull final MyCartAdapter.Holder holder, final int position) {
 
         Product item = products.get(position);
-        holder.price.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(products.get(position).getPriceWithVat()) + " " + "ر.س");
+        holder.price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(products.get(position).getPriceWithVat()) + " " + "ر.س");//
+
         holder.name.setText(products.get(position).getTitle());
         holder.total_qty.setText(products.get(position).getInCartQuantity() + "");
 

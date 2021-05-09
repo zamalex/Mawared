@@ -69,7 +69,7 @@ public interface APIInterface {
     Call<AllOrder> getAllOrders(@Query("page") int pageNumber, @Header("Authorization") String token);
 
     @GET("orders")
-    Call<AllOrder> searchOrder(@Query("q") int pageNumber, @Header("Authorization") String token);
+    Call<AllOrder> searchOrder(@Query("q") long pageNumber, @Header("Authorization") String token);
 
     @GET("orders/{orderId}/details")
     Call<OrderDetails> getOrderDetails(@Path("orderId") int id, @Header("Authorization") String token);

@@ -114,7 +114,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 if (cardModel != null) {
                     if (cardModel.getStatus() == 200) {
                         adapter.setProducts((ArrayList<Product>) cardModel.getData().getProducts());
-                        total_sum.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(cardModel.getData().getItemsSumFinalPrices()) + " ر.س");
+                        total_sum.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(cardModel.getData().getItemsSumFinalPrices()) + " ر.س");
 
                     }
                 }
@@ -186,6 +186,9 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             @Override
             public void onClick(View v) {
                 if (!Paper.book().read("token", "none").equals("none")) {
+                    if (viewModel.cardModelMutableLiveData.getValue()==null){
+                            return;
+                    }
                     if (viewModel.cardModelMutableLiveData.getValue().getData().getProducts().size() == 0) {
                         Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                         return;

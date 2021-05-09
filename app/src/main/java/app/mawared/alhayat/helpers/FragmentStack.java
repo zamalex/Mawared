@@ -11,6 +11,7 @@ import java.util.List;
 
 public class FragmentStack {
 
+    
     private Activity activity;
     private FragmentManager manager;
     private int containerId;

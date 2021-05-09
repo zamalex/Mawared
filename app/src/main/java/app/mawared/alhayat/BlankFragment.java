@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -30,6 +31,8 @@ public class BlankFragment extends Fragment {
     View v;
     WebView webView;
 
+    AlertDialog alertDialog ;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,6 +42,15 @@ public class BlankFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_blank, container, false);
         webView = v.findViewById(R.id.webv);
         ((MainActivity) getActivity()).showDialog(false);
+
+         alertDialog = new AlertDialog.Builder(getActivity())
+//set title
+//set message
+                 .setView(R.layout.loadind_dialog)
+               // .setMessage("برجاء الانتظار وسيتم تحويلك تلقائيا")
+//set positive button
+                .setCancelable(false)
+                .create();
 
 
         final String mimeType = "text/html";
@@ -59,6 +71,8 @@ public class BlankFragment extends Fragment {
 
                 /* process JSON */
 
+                Log.e("console","message is "+cmsg.message());
+
                 try {
                     JSONObject jsonObject = new JSONObject(cmsg.message());
                     System.out.println("json is " + cmsg.message());
@@ -67,7 +81,7 @@ public class BlankFragment extends Fragment {
 
                     if (status == 200 && success) {
 
-                        Toast.makeText(getActivity(), "status is success " + status, Toast.LENGTH_SHORT).show();
+                   //     Toast.makeText(getActivity(), "status is success " + status, Toast.LENGTH_SHORT).show();
 
                         ((MainActivity)getActivity()).setPaymentSuccess(true);
 
@@ -76,7 +90,7 @@ public class BlankFragment extends Fragment {
 
 
                     } else {
-                        Toast.makeText(getActivity(), "status is failed " + status, Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(getActivity(), "status is failed " + status, Toast.LENGTH_SHORT).show();
                         ((MainActivity)getActivity()).setPaymentSuccess(false);
 
 
@@ -99,14 +113,14 @@ public class BlankFragment extends Fragment {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
 
-                Log.d("webb ", "res " + request.getUrl().toString());
+               // Log.d("webb ", "shouldOverrideUrlLoading " + request.getUrl().toString());
 
                 return super.shouldOverrideUrlLoading(view, request);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d("webb ", "urlll " + url);
+               // Log.d("webb ", "shouldOverrideUrlLoading " + url);
 
                 return super.shouldOverrideUrlLoading(view, url);
             }
@@ -115,10 +129,12 @@ public class BlankFragment extends Fragment {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
 
-                Log.d("webb ", "started " + url);
-                if (url.equals("http://www.mawared.badee.com.sa/api/v1/payment/return")) {
-                    // Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
-
+                if (url.contains("handle-payment-response"))
+                webView.setVisibility(View.INVISIBLE);
+                Log.d("webb ", "onPageStarted " + url);
+                if (url.equals("http://www.mawared.badee.com.sa/api/v1/payment/return")||url.contains(".payfort.com/FortAPI/general/backToMerchant")) {
+                  //  Toast.makeText(getActivity(), "please wait", Toast.LENGTH_SHORT).show();
+                    showDialog();
                     //startActivity(new Intent(getActivity(),MainActivity.class));
                 }
 
@@ -128,7 +144,7 @@ public class BlankFragment extends Fragment {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
 
-                Log.d("webb ", "error " + error.getDescription() + error.getErrorCode());
+               // Log.d("webb ", "onReceivedError " + error.getDescription() + error.getErrorCode());
 
             }
 
@@ -136,7 +152,7 @@ public class BlankFragment extends Fragment {
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                Log.d("requestto", request.getMethod() + " " + request.getUrl() + " " + request.getRequestHeaders().toString());
+                //Log.d("requestto", request.getMethod() + " " + request.getUrl() + " " + request.getRequestHeaders().toString());
 
 
                 return super.shouldInterceptRequest(view, request);
@@ -147,8 +163,15 @@ public class BlankFragment extends Fragment {
                 //   Toast.makeText(getActivity(), "is "+url, Toast.LENGTH_SHORT).show();
                 //  Toast.makeText(getActivity(), "web "+view.toString(), Toast.LENGTH_LONG).show();
 
-                Log.d("webb ", "url " + url);
+                Log.d("webb ", "onPageFinished " + url);
                 Log.d("webb ", "webview " + view.toString());
+                if (url.equals("http://www.mawared.badee.com.sa/api/v1/payment/return")||url.contains(".payfort.com/FortAPI/general/backToMerchant")) {
+                    //  Toast.makeText(getActivity(), "please wait", Toast.LENGTH_SHORT).show();
+                    showDialog();
+                    //startActivity(new Intent(getActivity(),MainActivity.class));
+                }
+
+                Log.e("console","url is "+url);
                 webView.loadUrl("javascript:console.log(document.body.getElementsByTagName('pre')[0].innerHTML);");
 
             }
@@ -169,5 +192,22 @@ public class BlankFragment extends Fragment {
             System.out.println(html);
         }
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        dismissDialog();
+    }
+    void showDialog(){
+        if (alertDialog!=null){
+            if (!alertDialog.isShowing())
+                alertDialog.show();
+        }
+    }
+    void dismissDialog(){
+        if (alertDialog!=null)
+            if (alertDialog.isShowing())
+                alertDialog.dismiss();
     }
 }

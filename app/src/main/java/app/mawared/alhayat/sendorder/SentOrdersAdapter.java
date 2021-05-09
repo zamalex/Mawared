@@ -41,7 +41,7 @@ public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Ho
 
         holder.count.setText("X"+p.getInCartQuantity());
         holder.name.setText(p.getTitle());
-        holder.peice.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p.getPriceWithVat())+" ر.س");
+        holder.peice.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p.getPriceWithVat())+" ر.س");
 
 
 

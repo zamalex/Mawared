@@ -38,7 +38,7 @@ public class OrderViewModel extends ViewModel {
         return orderMutableLiveData;
     }
 
-    public MutableLiveData<AllOrder> searchOrder(int orderNumber){
+    public MutableLiveData<AllOrder> searchOrder(long orderNumber){
         orderSearchLiveData = new MutableLiveData<>();
 
 

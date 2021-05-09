@@ -56,7 +56,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         if (product.qty==0)
             product.qty=Integer.parseInt(product.getIncart().toString());
 
-        holder.price.setText(new DecimalFormat("#,###.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
+        holder.price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
 
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
