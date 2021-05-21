@@ -189,6 +189,13 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                     if (viewModel.cardModelMutableLiveData.getValue()==null){
                             return;
                     }
+                    if (viewModel.cardModelMutableLiveData.getValue()==null)
+                        return;
+                    if (viewModel.cardModelMutableLiveData.getValue().getData()==null)
+                        return;
+                    if (viewModel.cardModelMutableLiveData.getValue().getData().getProducts()==null)
+                        return;
+
                     if (viewModel.cardModelMutableLiveData.getValue().getData().getProducts().size() == 0) {
                         Toast.makeText(getActivity(), "السلة فارغة", Toast.LENGTH_SHORT).show();
                         return;

@@ -41,7 +41,10 @@ public class BlankFragment extends Fragment {
 
         v = inflater.inflate(R.layout.fragment_blank, container, false);
         webView = v.findViewById(R.id.webv);
-        ((MainActivity) getActivity()).showDialog(false);
+        if (getActivity()!=null)
+
+            ((MainActivity) getActivity()).showDialog(false);
+
 
          alertDialog = new AlertDialog.Builder(getActivity())
 //set title

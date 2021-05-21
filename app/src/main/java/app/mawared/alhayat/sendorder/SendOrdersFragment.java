@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -102,7 +103,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     SendOrderViewModel viewModel;
     CartViewModel cartViewModel;
-
+    MainActivity activity;
     View v;
 
     Dialog addCoponDialog, timeDialog, pts_dialog;
@@ -167,6 +168,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Double vat_without_pts = null;
     Double price_without_pts = null;
     EditText rec_phone, rec_name;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activity = (MainActivity)context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -398,7 +405,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
                 @Override
                 public void onChanged(BanksModel banksModel) {
-                    ((MainActivity) getActivity()).showDialog(false);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(false);
 
                     if (banksModel.getStatus() == 200)
                         bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
@@ -427,7 +436,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
                 @Override
                 public void onChanged(AddressModel addressModel) {
-                    ((MainActivity) getActivity()).showDialog(false);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(false);
 
                     if (addressModel.getStatus() == 200) {
                         adapter.setAddresses((ArrayList<OrderShippingAddress>) addressModel.getOrderShippingAddresses());
@@ -441,11 +452,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             snd_order.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // ((MainActivity)getActivity()).fragmentStack.push(new OrderDoneFragment());
+                    // activity.fragmentStack.push(new OrderDoneFragment());
 
 
                     if (selected_payment_method.equals("visa")) {
-                        if (((MainActivity) getActivity()).isPaymentSuccess()) {
+                        if (activity.isPaymentSuccess()) {
                             getActivity().finishAffinity();
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             intent.putExtra("order", "order");
@@ -520,7 +531,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onChanged(CoponModel coponModel) {
 
-                    ((MainActivity) getActivity()).showDialog(false);
+                    activity.showDialog(false);
                     if (coponModel != null) {
                         if (coponModel.getSuccess()) {
                             selected_copon.setText(coponModel.getPromocode().getCode());
@@ -546,7 +557,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onChanged(TimesModel timesModel) {
                     if (isAdded()) {
-                        ((MainActivity) getActivity()).showDialog(false);
+                        if (getActivity()!=null)
+
+                            activity.showDialog(false);
                         if (timesModel != null) {
                             if (timesModel.getStatus() == 401) {
                                 Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
@@ -638,7 +651,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                         Toast.makeText(getActivity(), "ادخل الكوبون", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    ((MainActivity) getActivity()).showDialog(true);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(true);
 
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("coupon", copon_et.getText().toString());
@@ -764,7 +779,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                         month = "0" + month;
                     if (day.length() == 1)
                         day = "0" + day;
-                    ((MainActivity) getActivity()).showDialog(true);
+                    activity.showDialog(true);
 
                     RequestBody delivery_date = RequestBody.create(MediaType.parse("text/plain"), year + "-" + month + "-" + day);
 
@@ -792,7 +807,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).onBackPressed();
+                    activity.onBackPressed();
                 }
             });
             show_products.setOnClickListener(new View.OnClickListener() {
@@ -998,7 +1013,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         confirmDialog.dismiss();
         payDialog.dismiss();
 
-        ((MainActivity) getActivity()).showDialog(true);
+        activity.showDialog(true);
         if (selected_payment_method.equals("visa")) {
             RetrofitClient.getApiInterface().sendOrderVisa(requestBodyMap, token).enqueue(new Callback<VisaModel>() {
                 @Override
@@ -1015,13 +1030,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                                 b.putString("html", visaModel.getData().getView());
                                 blankFragment.setArguments(b);
-                                ((MainActivity) getActivity()).fragmentStack.push(blankFragment);
+                                activity.fragmentStack.push(blankFragment);
 
 
                             }
                         }
                     } else
-                        ((MainActivity) getActivity()).showDialog(false);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(false);
 
 
                 }
@@ -1029,7 +1046,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onFailure(Call<VisaModel> call, Throwable t) {
                     Log.d("resooo", t.getMessage());
-                    ((MainActivity) getActivity()).showDialog(false);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(false);
 
                 }
             });
@@ -1039,13 +1058,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
                     Log.d("resooo", response.message());
                     if (getActivity()!=null)
-                    ((MainActivity) getActivity()).showDialog(false);
+                    activity.showDialog(false);
                     if (response != null) {
                         if (response.code() == 200) {
 
 
 
-                            ((MainActivity) getActivity()).fragmentStack.replace(new OrderDoneFragment());
+                            activity.fragmentStack.replace(new OrderDoneFragment());
                         }
                     }
                 }
@@ -1053,7 +1072,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onFailure(Call<ConfirmModel> call, Throwable t) {
                     Log.d("resooo", t.getMessage());
-                    ((MainActivity) getActivity()).showDialog(false);
+                    if (getActivity()!=null)
+
+                        activity.showDialog(false);
 
                 }
             });
@@ -1277,7 +1298,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         super.onStart();
 
        String cid = Paper.book().read("cid");
-        // ((MainActivity)getActivity()).showDialog(true);
+        // activity.showDialog(true);
         //  next.startAnimation();
         cartViewModel.getCard(cid + "");
 
@@ -1288,7 +1309,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     if (cardModel.getSuccess()){
                         if (cardModel.getData().getItemsCount()==0){
                             if (getActivity()!=null){
-                                ((MainActivity) getActivity()).fragmentStack.replace(new OrderDoneFragment());
+                                activity.fragmentStack.replace(new OrderDoneFragment());
 
                             }
 
@@ -1341,6 +1362,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                                                 convertedAddress = getAddress(selectedLocation);
                                             } catch (IOException e) {
                                                 e.printStackTrace();
+                                            }catch (NullPointerException e){
+                                                e.printStackTrace();
+
                                             }
 
                                         }
@@ -1447,7 +1471,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onStop() {
         super.onStop();
-        ((MainActivity) getActivity()).setPaymentSuccess(false);
+        if (getActivity()!=null)
+        activity.setPaymentSuccess(false);
 
     }
 

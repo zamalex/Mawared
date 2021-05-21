@@ -1,11 +1,14 @@
 package app.mawared.alhayat;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -29,11 +32,21 @@ public class OrderDoneFragment extends Fragment {
 
     View v;
     Button go_orders;
+    MainActivity activity;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        activity = (MainActivity) context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        activity.showDialog(false);
         if (getActivity()!=null){
             FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
             Bundle bb = new Bundle();

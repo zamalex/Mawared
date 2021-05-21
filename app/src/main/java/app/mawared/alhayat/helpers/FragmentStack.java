@@ -1,6 +1,7 @@
 package app.mawared.alhayat.helpers;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -49,8 +50,12 @@ public class FragmentStack {
                     .add(containerId, fragment, indexToTag(0))
                     .commit();
         }
+        try {
+            manager.executePendingTransactions();
 
-        manager.executePendingTransactions();
+        }catch (IllegalStateException ex){
+            Log.e("fragment trans","illegal state");
+        }
     }
 
     /**

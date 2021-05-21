@@ -1,8 +1,10 @@
 package app.mawared.alhayat.notification;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,6 +34,20 @@ public class NotificationFragments extends Fragment {
     FragmentStack fragmentStack;
 
 
+    Context context;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        context = null;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,12 +61,12 @@ public class NotificationFragments extends Fragment {
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
         rv_notifications.setLayoutManager(gridLayoutManager);
 
-        ((MainActivity)getActivity()).showDialog(true);
+        ((MainActivity)context).showDialog(true);
 
         notificationViewModel.getAllNotification(pageNumber).observe(getActivity(), new Observer<Notification>() {
             @Override
             public void onChanged(Notification notification) {
-                ((MainActivity)getActivity()).showDialog(false);
+                ((MainActivity)context).showDialog(false);
 
                 if (notification!=null){
                     if (notification.getStatus()==401){

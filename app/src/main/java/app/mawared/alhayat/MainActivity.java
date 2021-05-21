@@ -406,14 +406,17 @@ public class MainActivity extends AppCompatActivity {
                     .setDimAmount(0.5f);
         }
 
-        if (show) {
-            if (!dialog.isShowing())
-                dialog.show();
-        } else {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
+        try {
+            if (show) {
+                if (!dialog.isShowing())
+                    dialog.show();
+            } else {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
             }
-        }
+        }catch (NullPointerException ex){}
+
 
 
     }

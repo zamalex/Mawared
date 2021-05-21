@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -59,6 +60,19 @@ public class OrderFragment extends Fragment implements OrderClickListener {
     HomeViewModel homeViewModel;
 
     String token = Paper.book().read("token");
+    Context context;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context = null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,11 +91,11 @@ public class OrderFragment extends Fragment implements OrderClickListener {
         ordersAdapter = new OrdersAdapter(this);
 
 
-        ((MainActivity) getActivity()).showDialog(true);
+        ((MainActivity) context).showDialog(true);
         orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
             @Override
             public void onChanged(AllOrder allOrder) {
-                ((MainActivity) getActivity()).showDialog(false);
+                ((MainActivity) context).showDialog(false);
 
                 if (allOrder != null) {
                     if (allOrder.getStatus() == 401) {
