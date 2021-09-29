@@ -25,7 +25,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:fontFamily="@font/urwheavy"
-            android:text="المدينة"
+            android:text="التوصيل"
             android:textColor="#0D2142"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,6 +35,7 @@
 
         <EditText
             android:text="الكل"
+            android:visibility="gone"
             android:editable="false"
             android:focusable="false"
             android:fontFamily="@font/urosemi"
@@ -48,6 +49,25 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/selected_address_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:fontFamily="@font/urwheavy"
+            android:maxLines="2"
+            android:text="لا يوجد عنوان"
+            android:ellipsize="end"
+            android:textColor="@color/darkgrey"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toStartOf="@+id/go_cart"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="@+id/textView" />
+
+
 
         <ProgressBar
             android:id="@+id/progressBar_cyclic"

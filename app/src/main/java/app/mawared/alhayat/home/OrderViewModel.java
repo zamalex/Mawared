@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import app.mawared.alhayat.api.APIInterface;
 import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.orders.model.AllOrder;
+import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,14 +15,14 @@ import retrofit2.Response;
 public class OrderViewModel extends ViewModel {
 
     APIInterface apiInterface;
-    public MutableLiveData<AllOrder> orderMutableLiveData;
-    public MutableLiveData<AllOrder> orderSearchLiveData;
+    public MutableLiveData<MyOrdersResponse> orderMutableLiveData;
+    public MutableLiveData<MyOrdersResponse> orderSearchLiveData;
 
-    public MutableLiveData<AllOrder> getAllOrders(int pageNumber){
+    public MutableLiveData<MyOrdersResponse> getAllOrders(int pageNumber){
         orderMutableLiveData = new MutableLiveData<>();
-        RetrofitClient.getApiInterface().getAllOrders(pageNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<AllOrder>() {
+        RetrofitClient.getApiInterface().getAllOrders(pageNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<MyOrdersResponse>() {
             @Override
-            public void onResponse(Call<AllOrder> call, Response<AllOrder> response) {
+            public void onResponse(Call<MyOrdersResponse> call, Response<MyOrdersResponse> response) {
                 if (response.body() != null) {
                     orderMutableLiveData.postValue(response.body());
                 }
@@ -30,7 +31,7 @@ public class OrderViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<AllOrder> call, Throwable t) {
+            public void onFailure(Call<MyOrdersResponse> call, Throwable t) {
                 orderMutableLiveData.setValue(null);
 
             }
@@ -38,13 +39,13 @@ public class OrderViewModel extends ViewModel {
         return orderMutableLiveData;
     }
 
-    public MutableLiveData<AllOrder> searchOrder(long orderNumber){
+    public MutableLiveData<MyOrdersResponse> searchOrder(long orderNumber){
         orderSearchLiveData = new MutableLiveData<>();
 
 
-        RetrofitClient.getApiInterface().searchOrder(orderNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<AllOrder>() {
+        RetrofitClient.getApiInterface().searchOrder(orderNumber,"Bearer "+Paper.book().read("token","none")).enqueue(new Callback<MyOrdersResponse>() {
             @Override
-            public void onResponse(Call<AllOrder> call, Response<AllOrder> response) {
+            public void onResponse(Call<MyOrdersResponse> call, Response<MyOrdersResponse> response) {
                 if (response.body() != null) {
                     orderSearchLiveData.postValue(response.body());
                 }
@@ -54,7 +55,7 @@ public class OrderViewModel extends ViewModel {
 
 
             @Override
-            public void onFailure(Call<AllOrder> call, Throwable t) {
+            public void onFailure(Call<MyOrdersResponse> call, Throwable t) {
                 orderSearchLiveData.postValue(null);
             }
         });

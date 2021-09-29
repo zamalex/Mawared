@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.update.UpdateViewModel;
 import app.mawared.alhayat.update.model.UpdateModel;
 import io.paperdb.Paper;
@@ -28,7 +29,7 @@ public class EmailFragment extends Fragment {
     Button confirm;
     EditText email_et;
     UpdateViewModel viewModel;
-    LoginResponse mLoginResponse;
+    VerifyLoginResponse mLoginResponse;
     View v;
 
     @Override
@@ -66,7 +67,7 @@ public class EmailFragment extends Fragment {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("email", email_et.getText().toString());
-                viewModel.updateEmail(jsonObject,"Bearer "+ mLoginResponse.getUser().getToken());
+                viewModel.updateEmail(jsonObject,"Bearer "+ mLoginResponse.getAccessToken());
 
             }
         });

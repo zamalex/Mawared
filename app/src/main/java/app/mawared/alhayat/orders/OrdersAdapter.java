@@ -16,10 +16,11 @@ import java.util.List;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.helpers.OrderClickListener;
 import app.mawared.alhayat.orders.model.Order;
+import app.mawared.alhayat.orders.newmodel.DataItem;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHolder> {
 
-    List<Order> allOrderList = new ArrayList<>();
+    List<DataItem> allOrderList = new ArrayList<>();
     OrderClickListener mListener;
 
     public OrdersAdapter(OrderClickListener mListener) {
@@ -34,17 +35,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
         return new ordersHolder(itemView);
     }
 
-    public void setList(List<Order> orderList) {
+    public void setList(List<DataItem> orderList) {
         allOrderList.addAll(orderList);
         notifyDataSetChanged();
     }
 
     @Override
     public void onBindViewHolder(@NonNull ordersHolder holder, int position) {
-        Order allOrderModel = allOrderList.get(position);
+        DataItem allOrderModel = allOrderList.get(position);
 
        // holder.unread_count.setText(allOrderModel.unread_count.toString());
-        if (allOrderModel.new_updates) {
+        if (allOrderModel.isNewUpdates()) {
             holder.unread_count.setVisibility(View.VISIBLE);
         } else {
             holder.unread_count.setVisibility(View.INVISIBLE);
@@ -53,21 +54,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
 
 
         if (allOrderModel != null) {
-            holder.tv_orderNumber.setText(allOrderModel.getFormatedNumber() + "#");
-            if (allOrderModel.getStatus().equals("تم استلام الطلب") || allOrderModel.getStatus().equals("جاري تجهيز طلبك")) {
+            holder.tv_orderStatus.setText(OrdersStatus.STATUS.get(allOrderModel.getStatus()));
+            holder.tv_orderNumber.setText(allOrderModel.getId() + "#");
+           /* if (allOrderModel.getStatus().equals("تم استلام الطلب") || allOrderModel.getStatus().equals("جاري تجهيز طلبك")) {
                 holder.tv_orderStatus.setText("جاري تجهيز طلبك");
 
             } else
-                holder.tv_orderStatus.setText(allOrderModel.getStatus());
+                holder.tv_orderStatus.setText(allOrderModel.getStatus());*/
             holder.tv_orderDate.setText("بتاريخ: " + allOrderModel.getCreatedAt());
-           /* Drawable unwrappedDrawable = AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg);
-            Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);*/
-            if (allOrderModel.getStatus().equals("تم استلام الطلب") || allOrderModel.getStatus().equals("جاري تجهيز طلبك")) {
-                //DrawableCompat.setTint(wrappedDrawable, Color.BLUE);
+             if (allOrderModel.getStatus()==0||allOrderModel.getStatus()==1||allOrderModel.getStatus()==3||allOrderModel.getStatus()==4) {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.light_green_bg));
-            } else if (allOrderModel.getStatus().equals("ملغي")) {
+            } else if (allOrderModel.getStatus()==5||allOrderModel.getStatus()==6||allOrderModel.getStatus()==8) {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.malghi_bg));
-                //DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#de666b"));
             } else {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg));
 

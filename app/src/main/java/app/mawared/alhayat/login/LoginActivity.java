@@ -19,9 +19,12 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import app.mawared.alhayat.AppSignatureHelper;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.activiation.ActivationActivity;
+import app.mawared.alhayat.activiation.LoginActivationActivity;
 import app.mawared.alhayat.forgot.ForgotPasswordActivity;
 import app.mawared.alhayat.home.HomeViewModel;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.OtpResponse;
 import app.mawared.alhayat.registeration.RegisterationActivity;
 import io.paperdb.Paper;
 
@@ -102,18 +105,15 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (pass_et.getText().toString().isEmpty()){
-                    Toast.makeText(LoginActivity.this, "ادخل كلمة المرور", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 JsonObject jsonObject = new JsonObject();
 
                 jsonObject.addProperty("mobile", phone_et.getText() + "");
-                jsonObject.addProperty("password", pass_et.getText() + "");
-                jsonObject.addProperty("country_code", "SA");
+               // jsonObject.addProperty("password", pass_et.getText() + "");
+               // jsonObject.addProperty("country_code", "SA");
 
                 dialog.show();
-                viewModel.login(jsonObject);
+                viewModel.requestOtp(jsonObject);
+
             }
         });
 
@@ -132,11 +132,10 @@ public class LoginActivity extends AppCompatActivity {
                 dialog.dismiss();
                 if (loginResponse != null) {
                     if (loginResponse.getStatus() == 200) {
-                        Paper.book().write("token", loginResponse.getUser().getToken());
-                        Paper.book().write("login", loginResponse);
-                        // viewModel.checkUserCart(loginResponse.getUser().getId().toString());
+                       // Paper.book().write("token", loginResponse.getUser().getToken());
+                        //Paper.book().write("login", loginResponse);
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, LoginActivationActivity.class));
                         LoginActivity.this.finish();
 
                     }
@@ -144,6 +143,34 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "البيانات التي ادخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
                 }
 
+            }
+        });
+
+        viewModel.requestOtpResponse.observe(this, new Observer<OtpResponse>() {
+            @Override
+            public void onChanged(OtpResponse otpResponse) {
+                dialog.dismiss();
+                if (otpResponse != null) {
+                    if (otpResponse.isSuccess()) {
+                        // Paper.book().write("token", loginResponse.getUser().getToken());
+                        //Paper.book().write("login", loginResponse);
+
+                        Toast.makeText(LoginActivity.this, otpResponse.getOtpCode()+"", Toast.LENGTH_SHORT).show();
+                        Intent activationIntent = new Intent(LoginActivity.this,
+                                LoginActivationActivity.class);
+                        activationIntent.putExtra("mobNo", phone_et.getText() + "");
+                        startActivity(activationIntent);
+
+                    }
+                    else {
+                        if (otpResponse.getError()!=null){
+                            Toast.makeText(LoginActivity.this, otpResponse.getError().get(0).getMessage(), Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, "البيانات التي ادخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

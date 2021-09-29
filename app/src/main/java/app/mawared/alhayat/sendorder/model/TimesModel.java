@@ -11,7 +11,7 @@ public class TimesModel {
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
-    @SerializedName("times")
+    @SerializedName("data")
     private List<Time> mTimes;
 
     public Long getStatus() {

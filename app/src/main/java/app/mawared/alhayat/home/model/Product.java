@@ -8,9 +8,9 @@ public class Product {
 
     public int qty=0;
     @SerializedName("available")
-    private Long mAvailable;
+    private boolean mAvailable;
     @SerializedName("has_offer")
-    private Long mHasOffer;
+    private boolean mHasOffer;
     @SerializedName("id")
     private Long mId;
     @SerializedName("img")
@@ -41,19 +41,19 @@ public class Product {
     @SerializedName("photo")
     private String photo;
 
-    public Long getAvailable() {
+    public boolean getAvailable() {
         return mAvailable;
     }
 
-    public void setAvailable(Long available) {
+    public void setAvailable(boolean available) {
         mAvailable = available;
     }
 
-    public Long getHasOffer() {
+    public boolean getHasOffer() {
         return mHasOffer;
     }
 
-    public void setHasOffer(Long hasOffer) {
+    public void setHasOffer(boolean hasOffer) {
         mHasOffer = hasOffer;
     }
 

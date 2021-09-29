@@ -11,8 +11,8 @@ public class Data {
     private Long mExpireDate=1l;
     @SerializedName("to_exchange")
     private List<Long> mToExchange;
-    @SerializedName("total_points")
-    private Long mTotalPoints;
+    @SerializedName("balance")
+    private double mTotalPoints;
 
     public Long getExpireDate() {
         return mExpireDate;
@@ -30,7 +30,7 @@ public class Data {
         mToExchange = toExchange;
     }
 
-    public Long getTotalPoints() {
+    public double getTotalPoints() {
         return mTotalPoints;
     }
 

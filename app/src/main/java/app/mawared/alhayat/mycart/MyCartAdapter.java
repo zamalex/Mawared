@@ -69,13 +69,13 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
         sumListener.doSum(calculateTotal());
 
 
-        products.get(position).qty = Integer.parseInt(products.get(position).getInCartQuantity().toString());
+        item.qty = Integer.parseInt(item.getInCartQuantity().toString());
 
 
         holder.total_qty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateListener.setAmount(products.get(position));
+                updateListener.setAmount(item);
             }
         });
 
@@ -89,13 +89,14 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                     System.out.println("");
 
 
+                ((MyCartFragment) updateListener).isLoading=true;
                 //mLastClickTime = SystemClock.elapsedRealtime();
 
                 if (timer!=null)
                     timer.cancel();
                 timer = new Timer();
-                products.get(position).setInCartQuantity(1+item.getInCartQuantity());
-                holder.total_qty.setText(products.get(position).getInCartQuantity() + "");
+                item.setInCartQuantity(1+item.getInCartQuantity());
+                holder.total_qty.setText(item.getInCartQuantity() + "");
                 sumListener.doSum(calculateTotal());
                 notifyDataSetChanged();
 
@@ -103,7 +104,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                     @Override
                     public void run() {
 
-                        updateListener.increase(products.get(position), Integer.parseInt(products.get(position).getInCartQuantity()+""));
+                        updateListener.increase(item, Integer.parseInt(item.getInCartQuantity()+""));
 
                     }
                 },1000);
@@ -122,25 +123,26 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
                     System.out.println("");
 
 
+                ((MyCartFragment) updateListener).isLoading = true;
                 if (timer!=null)
                     timer.cancel();
                 timer = new Timer();
 
-                Long amount = Long.parseLong(products.get(position).getInCartQuantity().toString());
+                Long amount = Long.parseLong(item.getInCartQuantity().toString());
                 if (amount > 1) {
-                    products.get(position).setInCartQuantity((amount - 1));
-                    holder.total_qty.setText(products.get(position).qty + "");
+                    item.setInCartQuantity((amount - 1));
+                    holder.total_qty.setText(item.qty + "");
 
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            updateListener.decrease(products.get(position),  Integer.parseInt(products.get(position).getInCartQuantity()+""));
+                            updateListener.decrease(item,  Integer.parseInt(item.getInCartQuantity()+""));
 
                         }
                     },1000);
                 }
                else {
-                    updateListener.decrease(products.get(position), 0);
+                    updateListener.decrease(item, 0);
                 }
 
 
@@ -150,26 +152,26 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.Holder> {
             }
         });
 
-        Picasso.get().load(products.get(position).getImg()).fit().into(holder.img);
+        Picasso.get().load(item.getImg()).fit().into(holder.img);
 
         String c = "\\u002B";
 
 
-        if (products.get(position).getHasOffer() == 1) {
-            if (products.get(position).getOffer() != null)
-                if (!products.get(position).getOffer().isEmpty()) {
-                    String o = products.get(position).getOffer().replace(" ", "");
+        if (item.getHasOffer()) {
+            if (item.getOffer() != null)
+                if (!item.getOffer().isEmpty()) {
+                    String o = item.getOffer().replace(" ", "");
                     String[] parts = o.split(c);
                     int part1 = Integer.parseInt(parts[0]);
                     int part2 = Integer.parseInt(parts[1]);
                     Log.d("oof", part1 + "   " + part2);
 
-                    if (Long.parseLong(products.get(position).getInCartQuantity().toString()) >= part1 && part2 > 0) {
+                    if (Long.parseLong(item.getInCartQuantity().toString()) >= part1 && part2 > 0) {
                         holder.offerCard.setVisibility(View.VISIBLE);
-                        holder.offer_name.setText(products.get(position).getTitle());
-                        Picasso.get().load(products.get(position).getImg()).fit().into(holder.product_img2);
+                        holder.offer_name.setText(item.getTitle());
+                        Picasso.get().load(item.getImg()).fit().into(holder.product_img2);
 
-                        int q = Integer.parseInt(products.get(position).getInCartQuantity() + "") / part1 * part2;
+                        int q = Integer.parseInt(item.getInCartQuantity() + "") / part1 * part2;
                         holder.offer_qty.setText(" الكمية " + q);
                     } else
                         holder.offerCard.setVisibility(View.GONE);

@@ -110,8 +110,8 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    void getHomeProducts(String cart_id) {
-        RetrofitClient.getApiInterface().getHomeProducts(cart_id).enqueue(new Callback<HomeProductModel>() {
+    void getHomeProducts(String cart_id,String lat,String lng,int page) {
+        RetrofitClient.getApiInterface().getHomeProducts(cart_id,lat,lng,page).enqueue(new Callback<HomeProductModel>() {
             @Override
             public void onResponse(Call<HomeProductModel> call, Response<HomeProductModel> response) {
                 result.setValue(response.body());
@@ -120,7 +120,7 @@ public class HomeViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<HomeProductModel> call, Throwable t) {
-                Log.d("rere", t.getMessage());
+                Log.e("rere", t.getMessage());
                 result.setValue(null);
 
             }
@@ -167,8 +167,10 @@ public class HomeViewModel extends ViewModel {
         RetrofitClient.getApiInterface().getMCities().enqueue(new Callback<CitiesModel>() {
             @Override
             public void onResponse(Call<CitiesModel> call, Response<CitiesModel> response) {
-                cities.setValue(response.body());
-                Log.d("rere", "done");
+
+               if (response.isSuccessful())cities.setValue(response.body());
+               else cities.setValue(null);
+               Log.d("rere", "done");
             }
 
             @Override
@@ -183,7 +185,7 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData<ResponseBody> bindResponse = new MutableLiveData<>();
 
     public void bindUserCard(String card_id, String user_id) {
-        RetrofitClient.getApiInterface().bindUserCard(card_id, user_id).enqueue(new Callback<ResponseBody>() {
+        RetrofitClient.getApiInterface().bindUserCard(card_id).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 bindResponse.setValue(response.body());

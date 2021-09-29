@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.update.UpdateViewModel;
 import app.mawared.alhayat.update.model.UpdateModel;
 import io.paperdb.Paper;
@@ -30,7 +31,7 @@ public class NameFragment extends Fragment {
     Button confirm;
     EditText name_et;
     UpdateViewModel viewModel;
-    LoginResponse mLoginResponse;
+    VerifyLoginResponse mLoginResponse;
     View v;
 
     @Override
@@ -68,7 +69,7 @@ public class NameFragment extends Fragment {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("name", name_et.getText().toString());
-                viewModel.updateName(jsonObject,"Bearer "+ mLoginResponse.getUser().getToken());
+                viewModel.updateName(jsonObject,"Bearer "+ mLoginResponse.getAccessToken());
 
             }
         });

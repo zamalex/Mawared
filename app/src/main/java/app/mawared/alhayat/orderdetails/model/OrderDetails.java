@@ -16,7 +16,7 @@ public class OrderDetails implements Parcelable
     @SerializedName("success")
     @Expose
     private boolean success;
-    @SerializedName("order")
+    @SerializedName("data")
     @Expose
     private Order order;
     public final static Creator<OrderDetails> CREATOR = new Creator<OrderDetails>() {

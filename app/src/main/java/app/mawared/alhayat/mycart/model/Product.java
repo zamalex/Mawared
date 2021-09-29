@@ -11,11 +11,11 @@ public class Product implements Parcelable {
 
     public int qty=0;
     @SerializedName("available")
-    private Long mAvailable;
+    private boolean mAvailable;
     @SerializedName("cart_item_id")
     private Long mCartItemId;
     @SerializedName("has_offer")
-    private Long mHasOffer;
+    private boolean mHasOffer;
     @SerializedName("id")
     private Long mId;
     @SerializedName("img")
@@ -45,21 +45,13 @@ public class Product implements Parcelable {
 
     protected Product(Parcel in) {
         qty = in.readInt();
-        if (in.readByte() == 0) {
-            mAvailable = null;
-        } else {
-            mAvailable = in.readLong();
-        }
+        mAvailable = in.readByte() != 0;
         if (in.readByte() == 0) {
             mCartItemId = null;
         } else {
             mCartItemId = in.readLong();
         }
-        if (in.readByte() == 0) {
-            mHasOffer = null;
-        } else {
-            mHasOffer = in.readLong();
-        }
+        mHasOffer = in.readByte() != 0;
         if (in.readByte() == 0) {
             mId = null;
         } else {
@@ -114,11 +106,11 @@ public class Product implements Parcelable {
         }
     };
 
-    public Long getAvailable() {
+    public boolean getAvailable() {
         return mAvailable;
     }
 
-    public void setAvailable(Long available) {
+    public void setAvailable(boolean available) {
         mAvailable = available;
     }
 
@@ -130,11 +122,11 @@ public class Product implements Parcelable {
         mCartItemId = cartItemId;
     }
 
-    public Long getHasOffer() {
+    public boolean getHasOffer() {
         return mHasOffer;
     }
 
-    public void setHasOffer(Long hasOffer) {
+    public void setHasOffer(boolean hasOffer) {
         mHasOffer = hasOffer;
     }
 
@@ -241,72 +233,62 @@ public class Product implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(qty);
-        if (mAvailable == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mAvailable);
-        }
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(qty);
+        parcel.writeByte((byte) (mAvailable ? 1 : 0));
         if (mCartItemId == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mCartItemId);
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mCartItemId);
         }
-        if (mHasOffer == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mHasOffer);
-        }
+        parcel.writeByte((byte) (mHasOffer ? 1 : 0));
         if (mId == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mId);
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mId);
         }
-        dest.writeString(mImg);
+        parcel.writeString(mImg);
         if (mInCartQuantity == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mInCartQuantity);
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mInCartQuantity);
         }
-        dest.writeString(mOffer);
+        parcel.writeString(mOffer);
         if (mOfferPrice == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(mOfferPrice);
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(mOfferPrice);
         }
         if (mPrice == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(mPrice);
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(mPrice);
         }
         if (mPriceWithVat == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(mPriceWithVat);
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(mPriceWithVat);
         }
         if (mQuantity == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mQuantity);
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mQuantity);
         }
-        dest.writeString(mSku);
-        dest.writeString(mTitle);
+        parcel.writeString(mSku);
+        parcel.writeString(mTitle);
         if (mVat == null) {
-            dest.writeByte((byte) 0);
+            parcel.writeByte((byte) 0);
         } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(mVat);
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mVat);
         }
-        dest.writeString(city_id);
+        parcel.writeString(city_id);
     }
 }

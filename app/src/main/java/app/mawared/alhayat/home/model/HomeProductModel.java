@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class HomeProductModel {
 
     @SerializedName("products")
-    private ArrayList<Product> mProducts;
+    ArrayList<Product> mProducts;
     @SerializedName("status")
     private Long mStatus;
     @SerializedName("success")
@@ -20,7 +20,7 @@ public class HomeProductModel {
     }
 
     public void setProducts(ArrayList<Product> products) {
-        mProducts = products;
+        mProducts= products;
     }
 
     public Long getStatus() {
@@ -38,5 +38,7 @@ public class HomeProductModel {
     public void setSuccess(Boolean success) {
         mSuccess = success;
     }
+
+
 
 }

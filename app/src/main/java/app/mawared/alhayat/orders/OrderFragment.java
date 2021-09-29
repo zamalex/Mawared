@@ -41,6 +41,7 @@ import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.orderdetails.OrderDetailsFragment;
 import app.mawared.alhayat.orders.model.AllOrder;
+import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
 import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -92,9 +93,9 @@ public class OrderFragment extends Fragment implements OrderClickListener {
 
 
         ((MainActivity) context).showDialog(true);
-        orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
+        orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<MyOrdersResponse>() {
             @Override
-            public void onChanged(AllOrder allOrder) {
+            public void onChanged(MyOrdersResponse allOrder) {
                 ((MainActivity) context).showDialog(false);
 
                 if (allOrder != null) {
@@ -104,16 +105,16 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                         return;
 
                     }
-                    if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                    if (allOrder.getData().getData() != null && allOrder.getData().getData().size() != 0) {
 
-                        ordersAdapter.setList(allOrder.getOrders());
+                        ordersAdapter.setList(allOrder.getData().getData());
 
                         if (getArguments()!=null)
                             if (getArguments().getString("has",null).equals("has")){
-                                if (allOrder.getOrders().size()>0){
+                                if (allOrder.getData().getData().size()>0){
 
                                     getArguments().putString("has","clear");
-                                    orderIdPref.putInt("orderId", allOrder.getOrders().get(0).getId()).apply();
+                                    orderIdPref.putInt("orderId", allOrder.getData().getData().get(0).getId()).apply();
                                     fragmentStack = new FragmentStack(getActivity(), getActivity().getSupportFragmentManager(), R.id.main_container);
 
                                     ((MainActivity)getActivity()).navigationView.setSelectedItemId(R.id.orders);
@@ -139,12 +140,12 @@ public class OrderFragment extends Fragment implements OrderClickListener {
             public void onLoadMore() {
                 if (pageNum >= 1) {
                     pageNum++;
-                    orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
+                    orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<MyOrdersResponse>() {
                         @Override
-                        public void onChanged(AllOrder allOrder) {
+                        public void onChanged(MyOrdersResponse allOrder) {
                             if (allOrder != null) {
-                                if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
-                                    ordersAdapter.setList(allOrder.getOrders());
+                                if (allOrder.getData().getData() != null && allOrder.getData().getData().size() != 0) {
+                                    ordersAdapter.setList(allOrder.getData().getData());
                                 }
                             }
                         }
@@ -160,12 +161,12 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                     if (et_searchOrder.getText().toString() != null && !et_searchOrder.getText().toString().equals("")) {
                         long orderId = Long.parseLong(et_searchOrder.getText().toString());
 
-                        orderViewModel.searchOrder(orderId).observe(getActivity(), new Observer<AllOrder>() {
+                        orderViewModel.searchOrder(orderId).observe(getActivity(), new Observer<MyOrdersResponse>() {
                             @Override
-                            public void onChanged(AllOrder allOrder) {
+                            public void onChanged(MyOrdersResponse allOrder) {
                                 if (allOrder != null) {
                                     OrdersAdapter orderAdapter = new OrdersAdapter(OrderFragment.this);
-                                    orderAdapter.setList(allOrder.getOrders());
+                                    orderAdapter.setList(allOrder.getData().getData());
                                     rv_orders.setAdapter(orderAdapter);
                                 }
                             }
@@ -173,13 +174,13 @@ public class OrderFragment extends Fragment implements OrderClickListener {
                     } else {
                         pageNum = 1;
 
-                        orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<AllOrder>() {
+                        orderViewModel.getAllOrders(pageNum).observe(getActivity(), new Observer<MyOrdersResponse>() {
                             @Override
-                            public void onChanged(AllOrder allOrder) {
+                            public void onChanged(MyOrdersResponse allOrder) {
                                 if (allOrder != null) {
-                                    if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                                    if (allOrder.getData().getData() != null && allOrder.getData().getData().size() != 0) {
 
-                                        ordersAdapter.setList(allOrder.getOrders());
+                                        ordersAdapter.setList(allOrder.getData().getData());
                                         rv_orders.setAdapter(ordersAdapter);
                                     }
                                 }

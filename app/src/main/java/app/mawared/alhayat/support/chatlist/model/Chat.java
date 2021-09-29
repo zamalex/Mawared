@@ -105,7 +105,7 @@ public class Chat implements Serializable {
     }
 
 
-    public class LastMessage{
+    public class LastMessage implements Serializable{
         @SerializedName("message")
         public String message;
     }

@@ -46,7 +46,7 @@ public class SentOrdersAdapter extends RecyclerView.Adapter<SentOrdersAdapter.Ho
 
 
         String c = "\\u002B";
-        if (p.getHasOffer() == 1) {
+        if (p.getHasOffer()) {
             if (p.getOffer() != null)
                 if (!p.getOffer().isEmpty()) {
                     String o = p.getOffer().replace(" ", "");

@@ -34,10 +34,13 @@ import java.util.Locale;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.activiation.LoginActivationActivity;
 import app.mawared.alhayat.cities.Cities;
 import app.mawared.alhayat.helpers.CustomeSpinnerAdapter;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.OtpResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.register.model.RegisterBody;
 import app.mawared.alhayat.register.model.RegisterModel;
 import io.paperdb.Paper;
@@ -58,6 +61,8 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
     String code;
     RegisterBody registerBody;
     EditText et_regiFullName,et_emailAddress,et_regiPassword;
+
+    VerifyLoginResponse loginResponse;
 
     KProgressHUD load;
 
@@ -134,30 +139,41 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
                 if (et_emailAddress.getText().toString() != null && et_regiFullName.getText().toString() != null && et_regiPassword.getText().toString() != null) {
                     String mobileNumber = getActivity().getSharedPreferences("mwared", Context.MODE_PRIVATE).getString("mobNum", "");
                     registerBody.setCity_id(selectedCityId);
-                    registerBody.setCode(code);
+                  //  registerBody.setCode(code);
                     registerBody.setEmail(et_emailAddress.getText().toString());
-                    registerBody.setPassword(et_regiPassword.getText().toString());
-                    registerBody.setMobile(mobileNumber);
-                    registerBody.setCountry_code("sa");
-                    registerBody.setPassword_confirmation(et_regiPassword.getText().toString());
+                   // registerBody.setPassword(et_regiPassword.getText().toString());
+                    //registerBody.setMobile(mobileNumber);
+                    //registerBody.setCountry_code("sa");
+                    //registerBody.setPassword_confirmation(et_regiPassword.getText().toString());
                     registerBody.setName(et_regiFullName.getText().toString());
 
                     load.show();
-                    registerViewModel.setNewAccount(registerBody).observe(getActivity(), new Observer<LoginResponse>() {
+                    registerViewModel.setNewAccount(registerBody,loginResponse.getAccessToken()).observe(getActivity(), new Observer<OtpResponse>() {
                         @Override
-                        public void onChanged(LoginResponse responseBody) {
+                        public void onChanged(OtpResponse responseBody) {
                            // Log.e("happen", responseBody.toString() );
                             load.dismiss();
                             if (responseBody!=null){
-                                Toast.makeText(getActivity(), responseBody.getMessage().getDescription(), Toast.LENGTH_SHORT).show();
-                                if (responseBody.getStatus()==200){
-                                    Paper.book().write("login",responseBody);
-                                    Paper.book().write("token", responseBody.getUser().getToken());
+                                if (responseBody.isSuccess()){
 
-                                    Intent mainIntent = new Intent(getActivity(), MainActivity.class);
-                                    startActivity(mainIntent);
+                                    Toast.makeText(getActivity(), responseBody.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                        Paper.book().write("login",loginResponse);
+                                        Paper.book().write("token", loginResponse.getAccessToken());
+
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
                                     getActivity().finish();
-                                    dialog.dismiss();
+                                        /*Intent mainIntent = new Intent(getActivity(), MainActivity.class);
+                                        startActivity(mainIntent);
+                                        getActivity().finish();
+                                        dialog.dismiss();
+                                       */
+                                }
+                                else {
+                                    if (responseBody.getError()!=null){
+                                        Toast.makeText(getActivity(), responseBody.getError().get(0).getMessage(), Toast.LENGTH_SHORT).show();
+
+                                    }
                                 }
                             }
                         }
@@ -206,5 +222,8 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
 
     public void setCode(String code) {
         this.code = code;
+    }
+    public void setLoginData(VerifyLoginResponse loginResponse) {
+        this.loginResponse = loginResponse;
     }
 }

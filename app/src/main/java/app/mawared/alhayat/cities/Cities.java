@@ -12,7 +12,7 @@ public class Cities {
     @SerializedName("message")
     private String message;
     @Expose
-    @SerializedName("status_code")
+    @SerializedName("status")
     private int status_code;
     @Expose
     @SerializedName("data")

@@ -68,8 +68,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import app.mawared.alhayat.AddressModel;
 import app.mawared.alhayat.BlankFragment;
 import app.mawared.alhayat.MainActivity;
+import app.mawared.alhayat.MapsActivity;
 import app.mawared.alhayat.OrderDoneFragment;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.api.RetrofitClient;
@@ -78,7 +80,6 @@ import app.mawared.alhayat.mycart.CartViewModel;
 import app.mawared.alhayat.mycart.model.CardModel;
 import app.mawared.alhayat.mycart.model.Product;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
-import app.mawared.alhayat.sendorder.model.AddressModel;
 import app.mawared.alhayat.sendorder.model.Bank;
 import app.mawared.alhayat.sendorder.model.BanksModel;
 import app.mawared.alhayat.sendorder.model.OrderShippingAddress;
@@ -88,6 +89,8 @@ import app.mawared.alhayat.sendorder.model.copon.CoponModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.ConfirmModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.visa.VisaModel;
 import app.mawared.alhayat.sendorder.model.points.PointsModel;
+import app.mawared.alhayat.sendorder.newaddress.AddressNewResponse;
+import app.mawared.alhayat.sendorder.newaddress.DataItem;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.paperdb.Paper;
@@ -169,6 +172,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Double price_without_pts = null;
     EditText rec_phone, rec_name;
 
+    double balance = 0;
+    boolean isBalance = false;
+
+    AddressModel addressModel = Paper.book().read("address",null);
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        //super.onSaveInstanceState(outState);
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -191,6 +205,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             pts_switch = v.findViewById(R.id.imageView42);
 
             selected_address = v.findViewById(R.id.selected_address);
+            if (addressModel!=null)
+                selected_address.setText(addressModel.getAddress());
+
             selected_address_type = v.findViewById(R.id.selected_address_type);
             selected_copon = v.findViewById(R.id.selected_copon);
             selected_date = v.findViewById(R.id.selected_date);
@@ -402,6 +419,27 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             show_products = v.findViewById(R.id.show_products);
             snd_order = v.findViewById(R.id.snd_order);
 
+            if (addressModel!=null){
+                RequestBody delivery_type = RequestBody.create(MediaType.parse("text/plain"), addressModel.getType());
+                RequestBody address = RequestBody.create(MediaType.parse("text/plain"), addressModel.getAddress());
+                RequestBody lat = RequestBody.create(MediaType.parse("text/plain"), addressModel.getLat() + "");
+                RequestBody lng = RequestBody.create(MediaType.parse("text/plain"), addressModel.getLng() + "");
+
+
+                requestBodyMap.put("address[delivery_type]", delivery_type);
+                requestBodyMap.put("address[address]", address);
+                requestBodyMap.put("address[lat]", lat);
+                requestBodyMap.put("address[lng]", lng);
+
+                RequestBody username = RequestBody.create(MediaType.parse("text/plain"), addressModel.getUsername());
+
+                requestBodyMap.put("address[username]", username);
+
+                RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), addressModel.getMobile());
+
+                requestBodyMap.put("address[mobile]", phone);
+            }
+
             viewModel.banks.observe(getActivity(), new Observer<BanksModel>() {
                 @Override
                 public void onChanged(BanksModel banksModel) {
@@ -419,7 +457,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 public void onChanged(PointsModel pointsModel) {
                     if (pointsModel != null) {
                         if (pointsModel.getSuccess()) {
-                            if (pointsModel.getData().getToExchange().size() > 0) {
+                            balance = pointsModel.getData().getTotalPoints();
+
+                            Log.e("balance",balance+"");
+                            /*if (pointsModel.getData().getToExchange().size() > 0) {
                                 pts_amounts = new ArrayList<>();
                                 pts_c_txt.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
                                 for (Long l : pointsModel.getData().getToExchange()) {
@@ -427,21 +468,21 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                                 }
                                 ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, pts_amounts);
                                 pts_spinner.setAdapter(aarrdapter);
-                            }
+                            }*/
                         }
                     }
                 }
             });
 
-            viewModel.addresses.observe(getActivity(), new Observer<AddressModel>() {
+            viewModel.addresses.observe(getActivity(), new Observer<AddressNewResponse>() {
                 @Override
-                public void onChanged(AddressModel addressModel) {
+                public void onChanged(AddressNewResponse addressModel) {
                     if (getActivity()!=null)
 
                         activity.showDialog(false);
 
                     if (addressModel.getStatus() == 200) {
-                        adapter.setAddresses((ArrayList<OrderShippingAddress>) addressModel.getOrderShippingAddresses());
+                        adapter.setAddresses((ArrayList<DataItem>) addressModel.getData().getData());
                     } else if (addressModel.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -477,7 +518,22 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                    if (viewModel.points != null) {
+                    isBalance = isChecked;
+
+                    if (balance==0){
+                        Toast.makeText(getActivity(), "ليس لديك رصيد", Toast.LENGTH_SHORT).show();
+                        pts_switch.setChecked(false);
+                        isBalance=false;
+                        return;
+                    }
+
+                    if (balance>0){
+                        doCalculations();
+                    }
+
+
+
+                   /* if (viewModel.points != null) {
                         if (viewModel.points.getValue() != null) {
                             if (viewModel.points.getValue().getSuccess()) {
                                 if (viewModel.points.getValue().getData().getExpireDate() <= 0) {
@@ -513,7 +569,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         doCalculations();
 
-                    }
+                    }*/
 
 
                 }
@@ -543,6 +599,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             RequestBody coupon = RequestBody.create(MediaType.parse("text/plain"), coponModel.getPromocode().getCode());
 
                             requestBodyMap.put("coupon", coupon);
+                            requestBodyMap.put("promocode", coupon);
 
                         } else {
                             Toast.makeText(getActivity(), "الكود خاطئ", Toast.LENGTH_SHORT).show();
@@ -560,13 +617,13 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                         if (getActivity()!=null)
 
                             activity.showDialog(false);
-                        if (timesModel != null) {
+                       /* if (timesModel != null) {
                             if (timesModel.getStatus() == 401) {
                                 Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(getActivity(), LoginActivity.class));
                                 return;
                             }
-                        }
+                        }*/
                         if (timesModel != null) {
                             if (timesModel.getSuccess()) {
                                 times = new ArrayList<>();
@@ -657,6 +714,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("coupon", copon_et.getText().toString());
+                    jsonObject.addProperty("promocode", copon_et.getText().toString());
                     jsonObject.addProperty("total", total.getValue());
                     viewModel.checkCopon(jsonObject, "Bearer " + token);
 
@@ -697,10 +755,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     RequestBody lng = RequestBody.create(MediaType.parse("text/plain"), selectedLocation.getLongitude() + "");
 
 
-                    requestBodyMap.put("delivery_type", delivery_type);
-                    requestBodyMap.put("address", address);
-                    requestBodyMap.put("lat", lat);
-                    requestBodyMap.put("lng", lng);
+                    requestBodyMap.put("address[delivery_type]", delivery_type);
+                    requestBodyMap.put("address[address]", address);
+                    requestBodyMap.put("address[lat]", lat);
+                    requestBodyMap.put("address[lng]", lng);
 
                 }
             });
@@ -730,8 +788,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                             String stimw = times.get(position);
 
                             String[] tarr = stimw.split("-");
-                            RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), tarr[0].replace(" ", "") + ":00");
-                            RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), tarr[1].replace(" ", "") + ":00");
+                            RequestBody delivery_start_time = RequestBody.create(MediaType.parse("text/plain"), tarr[0].replace(" ", "") /*+ ":00"*/);
+                            RequestBody delivery_end_time = RequestBody.create(MediaType.parse("text/plain"), tarr[1].replace(" ", "") /*+ ":00"*/);
                             time = stimw;
                             requestBodyMap.put("delivery_start_time", delivery_start_time);
                             requestBodyMap.put("delivery_end_time", delivery_end_time);
@@ -753,14 +811,32 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             day_spinner.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Calendar rightNow = Calendar.getInstance();
+                    int currentHourIn24Format = rightNow.get(Calendar.HOUR_OF_DAY);
+                    Calendar cal = Calendar.getInstance();
 
+
+                    if (currentHourIn24Format>=18){
+                        cal.add(Calendar.DAY_OF_YEAR, 2);
+                        datePicker.setMinDate(cal.getTimeInMillis());
+                    }else{
+                        cal.add(Calendar.DAY_OF_YEAR, 1);
+                        datePicker.setMinDate(cal.getTimeInMillis());
+                    }
+
+
+
+                  //  datePicker.setMinDate(System.currentTimeMillis() - 1000);
 
                     datePickerDialog.show();
                 }
 
 
             });
-            datePicker.setMinDate(System.currentTimeMillis() - 1000);
+
+
+
+
             done_date.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -834,7 +910,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             add_address.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    address_dialog.show();
+                    //address_dialog.show();
+                    if (addressModel==null){
+                        startActivity(new Intent(activity,MapsActivity.class));
+                    activity.finish();}
                 }
             });
 
@@ -926,16 +1005,16 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 requestBodyMap.remove("points");
         }
 
-        if (!requestBodyMap.containsKey("address") || !requestBodyMap.containsKey("lng") || !requestBodyMap.containsKey("lat")) {
+        if (!requestBodyMap.containsKey("address[address]") || !requestBodyMap.containsKey("address[lng]") || !requestBodyMap.containsKey("address[lat]")) {
             Toast.makeText(getActivity(), "ادخل عنوان التوصيل", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!requestBodyMap.containsKey("delivery_type")) {
+        if (!requestBodyMap.containsKey("address[delivery_type]")) {
             Toast.makeText(getActivity(), "ادخل نوع المستلم", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (selectedShippingType != null) {
+       /* if (selectedShippingType != null) {
             if (map_spinner.getSelectedItemPosition() != 0) {
                 if (rec_name.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "ادخل اسم المستلم", Toast.LENGTH_SHORT).show();
@@ -943,7 +1022,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 } else {
                     RequestBody username = RequestBody.create(MediaType.parse("text/plain"), rec_name.getText().toString());
 
-                    requestBodyMap.put("username", username);
+                    requestBodyMap.put("address[username]", username);
                 }
                 if (rec_phone.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "ادخل رقم الجوال للمستلم", Toast.LENGTH_SHORT).show();
@@ -951,12 +1030,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                 } else {
                     RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), rec_phone.getText().toString());
 
-                    requestBodyMap.put("mobile", phone);
+                    requestBodyMap.put("address[mobile]", phone);
                 }
             }
 
           //  Toast.makeText(getContext(), types_e[map_spinner.getSelectedItemPosition()], Toast.LENGTH_SHORT).show();
-        }
+        }*/
         if (!requestBodyMap.containsKey("delivery_date")) {
             Toast.makeText(getActivity(), "ادخل تاريخ الاستلام", Toast.LENGTH_SHORT).show();
             return;
@@ -1249,15 +1328,29 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     @Override
-    public void setAddress(String type, OrderShippingAddress address) {
+    public void setAddress(String type, DataItem address) {
         address_dialog.dismiss();
         // selected_address.setText(address);
         selectedLocation = new Location("");
         selectedLocation.setLatitude(Double.parseDouble(address.getLat()));
         selectedLocation.setLongitude(Double.parseDouble(address.getLng()));
 
+        ///////////////////////////////////////////////////////////////////// new scenario
+        Intent intent = new Intent(getActivity(), MapsActivity.class);
+        intent.putExtra("lat", Double.parseDouble(address.getLat()));
+        intent.putExtra("lng", Double.parseDouble(address.getLng()));
+        intent.putExtra("id", address.getId());
+        intent.putExtra("address", address.getAddress());
+        Log.e("addddddd",address.getAddress());
 
-        try {
+        startActivity(intent);
+
+
+
+        ////////////////////////////////////////////////////////////////////
+
+
+        /*try {
             convertedAddress = getAddress(selectedLocation);
         } catch (IOException e) {
             e.printStackTrace();
@@ -1273,11 +1366,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         mp.position(new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude()));
 
         mp.title("my position");
-
+        if (map!=null)
         map.addMarker(mp);
 
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude()), 16));
+        if (map!=null)
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude()), 16));*/
+    }
+
+    @Override
+    public void onDelete(DataItem address) {
+
     }
 
     void doCalculations() {
@@ -1288,6 +1387,14 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
         Double v = vat - ((Double) (Math.round((vat * (ptsDiscount + (coponDiscount / 100))) * 100) / 100.00));
 
         Double sum = total_before - (total_before * (ptsDiscount + (coponDiscount / 100))) + v;
+
+        if (isBalance){
+            if (balance>=sum){
+                sum=0d;
+            }else {
+                sum=sum-balance;
+            }
+        }
         total.setValue(sum);
 
 
@@ -1351,7 +1458,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                                             mp.title("my position");
 
-                                            map.addMarker(mp);
+                                            if (map!=null)
+                                                map.addMarker(mp);
 
                                             map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                                     new LatLng(location.getLatitude(), location.getLongitude()), 16));

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
+    android:fillViewport="true"
     tools:context=".home.ProductDetailsFragment">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
 
     <ImageView
         android:id="@+id/imageView"
@@ -159,9 +164,13 @@
 
                     <ImageView
                         android:id="@+id/product_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="130dp"
+
+
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:scaleType="centerCrop"
                         android:layout_margin="8dp"
+                        android:adjustViewBounds="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -211,7 +220,7 @@
                     <ImageView
                         android:id="@+id/off_img"
                         android:layout_width="wrap_content"
-                        android:layout_height="62dp"
+                        android:layout_height="70dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
@@ -226,11 +235,11 @@
                         android:id="@+id/txt_offer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="32dp"
+                        android:layout_marginTop="16dp"
                         android:fontFamily="@font/urwbold"
                         android:gravity="center"
                         android:textColor="@color/white"
-                        android:textSize="11sp"
+                        android:textSize="11dp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@+id/off_img"
                         app:layout_constraintEnd_toEndOf="@+id/off_img"
@@ -263,3 +272,4 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout13"
         app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

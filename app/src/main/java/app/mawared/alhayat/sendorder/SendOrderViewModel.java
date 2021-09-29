@@ -14,6 +14,7 @@ import app.mawared.alhayat.sendorder.model.PaymentModel;
 import app.mawared.alhayat.sendorder.model.TimesModel;
 import app.mawared.alhayat.sendorder.model.copon.CoponModel;
 import app.mawared.alhayat.sendorder.model.points.PointsModel;
+import app.mawared.alhayat.sendorder.newaddress.AddressNewResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,28 +22,28 @@ import retrofit2.Response;
 
 public class SendOrderViewModel extends ViewModel {
 
-    MutableLiveData<AddressModel> addresses = new MutableLiveData<>();
+   public MutableLiveData<AddressNewResponse> addresses = new MutableLiveData<>();
     MutableLiveData<BanksModel> banks = new MutableLiveData<>();
     MutableLiveData<TimesModel> times = new MutableLiveData<>();
     MutableLiveData<PaymentModel> payment = new MutableLiveData<>();
      public  MutableLiveData<PointsModel> points = new MutableLiveData<>();
     MutableLiveData<CoponModel> copon = new MutableLiveData<>();
 
-    void getAddresses(String token) {
+   public void getAddresses(String token) {
 
-        RetrofitClient.getApiInterface().getaddresses(token).enqueue(new Callback<AddressModel>() {
+        RetrofitClient.getApiInterface().getaddresses(token).enqueue(new Callback<AddressNewResponse>() {
             @Override
-            public void onResponse(Call<AddressModel> call, Response<AddressModel> response) {
+            public void onResponse(Call<AddressNewResponse> call, Response<AddressNewResponse> response) {
                 if (response.isSuccessful()) {
                     addresses.setValue(response.body());
                 }
                 if (response.code()==401){
-                    addresses.setValue(new AddressModel(Long.parseLong(401+"")));
+                    addresses.setValue(new AddressNewResponse(Long.parseLong(401+"")));
                 }
             }
 
             @Override
-            public void onFailure(Call<AddressModel> call, Throwable t) {
+            public void onFailure(Call<AddressNewResponse> call, Throwable t) {
                 Log.d("aeeee",t.getMessage());
             }
         });

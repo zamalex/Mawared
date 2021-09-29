@@ -9,6 +9,7 @@ import app.mawared.alhayat.about.model.SocialsModel;
 import app.mawared.alhayat.activiation.model.ActivationiModel;
 import app.mawared.alhayat.cities.Cities;
 import app.mawared.alhayat.contactus.model.ContactUsResponse;
+import app.mawared.alhayat.defaultaddress.DefaultAddressResponse;
 import app.mawared.alhayat.forgot.model.ForgotModel;
 import app.mawared.alhayat.home.model.CitiesModel;
 import app.mawared.alhayat.home.model.HomeProductModel;
@@ -22,10 +23,13 @@ import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
 import app.mawared.alhayat.home.orderscount.OrdersCountModel;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.login.model.checkmodel.CheckCardModel;
+import app.mawared.alhayat.login.model.newlogin.OtpResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.mycart.model.CardModel;
 import app.mawared.alhayat.notification.model.Notification;
 import app.mawared.alhayat.orderdetails.model.OrderDetails;
 import app.mawared.alhayat.orders.model.AllOrder;
+import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
 import app.mawared.alhayat.register.model.RegisterBody;
 import app.mawared.alhayat.register.model.RegisterModel;
 import app.mawared.alhayat.registeration.model.LoginRegistration;
@@ -39,6 +43,7 @@ import app.mawared.alhayat.sendorder.model.copon.CoponModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.ConfirmModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.visa.VisaModel;
 import app.mawared.alhayat.sendorder.model.points.PointsModel;
+import app.mawared.alhayat.sendorder.newaddress.AddressNewResponse;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
 import app.mawared.alhayat.support.chat.model.received.ReceivedChat;
 import app.mawared.alhayat.support.chatlist.model.ChatList;
@@ -60,18 +65,79 @@ import retrofit2.http.Query;
 
 
 public interface APIInterface {
+///////////////////////////////////////////////////////////////////////////////
+
+    //new Auth=======
+
+    //login
+    @POST("auth/otp-login")
+    Call<OtpResponse> requestLoginOtp(@Body JsonObject jsonObject);
+
+    //verify login otp
+    @POST("auth/otp-verify")
+    Call<VerifyLoginResponse> verifyLoginOtp(@Body JsonObject jsonObject);
+
+//register
+    @POST("auth/otp-register")
+    Call<OtpResponse> completeNewAccount(@Body RegisterBody registerBody,@Header("Authorization") String token);
+
+////slider
+@GET("settings/slider")
+Call<HomeSliderModel> getHomeSlider();
+
+    ///update profile
+    @POST("user/email/update")
+    Call<UpdateModel> uodateEmail(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
+    @POST("user/name/update")
+    Call<UpdateModel> uodateName(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
+    ///banks
+    @GET("settings/banks-list")
+    Call<BanksModel> getBanks();
 
 
+    //home products
     @GET("products")
-    Call<HomeProductModel> getHomeProducts(@Query("cart_id") String cart_id);
+    Call<HomeProductModel> getHomeProducts(@Query("cart_id") String cart_id,@Query("lat") String lat,@Query("long") String lng,@Query("page") int page);
+
+
+    //add cart to user
+    @POST("carts/{cart_id}/add-to-user")
+    Call<ResponseBody> bindUserCard(@Path("cart_id") String cart_id);
+
+
+    //add new address
+    @POST("addresses/store")
+    Call<ResponseBody> addNewAddress(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
+    //delete address
+    @POST("addresses/{id}/delete")
+    Call<ResponseBody> deleteAddress(@Path("id") String id, @Header("Authorization") String topen);
+
+
+    //set default address
+    @POST("addresses/set-default-address")
+    Call<ResponseBody> setDefaultAddress(@Body JsonObject jsonObject, @Header("Authorization") String topen);
+
+
+    //get default address
+    @GET("addresses/get-default-address")
+    Call<DefaultAddressResponse> getDefaultAddress(@Header("Authorization") String topen);
+
+
+    //////////////////////////////////////////////////////////////////////////
+
+   // @GET("products")
+   // Call<HomeProductModel> getHomeProducts(@Query("cart_id") String cart_id,@Query("lat") String lat,@Query("long") String lng);
 
     @GET("orders")
-    Call<AllOrder> getAllOrders(@Query("page") int pageNumber, @Header("Authorization") String token);
+    Call<MyOrdersResponse> getAllOrders(@Query("page") int pageNumber, @Header("Authorization") String token);
 
     @GET("orders")
-    Call<AllOrder> searchOrder(@Query("q") long pageNumber, @Header("Authorization") String token);
+    Call<MyOrdersResponse> searchOrder(@Query("order_number") long pageNumber, @Header("Authorization") String token);
 
-    @GET("orders/{orderId}/details")
+    @GET("orders/{orderId}/show")
     Call<OrderDetails> getOrderDetails(@Path("orderId") int id, @Header("Authorization") String token);
 
     @GET("notifications")
@@ -86,27 +152,26 @@ public interface APIInterface {
     @POST("register/verify")
     Call<ActivationiModel> verifyCode(@Body JsonObject verifyCode);
 
-    @GET("cities")
+    @GET("settings/cities")
     Call<Cities> getCities();
 
     @POST("register/profile")
     Call<LoginResponse> registerNewAccount(@Body RegisterBody registerBody);
 
-    @GET("points/terms")
+    @GET("pages/points-terms")
     Call<Terms> getTermsPoints(@Header("Authorization") String token);
 
     @GET("privacy-terms")
     Call<Terms> getPrivacyTerms();
 
-    @GET("settings/slider")
-    Call<HomeSliderModel> getHomeSlider();
-
-    @GET("orders/addresses")
-    Call<AddressModel> getaddresses(@Header("Authorization") String topen);
 
 
-    @GET("payment/banks")
-    Call<BanksModel> getBanks();
+    @GET("addresses")
+    Call<AddressNewResponse> getaddresses(@Header("Authorization") String topen);
+
+
+   /* @GET("settings/banks-list")
+    Call<BanksModel> getBanks();*/
 
     @GET("settings/orders/min-amount")
     Call<MiniModel> getMinmum();
@@ -125,15 +190,15 @@ public interface APIInterface {
     @POST("login")
     Call<LoginResponse> login(@Body JsonObject jsonObject);
 
-    @POST("update-email")
+   /* @POST("update-email")
     Call<UpdateModel> uodateEmail(@Body JsonObject jsonObject, @Header("Authorization") String topen);
-
+*/
     @POST("mobile-notifications/subscription")
     Call<ResponseBody> sendNotificationToken(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 
-    @POST("update-name")
+    /*@POST("update-name")
     Call<UpdateModel> uodateName(@Body JsonObject jsonObject, @Header("Authorization") String topen);
-
+*/
     @POST("update-mobile")
     Call<UpdateModel> updateMob(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 
@@ -143,16 +208,16 @@ public interface APIInterface {
     @POST("password/reset")
     Call<LoginResponse> resetPass(@Body JsonObject jsonObject);
 
-    @POST("deliver-time/available-times")
+    @POST("orders/get-available-shifts")
     Call<TimesModel> getTimes(@Body JsonObject jsonObject, @Header("Authorization") String token);
 
     @Multipart
-    @POST("orders")
+    @POST("orders/create")
     Call<VisaModel> sendOrderVisa(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
     @Multipart
-    @POST("orders")
+    @POST("orders/create")
     Call<ConfirmModel> sendOrder(@PartMap Map<String, RequestBody> params, @Header("Authorization") String topen);
 
 
@@ -162,15 +227,15 @@ public interface APIInterface {
                                   @Query("address") String address, @Query("delivery_type") String delivery_type,
                                   @Header("Authorization") String token);
 
-    @POST("points/count")
+    @GET("user/wallet")
     Call<PointsModel> getPoints(@Header("Authorization") String token);
 
-    @POST("coupon/check")
+    @POST("orders/apply-coupon")
     Call<CoponModel> checkCopon(@Body JsonObject jsonObject, @Header("Authorization") String token);
 
 
     @POST("carts/add")
-    Call<AddCardModel> addToCard(@Query("product_id") String product_id, @Query("amount") String amount, @Query("device_id") String device_id, @Query("cart_id") String cart_id, @Query("math_type") String math_type, @Query("city_id") String city_id);
+    Call<AddCardModel> addToCard(@Query("product_id") String product_id, @Query("amount") String amount, @Query("device_id") String device_id, @Query("cart_id") String cart_id, @Query("math_type") String math_type, @Query("city_id") String city_id,@Query("lat") String lat,@Query("lng") String lng);
 
 
     @POST("points/calculate-price")
@@ -179,12 +244,11 @@ public interface APIInterface {
     @POST("carts/{cart_id}/products/{product_id}/remove")
     Call<ResponseBody> removeFromCard(@Path("cart_id") String cart_id, @Path("product_id") String product_id);
 
-    @POST("carts/{cart_id}/user/{user_id}/update")
-    Call<ResponseBody> bindUserCard(@Path("cart_id") String cart_id, @Path("user_id") String user_id);
 
 
-    @POST("orders/cancel")
-    Call<ConfirmModel> cancelOrder(@Body JsonObject jsonObject, @Header("Authorization") String token);
+
+    @GET("orders/{id}/cancel")
+    Call<ConfirmModel> cancelOrder(@Path("id") String id, @Header("Authorization") String token);
 
 
     @POST("send-mobile-code")

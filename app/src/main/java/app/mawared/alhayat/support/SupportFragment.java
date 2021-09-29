@@ -39,6 +39,7 @@ import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.home.OrderViewModel;
 import app.mawared.alhayat.orders.model.AllOrder;
+import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
 import app.mawared.alhayat.support.chat.ChatViewModel;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
 import io.paperdb.Paper;
@@ -110,20 +111,20 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
 
         ((MainActivity)getActivity()).showDialog(true);
 
-        orderViewModel.getAllOrders(1).observe(getActivity(), new Observer<AllOrder>() {
+        orderViewModel.getAllOrders(1).observe(getActivity(), new Observer<MyOrdersResponse>() {
             @Override
-            public void onChanged(AllOrder allOrder) {
+            public void onChanged(MyOrdersResponse allOrder) {
 
 
                 if (getActivity()!=null)
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (allOrder != null) {
-                    if (allOrder.getOrders() != null && allOrder.getOrders().size() != 0) {
+                    if (allOrder.getData().getData() != null && allOrder.getData().getData().size() != 0) {
 
-                        for (int i = 0; i < allOrder.getOrders().size(); i++) {
+                        for (int i = 0; i < allOrder.getData().getData().size(); i++) {
                             if (i < 10)
-                                orders.add(allOrder.getOrders().get(i).getFormatedNumber() + "");
+                                orders.add(allOrder.getData().getData().get(i).getFormatedNumber() + "");
                         }
 
                     }

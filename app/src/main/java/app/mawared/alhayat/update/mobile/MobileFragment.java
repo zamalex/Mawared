@@ -35,6 +35,7 @@ import app.mawared.alhayat.R;
 import app.mawared.alhayat.activiation.ActivationActivity;
 import app.mawared.alhayat.forgot.ForgotPasswordActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.update.UpdateViewModel;
 import app.mawared.alhayat.update.model.SendCodeModel;
 import io.paperdb.Paper;
@@ -46,7 +47,7 @@ public class MobileFragment extends Fragment {
     Button confirm;
     EditText phone_et;
     UpdateViewModel viewModel;
-    LoginResponse mLoginResponse;
+    VerifyLoginResponse mLoginResponse;
     View v;
 
     @Override
@@ -63,7 +64,7 @@ public class MobileFragment extends Fragment {
         mLoginResponse = Paper.book().read("login", null);
 
         if (mLoginResponse != null)
-            phone_et.setText(mLoginResponse.getUser().getMobile());
+            phone_et.setText(mLoginResponse.getUser().getPhone());
 
 
         v.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
@@ -85,7 +86,7 @@ public class MobileFragment extends Fragment {
                 jsonObject.addProperty("mobile", phone_et.getText().toString());
                 jsonObject.addProperty("sms_token","NLeMjm76BfQ");
 
-                viewModel.sendCode(jsonObject, "Bearer " + mLoginResponse.getUser().getToken());
+                viewModel.sendCode(jsonObject, "Bearer " + mLoginResponse.getAccessToken());
 
             }
         });

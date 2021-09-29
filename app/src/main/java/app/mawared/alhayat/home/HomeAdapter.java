@@ -124,7 +124,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         }
 
         holder.offer_txt.setText("");
-        if (product.getHasOffer()==0||product.getOffer().isEmpty()||product.getOffer().replace(" ","").equals("1+0")) {
+        if (!product.getHasOffer()||product.getOffer().isEmpty()||product.getOffer().replace(" ","").equals("1+0")) {
             holder.offer_txt.setVisibility(View.GONE);
             holder.offer_img.setVisibility(View.GONE);
 
@@ -153,6 +153,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
                 .fitCenter()
                 .into(holder.img);
 */
+        if (!product.getImg().isEmpty())
         Picasso.get().load(product.getImg()).fit().into(holder.img);
         Log.d("imgg", product.getImg());
 
@@ -171,7 +172,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     }
 
     public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+        this.products=products;
         notifyDataSetChanged();
     }
 

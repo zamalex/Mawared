@@ -176,42 +176,55 @@ public class OrderDetailsFragment extends Fragment {
 
                 if (orderDetails != null) {
 
+                    cancel_order.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (orderDetails.getOrder().can_cancel)
+                                dialog.show();
+                            else
+                                Toast.makeText(getActivity(), "لا يمكن الغاء الطلب", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                     if (orderDetails.getOrder().isShowRating())
-                        if (orderDetails.getOrder().getStatus().equals("تم التسليم"))
+                        //if (orderDetails.getOrder().getStatus().equals("تم التسليم"))
                         rateDialog.show();
 
 
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());
                     rv_productDetails.setAdapter(orderDetailsAdapter);
-                    tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getFormatedNumber());
+                    tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getId());
 
-                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
+                   /* if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
                         tv_orderDetailsStatus.setText("جاري تجهيز طلبك");
-                    else
-                        tv_orderDetailsStatus.setText(orderDetails.getOrder().getStatus());
+                    else*/
+                        tv_orderDetailsStatus.setText(orderDetails.getOrder().statusLabel);
 
                     status = orderDetails.getOrder().getStatus();
-                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || orderDetails.getOrder().getStatus().equals("جاري تجهيز طلبك")) {
-                        cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.light_green_bg));
-                    } else if (orderDetails.getOrder().getStatus().equals("ملغي")) {
-                        cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.malghi_bg));
-                    } else {
-                        cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.order_states_bg));
 
+                    if (getActivity()!=null){
+                        if (status.equals("0")||status.equals("1")||status.equals("3")||status.equals("4")) {
+                            cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.light_green_bg));
+                        } else if (status.equals("5")||status.equals("6")||status.equals("8")) {
+                            cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.malghi_bg));
+                        } else {
+                            cl_orderStatus.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.order_states_bg));
+
+                        }
                     }
+
                     for (int i = 0; i < orderDetails.getOrder().getProducts().size(); i++) {
                         totalPrice += orderDetails.getOrder().getProducts().get(i).getTotal();
                     }
 
                     tv_totalPrice.setText(orderDetails.getOrder().getPricing().getTotalWithCouponVat() + " ر.س");
 
-                    one.setText("#" + orderDetails.getOrder().getFormatedNumber());
-                    if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
+                    one.setText("#" + orderDetails.getOrder().getId());
+                  /*  if (orderDetails.getOrder().getStatus().equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
 
                         two.setText("جاري تجهيز طلبك");
-                    else
-                        two.setText(orderDetails.getOrder().getStatus());
+                    else*/
+                        two.setText(orderDetails.getOrder().statusLabel);
 
                     three.setText(orderDetails.getOrder().getCustomerName());
                     four.setText(orderDetails.getOrder().getCustomerPhone());
@@ -254,15 +267,7 @@ public class OrderDetailsFragment extends Fragment {
             }
         });
 
-        cancel_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (status.equals("تم استلام الطلب") || status.equals("جاري تجهيز طلبك"))
-                    dialog.show();
-                else
-                    Toast.makeText(getActivity(), "لا يمكن الغاء الطلب", Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         ccncl_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,7 +283,7 @@ public class OrderDetailsFragment extends Fragment {
                 jsonObject.addProperty("order_id", orderId);
                 jsonObject.addProperty("reason", reason_et.getText().toString());
 
-                orderDetailsViewModel.cancelOrder(jsonObject, "Bearer " + Paper.book().read("token", "none"));
+                orderDetailsViewModel.cancelOrder(orderId+"", "Bearer " + Paper.book().read("token", "none"));
 
             }
         });

@@ -35,6 +35,14 @@ public class Order implements Parcelable
     @SerializedName("customer_phone")
     @Expose
     private String customerPhone;
+
+    @SerializedName("can_cancel")
+    @Expose
+    public boolean can_cancel;
+
+    @SerializedName("statusLabel")
+    @Expose
+    public String statusLabel;
     @SerializedName("delivery_date")
     @Expose
     private String deliveryDate;

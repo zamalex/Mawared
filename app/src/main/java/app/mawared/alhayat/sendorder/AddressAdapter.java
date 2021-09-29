@@ -3,6 +3,7 @@ package app.mawared.alhayat.sendorder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -15,12 +16,13 @@ import java.util.ArrayList;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.sendorder.model.OrderShippingAddress;
+import app.mawared.alhayat.sendorder.newaddress.DataItem;
 
 
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> {
 
 
-    ArrayList<OrderShippingAddress> addresses = new ArrayList<>();
+    ArrayList<DataItem> addresses = new ArrayList<>();
 
 
     AddressInterface addressInterface;
@@ -46,7 +48,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
 
     }
 
-    public void setAddresses(ArrayList<OrderShippingAddress> addresses) {
+    public void setAddresses(ArrayList<DataItem> addresses) {
         this.addresses = addresses;
         notifyDataSetChanged();
     }
@@ -64,10 +66,19 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
 
         TextView addrss_tv;
         ConstraintLayout add_c;
+        ImageView delete_address;
         public Holder(@NonNull View itemView) {
             super(itemView);
             addrss_tv = itemView.findViewById(R.id.addrss_tv);
             add_c = itemView.findViewById(R.id.add_c);
+            delete_address = itemView.findViewById(R.id.delete_address);
+
+            delete_address.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addressInterface.onDelete(addresses.get(getAdapterPosition()));
+                }
+            });
 
             add_c.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,7 +91,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.Holder> 
     }
 
     public interface AddressInterface{
-        void setAddress(String type,OrderShippingAddress address);
+        void setAddress(String type,DataItem address);
+        void onDelete(DataItem address);
     }
 
 }

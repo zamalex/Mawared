@@ -3,26 +3,32 @@ package app.mawared.alhayat.register.model;
 import com.google.gson.annotations.SerializedName;
 
 public class RegisterBody {
-    @SerializedName("mobile")
+
+    @SerializedName("name")
+    String name;
+
+    @SerializedName("email")
+    String email;
+    @SerializedName("city_id")
+    String city_id;
+
+    /*@SerializedName("mobile")
     String mobile;
     @SerializedName("code")
     String code;
-    @SerializedName("email")
-    String email;
+
     @SerializedName("password")
     String password;
-    @SerializedName("city_id")
-    String city_id;
+
 
     @SerializedName("country_code")
     String country_code;
 
     @SerializedName("password_confirmation")
     String password_confirmation;
+*/
 
 
-    @SerializedName("name")
-    String name;
 
     public String getName() {
         return name;
@@ -35,28 +41,35 @@ public class RegisterBody {
     public RegisterBody() {
     }
 
-    public RegisterBody(String mobile, String code, String email, String password, String city_id) {
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setCity_id(String city_id) {
+        this.city_id = city_id;
+    }
+   /* public RegisterBody(String mobile, String code, String email, String password, String city_id) {
         this.mobile = mobile;
         this.code = code;
         this.email = email;
         this.password = password;
         this.city_id = city_id;
-    }
+    }*/
 
-    public String getMobile() {
-        return mobile;
+    /*public String getMobile() {
+       // return mobile;
     }
 
     public void setMobile(String mobile) {
-        this.mobile = mobile;
+        //this.mobile = mobile;
     }
 
     public String getCode() {
-        return code;
+        ///return code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        //this.code = code;
     }
 
     public String getEmail() {
@@ -97,5 +110,5 @@ public class RegisterBody {
 
     public void setPassword_confirmation(String password_confirmation) {
         this.password_confirmation = password_confirmation;
-    }
+    }*/
 }

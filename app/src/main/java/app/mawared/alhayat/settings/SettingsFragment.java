@@ -39,6 +39,7 @@ import app.mawared.alhayat.R;
 import app.mawared.alhayat.about.AboutMawaredFragment;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.notification.NotificationViewModel;
 import app.mawared.alhayat.notification.model.Notification;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
@@ -113,13 +114,13 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         settingsList.add(settingsModel);
         settingsAdapter = new SettingsAdapter(settingsList, getActivity(), this,getActivity());
 
-        LoginResponse loginResponse = Paper.book().read("login", null);
+        VerifyLoginResponse loginResponse = Paper.book().read("login", null);
 
         if (loginResponse != null) {
             tv_profileName.setText(loginResponse.getUser().getName());
-            tv_userPhone.setText(loginResponse.getUser().getMobile());
+            tv_userPhone.setText(loginResponse.getUser().getPhone());
             tv_userMail.setText(loginResponse.getUser().getEmail());
-            sendOrderViewModel.getPoints("Bearer " + loginResponse.getUser().getToken());
+            sendOrderViewModel.getPoints("Bearer " + loginResponse.getAccessToken());
         }
 
 

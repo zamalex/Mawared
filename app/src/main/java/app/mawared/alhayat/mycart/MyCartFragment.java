@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -63,6 +65,8 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     Product p = null;
 
     public boolean isLoading = false;
+    LatLng latLng;
+    String lat="",lng="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,6 +76,14 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         back = v.findViewById(R.id.imageView);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
+        latLng = Paper.book().read("latlng",null);
+        lat="";
+        lng="";
+
+        if (latLng!=null){
+            lat = latLng.latitude+"";
+            lng = latLng.longitude+"";
+        }
         adapter = new MyCartAdapter(this, this);
         dialog= new Dialog(getActivity());
 
@@ -186,6 +198,8 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             @Override
             public void onClick(View v) {
                 if (!Paper.book().read("token", "none").equals("none")) {
+                    if (isLoading)
+                        return;
                     if (viewModel.cardModelMutableLiveData.getValue()==null){
                             return;
                     }
@@ -253,7 +267,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
 
                // next.startAnimation();
                 isLoading = true;
-                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance",p.getCity_id());
+                viewModel.addToCard(p.getId() + "", q_et.getText().toString(), null, cid, "balance",p.getCity_id(),lat,lng);
                 q_et.setText("");
 
 
@@ -274,7 +288,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
     public void increase(Product item, int qty) {
       //  next.startAnimation();
         isLoading = true;
-        viewModel.addToCard(item.getId() + "", qty+"", null, cid, "balance",item.getCity_id());
+        viewModel.addToCard(item.getId() + "", qty+"", null, cid, "balance",item.getCity_id(),lat,lng);
 
     }
 
@@ -286,7 +300,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
         if (qty == 0)
             viewModel.removeFromCard(cid + "", item.getId().toString());
         else
-            viewModel.addToCard(item.getId() + "", ""+qty, null, cid, "balance",item.getCity_id());
+            viewModel.addToCard(item.getId() + "", ""+qty, null, cid, "balance",item.getCity_id(),lat,lng);
 
     }
 

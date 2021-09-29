@@ -41,7 +41,7 @@ public class OrderDetailsViewModel extends ViewModel {
 
     MutableLiveData<ConfirmModel> cancelResponse = new MutableLiveData<>();
 
-    void cancelOrder(JsonObject jsonObject,String token){
+    void cancelOrder(String jsonObject,String token){
         RetrofitClient.getApiInterface().cancelOrder(jsonObject,token).enqueue(new Callback<ConfirmModel>() {
             @Override
             public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.appsflyer.AFInAppEventParameterName;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.attribution.AppsFlyerRequestListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
@@ -61,12 +62,22 @@ public class ProductDetailsFragment extends Fragment {
     String card_id = null;
     String city_id = null;
 
+    LatLng latLng;
+    String lat="",lng="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
 
+        latLng = Paper.book().read("latlng",null);
+        lat="";
+        lng="";
+
+        if (latLng!=null){
+            lat = latLng.latitude+"";
+            lng = latLng.longitude+"";
+        }
         itemView = inflater.inflate(R.layout.fragment_product_details, container, false);
         initView();
 
@@ -162,7 +173,7 @@ public class ProductDetailsFragment extends Fragment {
                         }
 
                         offer_txt.setText("");
-                        if (product.getHasOffer() == 0 || product.getOffer().isEmpty() || product.getOffer().replace(" ", "").equals("1+0")) {
+                        if (product.getHasOffer() || product.getOffer().isEmpty() || product.getOffer().replace(" ", "").equals("1+0")) {
                             offer_txt.setVisibility(View.GONE);
                             offer_img.setVisibility(View.GONE);
 
@@ -266,7 +277,7 @@ public class ProductDetailsFragment extends Fragment {
 
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus", product.getCityId());
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "plus", product.getCityId(),lat,lng);
 
 
     }
@@ -275,7 +286,7 @@ public class ProductDetailsFragment extends Fragment {
         // Toast.makeText(getActivity(), "" + product.qty, Toast.LENGTH_SHORT).show();
         card_id = Paper.book().read("cid", null);
 
-        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus", product.getCityId());
+        cartViewModel.addToCard(product.getId() + "", "1", null, card_id, "minus", product.getCityId(),lat,lng);
 
 
     }
