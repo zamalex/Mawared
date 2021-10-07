@@ -83,6 +83,8 @@ import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
 import app.mawared.alhayat.sendorder.model.Bank;
 import app.mawared.alhayat.sendorder.model.BanksModel;
 import app.mawared.alhayat.sendorder.model.OrderShippingAddress;
+import app.mawared.alhayat.sendorder.model.PaymentMethod;
+import app.mawared.alhayat.sendorder.model.PaymentModel;
 import app.mawared.alhayat.sendorder.model.Time;
 import app.mawared.alhayat.sendorder.model.TimesModel;
 import app.mawared.alhayat.sendorder.model.copon.CoponModel;
@@ -101,7 +103,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, AddressAdapter.AddressInterface, BankAdapter.BankInterface {
+public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, AddressAdapter.AddressInterface, BankAdapter.BankInterface, PaymentsAdapter.paymentClickListener {
 
 
     SendOrderViewModel viewModel;
@@ -121,7 +123,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     MapView mapView;
     GoogleMap map;
 
-    Button snd_order, p_bank, p_deliver, p_visa, add_copon_btn, add_pts, confirm_transfer;
+    Button snd_order, add_copon_btn, add_pts, confirm_transfer;
 
     ImageView show_map, dismiss_map;
 
@@ -155,8 +157,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     Double total_before = 0d;
     Double vat = 0d;
 
-    TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv, done_date;
+    TextView semi_final_txt, vat_txt, discount_txt, pts_c_txt, count_tv, done_date,rsed;
     DatePicker datePicker;
+    RecyclerView payments_rv;
 
     ImageView copy_account, copy_iban;
 
@@ -174,6 +177,8 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
     double balance = 0;
     boolean isBalance = false;
+
+    PaymentsAdapter paymentsAdapter;
 
     AddressModel addressModel = Paper.book().read("address",null);
 
@@ -202,6 +207,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             back = v.findViewById(R.id.imageView);
             final_total_txt = v.findViewById(R.id.final_total_txt);
             terms_txt = v.findViewById(R.id.terms_txt);
+            rsed = v.findViewById(R.id.rsed);
             pts_switch = v.findViewById(R.id.imageView42);
 
             selected_address = v.findViewById(R.id.selected_address);
@@ -231,7 +237,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             // Toast.makeText(getActivity(),token+ "", Toast.LENGTH_SHORT).show();
 
             viewModel.getBanks();
-            // viewModel.getPayment();
+             viewModel.getPayment();
 
 
             addCoponDialog = new Dialog(getActivity());
@@ -241,6 +247,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             adapter = new AddressAdapter(this);
             ordersAdapter = new SentOrdersAdapter();
             bankAdapter = new BankAdapter(this);
+            paymentsAdapter = new PaymentsAdapter(this);
 
             addCoponDialog.setContentView(R.layout.copon_dialog);
 
@@ -318,9 +325,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             bank_details = confirmDialog.findViewById(R.id.bank_details);
             bank_acc_no = confirmDialog.findViewById(R.id.bank_acc_no);
             bank_iban = confirmDialog.findViewById(R.id.bank_iban);
-            p_bank = payDialog.findViewById(R.id.p_bank);
-            p_deliver = payDialog.findViewById(R.id.p_deliver);
-            p_visa = payDialog.findViewById(R.id.p_visa);
+
             set_loc = map_dailog.findViewById(R.id.set_loc);
             map_spinner = map_dailog.findViewById(R.id.map_spinner);
             rec_phone = map_dailog.findViewById(R.id.editText2);
@@ -335,6 +340,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
             time_spinner = timeDialog.findViewById(R.id.time_spinner);
             products_rv = ordersDialog.findViewById(R.id.products_rv);
+            payments_rv = payDialog.findViewById(R.id.payment_rv);
             orders_total_dialog_txt = ordersDialog.findViewById(R.id.orders_total);
 
             pts_spinner = pts_dialog.findViewById(R.id.pts_spinner);
@@ -393,6 +399,10 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             banks_rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             banks_rv.setAdapter(bankAdapter);
 
+
+            payments_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            payments_rv.setAdapter(paymentsAdapter);
+
             show_map = address_dialog.findViewById(R.id.show_map);
             address_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             address_rv.setAdapter(adapter);
@@ -402,7 +412,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             dismiss_map = map_dailog.findViewById(R.id.dismiss_map);
             mapView.onCreate(savedInstanceState);
 
-
+            paymentMethod.setValue("يمكنك الدفع الآن أو لاحقًا على التطبيق عند وصول المندوب");
             mapView.getMapAsync(this);
 
 
@@ -447,7 +457,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         activity.showDialog(false);
 
-                    if (banksModel.getStatus() == 200)
+                    if (banksModel.getSuccess())
                         bankAdapter.setBanks((ArrayList<Bank>) banksModel.getBanks());
                 }
             });
@@ -458,6 +468,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     if (pointsModel != null) {
                         if (pointsModel.getSuccess()) {
                             balance = pointsModel.getData().getTotalPoints();
+                            rsed.setText("الرصيد "+balance);
 
                             Log.e("balance",balance+"");
                             /*if (pointsModel.getData().getToExchange().size() > 0) {
@@ -481,12 +492,12 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                         activity.showDialog(false);
 
-                    if (addressModel.getStatus() == 200) {
+                    if (addressModel.isSuccess()) {
                         adapter.setAddresses((ArrayList<DataItem>) addressModel.getData().getData());
-                    } else if (addressModel.getStatus() == 401) {
+                    } /*else if (addressModel.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
-                    }
+                    }*/
                 }
             });
 
@@ -530,6 +541,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     if (balance>0){
                         doCalculations();
                     }
+
 
 
 
@@ -609,6 +621,21 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                 }
             });
+
+            viewModel.payment.observe(getViewLifecycleOwner(), new Observer<PaymentModel>() {
+                @Override
+                public void onChanged(PaymentModel paymentModel) {
+                        if (paymentModel!=null){
+                            Log.e("ppppppppp",paymentModel.getPaymentMethods().size()+"");
+                            if (paymentModel.getSuccess()){
+                                if (paymentModel.getPaymentMethods()!=null){
+                                    paymentsAdapter.setList(paymentModel.getPaymentMethods());
+                                }
+                            }
+                        }
+                }
+            });
+
 
             viewModel.times.observe(getActivity(), new Observer<TimesModel>() {
                 @Override
@@ -948,15 +975,15 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
             });
 
 
-            p_bank.setOnClickListener(new View.OnClickListener() {
+           /* p_bank.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     paymentMethod.setValue("تحويل بنكي");
                     selected_payment_method = "bank";
                     confirmDialog.show();
                 }
-            });
-            p_visa.setOnClickListener(new View.OnClickListener() {
+            });*/
+           /* p_visa.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     paymentMethod.setValue("بطاقة مدى / visa");
@@ -965,9 +992,9 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     confirmOrder();
 
                 }
-            });
+            });*/
 
-            p_deliver.setOnClickListener(new View.OnClickListener() {
+           /* p_deliver.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     paymentMethod.setValue("الدفع عن الإستلام");
@@ -975,7 +1002,7 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
 
                     payDialog.dismiss();
                 }
-            });
+            });*/
 
             paymentMethod.observe(getActivity(), new Observer<String>() {
                 @Override
@@ -1100,6 +1127,17 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     Log.d("resooo", response.message());
 
                     if (response.isSuccessful()) {
+
+                       /* BlankFragment blankFragment = new BlankFragment();
+                        Bundle b = new Bundle();
+
+                        try {
+                            b.putString("html", response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        blankFragment.setArguments(b);
+                        activity.fragmentStack.push(blankFragment);*/
                         VisaModel visaModel = response.body();
 
                         if (visaModel != null) {
@@ -1585,4 +1623,24 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
     }
 
 
+    @Override
+    public void onClickPressed(PaymentMethod method) {
+        if (method.getGateway().equals("bank")){
+            paymentMethod.setValue("تحويل بنكي");
+            selected_payment_method = "bank";
+            confirmDialog.show();
+        }
+        else if(method.getGateway().equals("cash")){
+            paymentMethod.setValue("الدفع عن الإستلام");
+            selected_payment_method = "cash";
+
+            payDialog.dismiss();
+        }
+        else {
+            paymentMethod.setValue("بطاقة مدى / visa");
+            selected_payment_method = "visa";
+
+            confirmOrder();
+        }
+    }
 }

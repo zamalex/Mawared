@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.mawared.alhayat.SwipeHelper;
+import app.mawared.alhayat.home.model.MiniModel;
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
@@ -124,7 +125,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                 next.setBackgroundResource(R.drawable.next_radius);
 
                 if (cardModel != null) {
-                    if (cardModel.getStatus() == 200) {
+                    if (cardModel.getSuccess()) {
                         adapter.setProducts((ArrayList<Product>) cardModel.getData().getProducts());
                         total_sum.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(cardModel.getData().getItemsSumFinalPrices()) + " ر.س");
 
@@ -221,9 +222,14 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
                         }
                     }
                    */
-                    if (viewModel.cardModelMutableLiveData.getValue().getData().getItemsCount()<10)
+
+                    MiniModel miniModel = Paper.book().read("min",null);
+                    if (miniModel==null)
+                        return;
+                    if (viewModel.cardModelMutableLiveData.getValue().getData().getItemsCount()<miniModel.getData().getAmount()&&viewModel.cardModelMutableLiveData.getValue().getData().getItemsSumFinalPrices()<miniModel.getData().getPrice())
                     {
-                        Toast.makeText(getActivity(), "الحد الأدنى للطلب 10 منتجات او كراتين", Toast.LENGTH_SHORT).show();
+                        String s = "الحد الأدنى للطلب"+" "+miniModel.getData().getAmount()+" "+"منتجات"+" او "+miniModel.getData().getPrice()+" ريال ";
+                        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     ((MainActivity) getActivity()).showDialog(true);

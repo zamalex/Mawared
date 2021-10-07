@@ -81,7 +81,7 @@ public class NameFragment extends Fragment {
                 ((MainActivity)getActivity()).showDialog(false);
 
                 if (loginResponse != null) {
-                    if (loginResponse.getStatus() == 200) {
+                    if (loginResponse.getSuccess()) {
                         Toast.makeText(getActivity(), "تم تحديث الاسم", Toast.LENGTH_SHORT).show();
                         mLoginResponse.getUser().setName(loginResponse.getUser().getName());
 

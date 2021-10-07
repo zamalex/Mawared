@@ -1,5 +1,7 @@
 package app.mawared.alhayat.support.chat;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -15,9 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.JsonObject;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
@@ -35,26 +40,33 @@ import java.util.ArrayList;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
 import app.mawared.alhayat.support.chat.model.received.Message;
 import app.mawared.alhayat.support.chat.model.received.ReceivedChat;
 import app.mawared.alhayat.support.chatlist.model.Chat;
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ChatFragment extends Fragment {
 
+    BottomSheetDialog rateDialog;
 
     View v;
     ChatViewModel viewModel;
     RecyclerView chat_rv;
     ImageView snd_btn;
     ImageView bck;
-    TextView closed;
+    TextView closed,rating_title,mandob_title;
     ChatAdapter chatAdapter;
     EditText msg_et;
     Chat chat = null;
     ConstraintLayout chat_box;
+    RatingBar ratingBar,shipping_bar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +85,55 @@ public class ChatFragment extends Fragment {
         chat_box = v.findViewById(R.id.constraintLayout12);
         closed.setVisibility(View.INVISIBLE);
         chat_box.setVisibility(View.VISIBLE);
+
+        rateDialog = new BottomSheetDialog(getActivity());
+
+        rateDialog.setContentView(R.layout.rate_dialog);
+        ratingBar = rateDialog.findViewById(R.id.stars);
+        shipping_bar = rateDialog.findViewById(R.id.shipping_stars);
+        mandob_title = rateDialog.findViewById(R.id.mandob_title);
+        rating_title = rateDialog.findViewById(R.id.rating_title);
+        rating_title.setText("من فضلك قيم المحادثة");
+        shipping_bar.setVisibility(View.GONE);
+        mandob_title.setVisibility(View.GONE);
+
+        rateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+        rateDialog.findViewById(R.id.xrate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateDialog.dismiss();
+            }
+        });
+
+        rateDialog.findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chat!=null){
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("conversation_id", chat.getId());
+                    jsonObject.addProperty("rating", ratingBar.getRating() +"");
+                    RetrofitClient.getApiInterface().rateChat(jsonObject).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            rateDialog.dismiss();
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            rateDialog.dismiss();
+
+                        }
+                    });
+                }
+
+            }
+        });
+
+
 
         chat_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -104,12 +165,14 @@ public class ChatFragment extends Fragment {
             public void onChanged(ReceivedChat receivedChat) {
                 if (receivedChat != null) {
                     if (receivedChat.getSuccess()) {
-
-                        if (receivedChat.getData().getStatus().equals("1")){
+                        if (chat.getHide_rate()==0)
+                       rateDialog.show();
+                        if (receivedChat.getData().getConversationStatus().equals("1")){
                             closed.setVisibility(View.INVISIBLE);
                             chat_box.setVisibility(View.VISIBLE);
 
                         }else {
+                           // rateDialog.show();
                             closed.setVisibility(View.VISIBLE);
                             chat_box.setVisibility(View.INVISIBLE);
                         }
@@ -134,13 +197,21 @@ public class ChatFragment extends Fragment {
 
                 if (viewModel.receivedChatMutableLiveData.getValue()!=null){
                     if (viewModel.receivedChatMutableLiveData.getValue().getSuccess()){
-                        if (viewModel.receivedChatMutableLiveData.getValue().getData().getStatus().equals("0")){
+                        if (viewModel.receivedChatMutableLiveData.getValue().getData().getConversationStatus().equals("0")){
                             Toast.makeText(getActivity(), "تم اغلاق المحادثة", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
                 }
-                viewModel.sendNsg(msg_et.getText().toString(), ""+chat.getId(), chat.getOrderId()+"", chat.getTitle(), "Bearer " + Paper.book().read("token","none"));
+
+                JsonObject body = new JsonObject();
+
+                body.addProperty("message",msg_et.getText().toString());
+                body.addProperty("conversation_id",chat.getId());
+                if (chat.getOrderId()!=null)
+                body.addProperty("order_id",chat.getOrderId()+"");
+                body.addProperty("title",chat.getTitle());
+                viewModel.sendNsg(body, "Bearer " + Paper.book().read("token","none"));
 
                 msg_et.setText("");
                 viewModel.sendMsgModelMutableLiveData.observe(getViewLifecycleOwner(), new Observer<SendMsgModel>() {

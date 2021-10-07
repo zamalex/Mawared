@@ -17,13 +17,14 @@ import java.util.Date;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.support.chat.model.received.Message;
 import io.paperdb.Paper;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
-    String user = ((LoginResponse) Paper.book().read("login")).getUser().getId().toString();
+    String user = ((VerifyLoginResponse) Paper.book().read("login")).getUser().getId()+"";
 
     ArrayList<Message> messages = new ArrayList<>();
 
@@ -48,7 +49,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
         String newString2 = "2020-1-1";
         String originalString = msg.getCreatedAt();
         Date date = null;
-        try {
+       /* try {
             date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
              newString = new SimpleDateFormat("H:mm a").format(date);
              newString2 = new SimpleDateFormat("dd-MM-yyyy").format(date);
@@ -61,7 +62,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
             e.printStackTrace();
             newString="00:00 AM";
             newString2 = "2020-1-1";
-        }
+        }*/
 
 
 

@@ -8,22 +8,22 @@ import app.mawared.alhayat.login.model.error.ErrorItem;
 
 public class OtpResponse{
 
+	@SerializedName("data")
+	private Data data;
+
+
 	@SerializedName("success")
 	private boolean success;
 
 	@SerializedName("error")
 	private List<ErrorItem> error;
 
-	@SerializedName("show_otp")
-	private boolean showOtp;
-
 
 
 	@SerializedName("message")
 	private String message;
 
-	@SerializedName("otp_code")
-	private int otpCode;
+
 
 	@SerializedName("status")
 	private int status;
@@ -32,9 +32,7 @@ public class OtpResponse{
 		return success;
 	}
 
-	public boolean isShowOtp(){
-		return showOtp;
-	}
+
 
 	public String getMessage(){
 		return message;
@@ -43,12 +41,33 @@ public class OtpResponse{
 		return error;
 	}
 
-
 	public int getOtpCode(){
-		return otpCode;
+		return data.otpCode;
+	}
+
+
+	public Data getData() {
+		return data;
 	}
 
 	public int getStatus(){
 		return status;
 	}
+
+		class Data{
+			@SerializedName("show_otp")
+			private boolean showOtp;
+
+			@SerializedName("otp_code")
+			private int otpCode;
+
+
+			public boolean isShowOtp(){
+				return showOtp;
+			}
+			public int getOtpCode(){
+				return otpCode;
+			}
+		}
+
 }

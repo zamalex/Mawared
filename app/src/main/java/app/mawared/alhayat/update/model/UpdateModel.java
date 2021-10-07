@@ -12,7 +12,7 @@ public class UpdateModel {
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
-    @SerializedName("user")
+    @SerializedName("data")
     private User mUser;
 
     public String getMessage() {

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.hbisoft.pickit.PickiT;
 import com.hbisoft.pickit.PickiTCallbacks;
 import com.karumi.dexter.Dexter;
@@ -42,6 +43,7 @@ import app.mawared.alhayat.orders.model.AllOrder;
 import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
 import app.mawared.alhayat.support.chat.ChatViewModel;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
+import app.mawared.alhayat.support.ordermodel.ChatOrdersModel;
 import io.paperdb.Paper;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -111,7 +113,31 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
 
         ((MainActivity)getActivity()).showDialog(true);
 
-        orderViewModel.getAllOrders(1).observe(getActivity(), new Observer<MyOrdersResponse>() {
+
+        orderViewModel.getOrdersWithoutChats().observe(getViewLifecycleOwner(), new Observer<ChatOrdersModel>() {
+            @Override
+            public void onChanged(ChatOrdersModel chatOrdersModel) {
+                if (getActivity()!=null)
+                    ((MainActivity) getActivity()).showDialog(false);
+
+                if (chatOrdersModel != null) {
+                    if (chatOrdersModel.getData() != null && chatOrdersModel.getData().size() != 0) {
+
+                        for (int i = 0; i < chatOrdersModel.getData().size(); i++) {
+                            //if (i < 10)
+                                orders.add(chatOrdersModel.getData().get(i)+ "");
+                        }
+
+                    }
+                }
+
+                orders.add("اخرى");
+                ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, orders);
+                spinner.setAdapter(aarrdapter);
+            }
+        });
+
+       /* orderViewModel.getAllOrders(1).observe(getActivity(), new Observer<MyOrdersResponse>() {
             @Override
             public void onChanged(MyOrdersResponse allOrder) {
 
@@ -134,7 +160,7 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
                 ArrayAdapter<String> aarrdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, orders);
                 spinner.setAdapter(aarrdapter);
             }
-        });
+        });*/
 
         sendSupport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +175,16 @@ public class SupportFragment extends Fragment implements PickiTCallbacks {
                 String title = "خدمة العملاء";
                 if (order_no!=null)
                     title =  " خدمة العملاء لطلب "+order_no;
-                viewModel.sendNsg(details_et.getText().toString(), null, order_no, title, "Bearer " + Paper.book().read("token", "none"));
+
+                JsonObject body = new JsonObject();
+
+                body.addProperty("message",details_et.getText().toString());
+                //body.addProperty("conversation_id",null);
+                if (order_no!=null)
+                body.addProperty("order_id",order_no+"");
+                body.addProperty("title",title);
+
+                viewModel.sendNsg(body, "Bearer " + Paper.book().read("token", "none"));
 
             }
         });

@@ -16,13 +16,17 @@ import java.util.List;
 
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.notification.model.Notifications_messages;
+import app.mawared.alhayat.notification.newmodel.ListItem;
+import app.mawared.alhayat.notification.newmodel.NewNotifications;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.NotificationHolders> {
 
-    List<Notifications_messages> notifications_messagesList;
+    List<ListItem> notifications_messagesList;
+    NotificationFragments notificationFragments;
 
-    public NotificationsAdapter(List<Notifications_messages> notifications_messagesList) {
+    public NotificationsAdapter(List<ListItem> notifications_messagesList,NotificationFragments notificationFragments) {
         this.notifications_messagesList = notifications_messagesList;
+        this.notificationFragments = notificationFragments;
     }
 
     @NonNull
@@ -35,12 +39,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     @Override
     public void onBindViewHolder(@NonNull NotificationHolders holder, int position) {
-            Notifications_messages notifications_messagesModel = notifications_messagesList.get(position);
+        ListItem notifications_messagesModel = notifications_messagesList.get(position);
             String imageUrl = notifications_messagesModel.getPhoto();
             holder.tv_notificationTitle.setText(notifications_messagesModel.getTitle());
             holder.tv_notificationMessages.setText(notifications_messagesModel.getMessage());
 
 
+            if (imageUrl!=null)
         Glide.with(holder.itemView.getContext()).load(imageUrl).apply(new RequestOptions()
                 .placeholder(R.drawable.inv)
                 .error(R.drawable.inv)
@@ -63,6 +68,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             tv_notificationTitle = itemView.findViewById(R.id.tv_notificationTitle);
             tv_notificationMessages = itemView.findViewById(R.id.tv_notificationMessages);
             iv_notificationImages = itemView.findViewById(R.id.iv_notificationImages);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    notificationFragments.goToProduct(notifications_messagesList.get(getAdapterPosition()));
+                }
+            });
         }
     }
 }

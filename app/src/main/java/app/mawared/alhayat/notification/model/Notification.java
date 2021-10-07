@@ -9,7 +9,7 @@ public class Notification {
 
 
     @Expose
-    @SerializedName("notifications_messages")
+    @SerializedName("data")
     private List<Notifications_messages> notifications_messages;
     @Expose
     @SerializedName("success")

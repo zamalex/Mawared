@@ -23,9 +23,9 @@ import retrofit2.Response;
 public class SendOrderViewModel extends ViewModel {
 
    public MutableLiveData<AddressNewResponse> addresses = new MutableLiveData<>();
-    MutableLiveData<BanksModel> banks = new MutableLiveData<>();
+   public MutableLiveData<BanksModel> banks = new MutableLiveData<>();
     MutableLiveData<TimesModel> times = new MutableLiveData<>();
-    MutableLiveData<PaymentModel> payment = new MutableLiveData<>();
+    public MutableLiveData<PaymentModel> payment = new MutableLiveData<>();
      public  MutableLiveData<PointsModel> points = new MutableLiveData<>();
     MutableLiveData<CoponModel> copon = new MutableLiveData<>();
 
@@ -50,7 +50,7 @@ public class SendOrderViewModel extends ViewModel {
 
     }
 
-    void getBanks() {
+   public void getBanks() {
 
         RetrofitClient.getApiInterface().getBanks().enqueue(new Callback<BanksModel>() {
             @Override
@@ -89,7 +89,7 @@ public class SendOrderViewModel extends ViewModel {
 
     }
 
-    void getPayment() {
+  public  void getPayment() {
 
         RetrofitClient.getApiInterface().getPayment().enqueue(new Callback<PaymentModel>() {
             @Override
@@ -98,6 +98,7 @@ public class SendOrderViewModel extends ViewModel {
                     payment.setValue(response.body());
                 } else {
                     payment.setValue(null);
+                    Log.e("payment","pay error");
 
                 }
             }
@@ -105,7 +106,7 @@ public class SendOrderViewModel extends ViewModel {
             @Override
             public void onFailure(Call<PaymentModel> call, Throwable t) {
                 payment.setValue(null);
-
+                Log.e("payment",t.getLocalizedMessage());
             }
         });
 

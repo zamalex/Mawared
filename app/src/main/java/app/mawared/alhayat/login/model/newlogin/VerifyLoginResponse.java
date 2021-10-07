@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class VerifyLoginResponse{
 
-	@SerializedName("access_token")
-	private String accessToken;
 
-	@SerializedName("new_user")
-	private boolean newUser;
+
+	@SerializedName("data")
+	private Data data;
+
+	@SerializedName("status")
+	private int status;
 
 	@SerializedName("success")
 	private boolean success;
@@ -16,19 +18,7 @@ public class VerifyLoginResponse{
 	@SerializedName("message")
 	private String message;
 
-	@SerializedName("user")
-	private User user;
 
-	@SerializedName("status")
-	private int status;
-
-	public String getAccessToken(){
-		return accessToken;
-	}
-
-	public boolean isNewUser(){
-		return newUser;
-	}
 
 	public boolean isSuccess(){
 		return success;
@@ -38,11 +28,47 @@ public class VerifyLoginResponse{
 		return message;
 	}
 
+	public boolean isNewUser(){
+		return data.newUser;
+	}
+
+	public String getAccessToken(){
+		return data.accessToken;
+	}
 	public User getUser(){
-		return user;
+		return data.user;
+	}
+
+
+	public Data getData() {
+		return data;
 	}
 
 	public int getStatus(){
 		return status;
+	}
+
+	class Data{
+		@SerializedName("access_token")
+		private String accessToken;
+
+		@SerializedName("new_user")
+		private boolean newUser;
+
+
+
+		@SerializedName("user")
+		private User user;
+
+		public String getAccessToken(){
+			return accessToken;
+		}
+
+		public boolean isNewUser(){
+			return newUser;
+		}
+		public User getUser(){
+			return user;
+		}
 	}
 }

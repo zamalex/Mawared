@@ -3,6 +3,8 @@ package app.mawared.alhayat.support.chat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.JsonObject;
+
 import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
 import app.mawared.alhayat.support.chat.model.received.ReceivedChat;
@@ -14,8 +16,8 @@ public class ChatViewModel extends ViewModel {
    public MutableLiveData<SendMsgModel> sendMsgModelMutableLiveData = new MutableLiveData<>();
     MutableLiveData<ReceivedChat> receivedChatMutableLiveData = new MutableLiveData<>();
 
-   public void sendNsg(String msg, String id ,String order,String title,String token){
-        RetrofitClient.getApiInterface().sendMessage(msg,id,order,title,token).enqueue(new Callback<SendMsgModel>() {
+   public void sendNsg(JsonObject body, String token){
+        RetrofitClient.getApiInterface().sendMessage(body,token).enqueue(new Callback<SendMsgModel>() {
             @Override
             public void onResponse(Call<SendMsgModel> call, Response<SendMsgModel> response) {
                 if (response.isSuccessful()){

@@ -158,9 +158,28 @@
                         android:fontFamily="@font/urwbold"
                         android:textColor="#0D2142"
                         android:textSize="20sp"
+                        android:text=""
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/product_img" />
+
+                    <TextView
+                        android:id="@+id/product_offer_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="24dp"
+                        android:fontFamily="@font/urwbold"
+                        android:textColor="#D50000"
+                        android:textSize="20sp"
+                        android:text=""
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/product_price" />
 
                     <ImageView
                         android:id="@+id/product_img"
@@ -193,7 +212,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_price"
+                        app:layout_constraintTop_toBottomOf="@+id/product_offer_price"
                         app:layout_constraintVertical_bias="0.0"
 
                         />
@@ -259,17 +278,38 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
-        android:text="اذهب الى سلة مشترياتك"
-        android:fontFamily="@font/urosemi"
-        android:textColor="@color/white"
         android:background="@drawable/next_radius"
+        android:fontFamily="@font/urosemi"
+        android:text="اذهب الى سلة مشترياتك"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout13"
         app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/send_not"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="8dp"
+        android:text="المنتج غير متوفر ارسال تنبيه عند توفره"
+        android:fontFamily="@font/urosemi"
+        android:textColor="@color/white"
+        android:background="@drawable/next_radius"
+        app:layout_constraintBottom_toTopOf="@+id/go_cart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout13" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

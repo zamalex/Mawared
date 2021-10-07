@@ -1,6 +1,7 @@
 package app.mawared.alhayat.home;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,12 +60,23 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
 
         holder.price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
 
+        Double pp = Double.parseDouble(product.getOld_price().toString());
+        holder.offer_price.setPaintFlags(holder.offer_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+        if (pp!=0)
+            holder.offer_price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(pp) + " " + "ر.س");
+
+
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
 
         holder.total_qty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!product.getAvailable()) {
+                    Toast.makeText(context, "المنتج غير متوفر حاليا", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 listener.setAmount(position,products.get(position));
             }
         });
@@ -73,6 +86,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!products.get(position).getAvailable()) {
+                    Toast.makeText(context, "المنتج غير متوفر حاليا", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 products.get(position).qty++;
                 notifyDataSetChanged();
 
@@ -83,6 +100,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!products.get(position).getAvailable()) {
+                    Toast.makeText(context, "المنتج غير متوفر حاليا", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 products.get(position).qty++;
                 holder.total_qty.setText(products.get(position).qty + "");
                 notifyDataSetChanged();
@@ -184,7 +205,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        TextView name, price, total_qty, offer_txt;
+        TextView name, price, total_qty, offer_txt,offer_price;
         ImageView img, offer_img;
         ImageButton add, increase, decrease;
         LinearLayout quantityLayout;
@@ -202,6 +223,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
             increase = itemView.findViewById(R.id.increase);
             decrease = itemView.findViewById(R.id.decrease);
             offer_img = itemView.findViewById(R.id.off_img);
+            offer_price = itemView.findViewById(R.id.product_offer_price);
             offer_txt = itemView.findViewById(R.id.txt_offer);
         }
     }

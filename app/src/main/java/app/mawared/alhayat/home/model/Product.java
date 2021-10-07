@@ -21,6 +21,8 @@ public class Product {
     private String mOfferPrice;
     @SerializedName("price")
     private String mPrice;
+    @SerializedName("old_price")
+    private String old_price;
     @SerializedName("quantity")
     private Long mQuantity;
 
@@ -79,6 +81,10 @@ public class Product {
 
     public void setOffer(String offer) {
         mOffer = offer;
+    }
+
+    public String getOld_price() {
+        return old_price;
     }
 
     public String getOfferPrice() {

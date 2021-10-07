@@ -516,9 +516,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
 
                         if (miniModel != null) {
-                            if (miniModel.getStatus() == 200) {
+                            if (miniModel.getSuccess()) {
 
-                                Paper.book().write("min", miniModel.getData().getAmount());
+                                Paper.book().write("min", miniModel);
                             }
                         }
 
@@ -545,7 +545,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                             ((MainActivity) getActivity()).showDialog(false);
                             if (homeProductModel != null) {
                                 if (homeProductModel.getStatus() != null) {
-                                    if (homeProductModel.getStatus() == 200)
+                                    if (homeProductModel.getSuccess())
                                         adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
                                 }
                             } else
@@ -586,7 +586,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
 
                         if (checkCardModel != null) {
-                            if (checkCardModel.getStatus() == 200) {
+                            if (checkCardModel.getSuccess()) {
                                 if (checkCardModel.getData().getCartId() != null) {
                                     Paper.book().write("cid", checkCardModel.getData().getCartId().toString());
                                     SharedPreferences.Editor editor = pref.edit();
@@ -676,7 +676,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                     public void onChanged(CardModel cardModel) {
                         if (isAdded()) {
                             if (cardModel != null) {
-                                if (cardModel.getStatus() == 200) {
+                                if (cardModel.getSuccess()) {
                                     card_size.setValue(cardModel.getData().getItemsCount().intValue());
                                     if (cardModel.getData().getItemsCount() > 0) {
                                         card_linear.setVisibility(View.VISIBLE);
@@ -781,7 +781,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
             @Override
             public void onChanged(AddressNewResponse addressModel) {
 
-                if (addressModel.getStatus() == 200) {
+                if (addressModel.isSuccess()) {
                     addressAdapter.setAddresses((ArrayList<DataItem>) addressModel.getData().getData());
                 } else if (addressModel.getStatus() == 401) {
                     Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();

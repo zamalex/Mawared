@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bottom_sheet_bg"
     android:orientation="vertical"
     android:padding="8dp">
@@ -33,50 +34,12 @@
     </LinearLayout>
 
 
-    <Button
-        android:id="@+id/p_visa"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/iicon"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/urwbold"
-        android:gravity="right"
-        android:padding="10dp"
-        android:text="بطاقة مدى / visa"
-        android:textColor="#0D2142"
-        android:textSize="18sp" />
-
-    <Button
-        android:id="@+id/p_bank"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/bicon"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/urwbold"
-        android:gravity="right"
-        android:padding="10dp"
-        android:text="تحويل بنكي"
-        android:textColor="#0D2142"
-        android:textSize="18sp" />
-    <Button
-        android:id="@+id/p_deliver"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/radius_et"
-        android:drawableRight="@drawable/cicon"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/urwbold"
-        android:gravity="right"
-
-        android:padding="10dp"
-        android:text="الدفع عن الإستلام"
-        android:textColor="#0D2142"
-        android:textSize="18sp" />
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/payment_rv"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:listitem="@layout/item_payment"
+      />
 
 
 

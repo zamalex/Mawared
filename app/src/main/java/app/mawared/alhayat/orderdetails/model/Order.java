@@ -39,6 +39,9 @@ public class Order implements Parcelable
     @SerializedName("can_cancel")
     @Expose
     public boolean can_cancel;
+    @SerializedName("payment_status")
+    @Expose
+    public boolean payment_status;
 
     @SerializedName("statusLabel")
     @Expose
@@ -58,6 +61,15 @@ public class Order implements Parcelable
     @SerializedName("pricing")
     @Expose
     private Pricing pricing;
+
+    @SerializedName("driver")
+    @Expose
+    private Driver driver;
+
+    public Driver getDriver() {
+        return driver;
+    }
+
     public final static Creator<Order> CREATOR = new Creator<Order>() {
 
 
@@ -216,6 +228,32 @@ public class Order implements Parcelable
 
     public int describeContents() {
         return  0;
+    }
+
+   public class Driver{
+        @SerializedName("id")
+        @Expose
+        private int id;
+
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+       @SerializedName("mobile")
+        @Expose
+        private String mobile;
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getMobile() {
+            return mobile;
+        }
     }
 
 }

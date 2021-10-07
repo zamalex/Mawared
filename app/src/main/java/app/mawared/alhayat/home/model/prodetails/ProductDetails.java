@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class ProductDetails {
 
-    @SerializedName("product")
+    @SerializedName("data")
     private Product mProduct;
     @SerializedName("status")
     private Long mStatus;

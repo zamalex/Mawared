@@ -20,8 +20,11 @@ import android.widget.Toast;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.helpers.FragmentStack;
+import app.mawared.alhayat.home.ProductDetailsFragment;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.notification.model.Notification;
+import app.mawared.alhayat.notification.newmodel.ListItem;
+import app.mawared.alhayat.notification.newmodel.NewNotifications;
 
 
 public class NotificationFragments extends Fragment {
@@ -63,19 +66,19 @@ public class NotificationFragments extends Fragment {
 
         ((MainActivity)context).showDialog(true);
 
-        notificationViewModel.getAllNotification(pageNumber).observe(getActivity(), new Observer<Notification>() {
+        notificationViewModel.getAllNotification(pageNumber).observe(getActivity(), new Observer<NewNotifications>() {
             @Override
-            public void onChanged(Notification notification) {
+            public void onChanged(NewNotifications notification) {
                 ((MainActivity)context).showDialog(false);
 
                 if (notification!=null){
-                    if (notification.getStatus()==401){
+                   /* if (notification.getStatus()==401){
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
 
-                    }
-                    notificationsAdapter = new NotificationsAdapter(notification.getNotifications_messages());
+                    }*/
+                    notificationsAdapter = new NotificationsAdapter(notification.getData().getList(),NotificationFragments.this);
                     rv_notifications.setAdapter(notificationsAdapter);
                 }
 
@@ -91,5 +94,22 @@ public class NotificationFragments extends Fragment {
         });
 
         return view;
+    }
+
+    void goToProduct(ListItem notification){
+        if (notification.getOptions()!=null){
+            if (notification.getOptions().getType()!=null){
+                if (notification.getOptions().getType().equals("product")){
+                    Bundle bundle = new Bundle();
+                    bundle.putString("product",notification.getOptions().getId()+"");
+                    bundle.putString("city","1");
+                    ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+                    productDetailsFragment.setArguments(bundle);
+
+                    ((MainActivity)context).fragmentStack.push(productDetailsFragment);
+
+                }
+            }
+        }
     }
 }

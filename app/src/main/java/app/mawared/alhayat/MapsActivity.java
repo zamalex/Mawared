@@ -55,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double lat=0;
     double lng = 0;
     Spinner  map_spinner;
-    EditText rec_phone, rec_name;
+    EditText rec_phone, rec_name,address_name;
 
     LatLng preLoc;
     int id;
@@ -72,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        map_spinner = findViewById(R.id.map_spinner);
         rec_phone = findViewById(R.id.editText2);
         rec_name = findViewById(R.id.editText3);
+        address_name = findViewById(R.id.address_name);
 
         Bundle extras = getIntent().getExtras();
 
@@ -138,6 +139,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             return;
                         }
                     }
+                    if (address_name.getText().toString().isEmpty()){
+                        Toast.makeText(MapsActivity.this, "ادخل اسم العنوان", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
 
                     //  Toast.makeText(getContext(), types_e[map_spinner.getSelectedItemPosition()], Toast.LENGTH_SHORT).show();
 

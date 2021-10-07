@@ -56,8 +56,8 @@ public class OneSignalNotificationReceivedHandler implements OneSignal.Notificat
                         if (notifyCountModel != null) {
                             if (notifyCountModel.getSuccess()) {
                                 if (context != null) {
-                                    if (notifyCountModel.getData().getUnread() > 0 && context != null)
-                                        ((MainActivity) context).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                                    if (notifyCountModel.getCount() > 0 && context != null)
+                                        ((MainActivity) context).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getCount()+""));
                                     else {
                                         if (context != null)
                                             ((MainActivity) context).navigationView.removeBadge(R.id.support);

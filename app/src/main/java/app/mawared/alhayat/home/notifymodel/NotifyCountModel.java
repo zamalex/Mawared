@@ -1,40 +1,45 @@
 
 package app.mawared.alhayat.home.notifymodel;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class NotifyCountModel {
 
-    @SerializedName("data")
-    private Data mData;
     @SerializedName("status")
-    private Long mStatus;
+    @Expose
+    private Integer status;
     @SerializedName("success")
-    private Boolean mSuccess;
+    @Expose
+    private Boolean success;
+    @SerializedName("data")
+    @Expose
+    private Data data;
 
-    public Data getData() {
-        return mData;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setData(Data data) {
-        mData = data;
-    }
-
-    public Long getStatus() {
-        return mStatus;
-    }
-
-    public void setStatus(Long status) {
-        mStatus = status;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Boolean getSuccess() {
-        return mSuccess;
+        return success;
     }
 
     public void setSuccess(Boolean success) {
-        mSuccess = success;
+        this.success = success;
     }
 
+    public int getCount() {
+        return data.unread;
+    }
+
+    class Data{
+        @SerializedName("unread")
+        @Expose
+        private int unread;
+    }
 }

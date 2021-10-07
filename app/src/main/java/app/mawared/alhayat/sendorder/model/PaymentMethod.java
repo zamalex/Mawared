@@ -13,6 +13,9 @@ public class PaymentMethod {
     @SerializedName("name")
     private String mName;
 
+    @SerializedName("icon")
+    private String icon;
+
     public String getGateway() {
         return mGateway;
     }
@@ -31,6 +34,14 @@ public class PaymentMethod {
 
     public String getName() {
         return mName;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public void setName(String name) {

@@ -226,8 +226,8 @@ public class OrderFragment extends Fragment implements OrderClickListener {
             public void onChanged(NotifyCountModel notifyCountModel) {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getUnread() > 0 && getActivity() != null)
-                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        if (notifyCountModel.getCount() > 0 && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getCount()+""));
                         else {
                             if (getActivity()!=null)
                             ((MainActivity) getActivity()).navigationView.removeBadge(R.id.support);

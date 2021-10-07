@@ -2,10 +2,12 @@ package app.mawared.alhayat.sendorder.newaddress;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class AddressNewResponse{
 
 	@SerializedName("data")
-	private Data data;
+	private ParentData data;
 
 	@SerializedName("success")
 	private boolean success;
@@ -16,11 +18,8 @@ public class AddressNewResponse{
 	@SerializedName("status")
 	private Long status;
 
-	public void setData(Data data){
-		this.data = data;
-	}
 
-	public Data getData(){
+	public ParentData getData(){
 		return data;
 	}
 
@@ -50,6 +49,15 @@ public class AddressNewResponse{
 
 	public AddressNewResponse(Long mStatus) {
 		this.status = mStatus;
+	}
+
+	public class ParentData{
+		@SerializedName("data")
+		private List<DataItem> data;
+
+		public List<DataItem> getData() {
+			return data;
+		}
 	}
 
 }

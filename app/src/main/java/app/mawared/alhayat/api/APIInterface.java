@@ -16,6 +16,7 @@ import app.mawared.alhayat.home.model.HomeProductModel;
 
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
+import app.mawared.alhayat.home.model.NotifyAvailable;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
 import app.mawared.alhayat.home.model.checkrate.CheckRate;
 import app.mawared.alhayat.home.model.prodetails.ProductDetails;
@@ -27,6 +28,7 @@ import app.mawared.alhayat.login.model.newlogin.OtpResponse;
 import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.mycart.model.CardModel;
 import app.mawared.alhayat.notification.model.Notification;
+import app.mawared.alhayat.notification.newmodel.NewNotifications;
 import app.mawared.alhayat.orderdetails.model.OrderDetails;
 import app.mawared.alhayat.orders.model.AllOrder;
 import app.mawared.alhayat.orders.newmodel.MyOrdersResponse;
@@ -47,6 +49,7 @@ import app.mawared.alhayat.sendorder.newaddress.AddressNewResponse;
 import app.mawared.alhayat.support.chat.model.SendMsgModel;
 import app.mawared.alhayat.support.chat.model.received.ReceivedChat;
 import app.mawared.alhayat.support.chatlist.model.ChatList;
+import app.mawared.alhayat.support.ordermodel.ChatOrdersModel;
 import app.mawared.alhayat.update.model.SendCodeModel;
 import app.mawared.alhayat.update.model.UpdateModel;
 import okhttp3.RequestBody;
@@ -107,6 +110,13 @@ Call<HomeSliderModel> getHomeSlider();
     Call<ResponseBody> bindUserCard(@Path("cart_id") String cart_id);
 
 
+     @POST("orders/{id}/update-payment-method")
+     Call<ResponseBody> updatePayment(@Path("id") String id,@Body JsonObject jsonObject);
+
+     @POST("orders/{id}/update-payment-method")
+     Call<VisaModel> updatePaymentVisa(@Path("id") String id,@Body JsonObject jsonObject);
+
+
     //add new address
     @POST("addresses/store")
     Call<ResponseBody> addNewAddress(@Body JsonObject jsonObject, @Header("Authorization") String topen);
@@ -141,10 +151,10 @@ Call<HomeSliderModel> getHomeSlider();
     Call<OrderDetails> getOrderDetails(@Path("orderId") int id, @Header("Authorization") String token);
 
     @GET("notifications")
-    Call<Notification> getNotification(@Query("page") int pageNumber, @Header("Authorization") String token);
+    Call<NewNotifications> getNotification(@Query("page") int pageNumber, @Header("Authorization") String token);
 
-    @POST("contact-us")
-    Call<ContactUsResponse> getFromContact(@Query("title") String messageTitle, @Query("info") String messagesContent, @Query("mobile") String mobile, @Query("username") String username, @Header("Authorization") String token);
+    @POST("contact-us/send")
+    Call<ContactUsResponse> getFromContact(@Body JsonObject body, @Header("Authorization") String token);
 
     @POST("register/check-mobile")
     Call<LoginRegistration> checkMobile(@Body JsonObject mobileNumber);
@@ -170,6 +180,11 @@ Call<HomeSliderModel> getHomeSlider();
     Call<AddressNewResponse> getaddresses(@Header("Authorization") String topen);
 
 
+    //orders without chats
+    @GET("messages/get-orders-without-chats")
+    Call<ChatOrdersModel> getOrdersWithoutChats();
+
+
    /* @GET("settings/banks-list")
     Call<BanksModel> getBanks();*/
 
@@ -193,7 +208,7 @@ Call<HomeSliderModel> getHomeSlider();
    /* @POST("update-email")
     Call<UpdateModel> uodateEmail(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 */
-    @POST("mobile-notifications/subscription")
+    @POST("notifications/subscribe")
     Call<ResponseBody> sendNotificationToken(@Body JsonObject jsonObject, @Header("Authorization") String topen);
 
     /*@POST("update-name")
@@ -256,7 +271,7 @@ Call<HomeSliderModel> getHomeSlider();
 
 
     @POST("messages/send")
-    Call<SendMsgModel> sendMessage(@Query("message") String message, @Query("conversation_id") String conversation_id, @Query("order_id") String order_id, @Query("title") String title, @Header("Authorization") String token);
+    Call<SendMsgModel> sendMessage(@Body JsonObject body, @Header("Authorization") String token);
 
 
     @GET("messages")
@@ -270,8 +285,15 @@ Call<HomeSliderModel> getHomeSlider();
     @POST("payment/return")
     Call<ResponseBody> tstPayment();
 
-    @POST("orders/rate")
-    Call<ResponseBody> rateOrder(@Header("Authorization") String token, @Body JsonObject body);
+    @POST("orders/{order}/rate")
+    Call<ResponseBody> rateOrder(@Header("Authorization") String token, @Body JsonObject body,@Path("order") String id);
+
+
+  @POST("messages/rate")
+    Call<ResponseBody> rateChat(@Body JsonObject body);
+
+    @POST("products/{product}/notify-me-if-available")
+    Call<NotifyAvailable> notifyIfAvailable(@Header("Authorization") String token, @Path("product") String id);
 
 
     @GET("carts/{user_id}/user-cart")
@@ -280,7 +302,7 @@ Call<HomeSliderModel> getHomeSlider();
     @GET("carts/{card_id}/items")
     Call<CardModel> getCard(@Path("card_id") String card_id);
 
-    @GET("payment/payment-methods")
+    @GET("settings/payment-methods")
     Call<PaymentModel> getPayment();
 
     @GET("messages/count-unread")

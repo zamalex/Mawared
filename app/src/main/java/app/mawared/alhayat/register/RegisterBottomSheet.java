@@ -157,7 +157,7 @@ public class RegisterBottomSheet extends BottomSheetDialogFragment {
                                 if (responseBody.isSuccess()){
 
                                     Toast.makeText(getActivity(), responseBody.getMessage(), Toast.LENGTH_SHORT).show();
-
+                                        loginResponse.getUser().setEmail(et_emailAddress.getText().toString());
                                         Paper.book().write("login",loginResponse);
                                         Paper.book().write("token", loginResponse.getAccessToken());
 

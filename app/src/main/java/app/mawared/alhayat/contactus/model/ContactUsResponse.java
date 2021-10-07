@@ -8,7 +8,7 @@ public class ContactUsResponse {
 
     @Expose
     @SerializedName("message")
-    private Message message;
+    private String message;
     @Expose
     @SerializedName("success")
     private boolean success;
@@ -16,11 +16,11 @@ public class ContactUsResponse {
     @SerializedName("status")
     private int status;
 
-    public Message getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 

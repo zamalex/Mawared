@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import static app.mawared.alhayat.api.Constants.BASE_URL;
 
 
-public class BlankFragment extends Fragment {
+public class UpdateVisaFragment extends Fragment {
 
     View v;
     WebView webView;
@@ -58,11 +58,11 @@ public class BlankFragment extends Fragment {
             ((MainActivity) activity).showDialog(false);
 
 
-         alertDialog = new AlertDialog.Builder(activity)
+        alertDialog = new AlertDialog.Builder(activity)
 //set title
 //set message
-                 .setView(R.layout.loadind_dialog)
-               // .setMessage("برجاء الانتظار وسيتم تحويلك تلقائيا")
+                .setView(R.layout.loadind_dialog)
+                // .setMessage("برجاء الانتظار وسيتم تحويلك تلقائيا")
 //set positive button
                 .setCancelable(false)
                 .create();
@@ -96,20 +96,18 @@ public class BlankFragment extends Fragment {
 
                     if (status == 200 && success) {
 
-                   //     Toast.makeText(activity, "status is success " + status, Toast.LENGTH_SHORT).show();
 
-                        ((MainActivity)activity).setPaymentSuccess(true);
+                       // ((MainActivity)activity).setPaymentSuccess(true);
 
-                        ((MainActivity)activity).fragmentStack.replace(new OrderDoneFragment());
+                       // ((MainActivity)activity).fragmentStack.replace(new OrderDoneFragment());
 
 
 
                     } else {
-                     //   Toast.makeText(activity, "status is failed " + status, Toast.LENGTH_SHORT).show();
-                        ((MainActivity)activity).setPaymentSuccess(false);
+                       // ((MainActivity)activity).setPaymentSuccess(false);
 
 
-                        ((MainActivity)activity).fragmentStack.pop();
+                       // ((MainActivity)activity).fragmentStack.pop();
 
                     }
 
@@ -128,14 +126,14 @@ public class BlankFragment extends Fragment {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
 
-               // Log.d("webb ", "shouldOverrideUrlLoading " + request.getUrl().toString());
+                // Log.d("webb ", "shouldOverrideUrlLoading " + request.getUrl().toString());
 
                 return super.shouldOverrideUrlLoading(view, request);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-               // Log.d("webb ", "shouldOverrideUrlLoading " + url);
+                // Log.d("webb ", "shouldOverrideUrlLoading " + url);
 
                 return super.shouldOverrideUrlLoading(view, url);
             }
@@ -145,10 +143,10 @@ public class BlankFragment extends Fragment {
                 super.onPageStarted(view, url, favicon);
 
                 if (url.contains("handle-payment-response"))
-                webView.setVisibility(View.INVISIBLE);
+                    webView.setVisibility(View.INVISIBLE);
                 Log.d("webb ", "onPageStarted " + url);
                 if (url.equals("http://www.mawared.badee.com.sa/api/v1/payment/return")||url.contains(".payfort.com/FortAPI/general/backToMerchant")) {
-                  //  Toast.makeText(activity, "please wait", Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(activity, "please wait", Toast.LENGTH_SHORT).show();
                     showDialog();
                     //startActivity(new Intent(activity,MainActivity.class));
                 }
@@ -161,7 +159,9 @@ public class BlankFragment extends Fragment {
                 else if (url.equals(BASE_URL+"payments/status/success")){
                     ((MainActivity)activity).setPaymentSuccess(true);
 
-                    ((MainActivity)activity).fragmentStack.replace(new OrderDoneFragment());
+                    ((MainActivity) activity).fragmentStack.pop();
+                    ((MainActivity) activity).fragmentStack.pop();
+
                 }
 
             }
@@ -170,7 +170,7 @@ public class BlankFragment extends Fragment {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
 
-               // Log.d("webb ", "onReceivedError " + error.getDescription() + error.getErrorCode());
+                // Log.d("webb ", "onReceivedError " + error.getDescription() + error.getErrorCode());
 
             }
 

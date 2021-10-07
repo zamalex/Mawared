@@ -10,6 +10,7 @@ import app.mawared.alhayat.home.model.CitiesModel;
 import app.mawared.alhayat.home.model.HomeProductModel;
 import app.mawared.alhayat.home.model.HomeSliderModel;
 import app.mawared.alhayat.home.model.MiniModel;
+import app.mawared.alhayat.home.model.NotifyAvailable;
 import app.mawared.alhayat.home.model.checkrate.CheckRate;
 import app.mawared.alhayat.home.notifymodel.NotifyCountModel;
 import app.mawared.alhayat.home.orderscount.OrdersCountModel;
@@ -22,6 +23,7 @@ import retrofit2.Response;
 public class HomeViewModel extends ViewModel {
     public MutableLiveData<NotifyCountModel> notifyCount = new MutableLiveData<>();
     public MutableLiveData<OrdersCountModel> ordersCount = new MutableLiveData<>();
+    public MutableLiveData<NotifyAvailable> notifyAvailable = new MutableLiveData<>();
 
 
     MutableLiveData<HomeProductModel> result = new MutableLiveData<>();
@@ -56,15 +58,35 @@ public class HomeViewModel extends ViewModel {
         RetrofitClient.getApiInterface().getNotifyCount(token).enqueue(new Callback<NotifyCountModel>() {
             @Override
             public void onResponse(Call<NotifyCountModel> call, Response<NotifyCountModel> response) {
+                Log.d("rere22", response.body().getSuccess().toString());
 
                 notifyCount.setValue(response.body());
-                Log.d("rere2", "done");
             }
 
             @Override
             public void onFailure(Call<NotifyCountModel> call, Throwable t) {
-                Log.d("rere2", t.getMessage());
+                Log.d("rere22", t.getMessage());
                 notifyCount.setValue(null);
+
+
+            }
+        });
+    }
+
+    public void notifyAvailable(String token,String id) {
+        RetrofitClient.getApiInterface().notifyIfAvailable(token,id).enqueue(new Callback<NotifyAvailable>() {
+            @Override
+            public void onResponse(Call<NotifyAvailable> call, Response<NotifyAvailable> response) {
+                if (response.isSuccessful())
+                notifyAvailable.setValue(response.body());
+                else
+                    notifyAvailable.setValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<NotifyAvailable> call, Throwable t) {
+                Log.d("rere22", t.getMessage());
+                notifyAvailable.setValue(null);
 
 
             }

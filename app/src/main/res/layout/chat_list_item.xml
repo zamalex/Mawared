@@ -64,7 +64,7 @@
         android:ellipsize="end"
         android:gravity="right"
         android:maxLines="1"
-        android:text="اخر رسالة"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/order_no"
         app:layout_constraintEnd_toStartOf="@+id/order_no"
         app:layout_constraintHorizontal_bias="0.0"

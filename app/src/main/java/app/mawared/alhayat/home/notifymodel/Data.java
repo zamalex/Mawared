@@ -1,20 +1,33 @@
 
 package app.mawared.alhayat.home.notifymodel;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class Data {
+    @SerializedName("has_new_updates")
+    @Expose
+    private Boolean hasNewUpdates;
+    @SerializedName("count")
+    @Expose
+    private Integer count;
 
-    @SerializedName("unread")
-    private Long mUnread;
-
-    public Long getUnread() {
-        return mUnread;
+    public Boolean getHasNewUpdates() {
+        return hasNewUpdates;
     }
 
-    public void setUnread(Long unread) {
-        mUnread = unread;
+    public void setHasNewUpdates(Boolean hasNewUpdates) {
+        this.hasNewUpdates = hasNewUpdates;
     }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
 
 }

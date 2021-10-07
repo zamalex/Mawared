@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class BanksModel {
 
-    @SerializedName("banks")
+    @SerializedName("data")
     private List<Bank> mBanks;
     @SerializedName("status")
     private Long mStatus;

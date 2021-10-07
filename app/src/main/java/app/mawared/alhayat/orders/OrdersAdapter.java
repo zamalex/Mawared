@@ -62,9 +62,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ordersHold
             } else
                 holder.tv_orderStatus.setText(allOrderModel.getStatus());*/
             holder.tv_orderDate.setText("بتاريخ: " + allOrderModel.getCreatedAt());
-             if (allOrderModel.getStatus()==0||allOrderModel.getStatus()==1||allOrderModel.getStatus()==3||allOrderModel.getStatus()==4) {
+             if (allOrderModel.getStatus()==0||allOrderModel.getStatus()==1||allOrderModel.getStatus()==3||allOrderModel.getStatus()==4||allOrderModel.getStatus()==8) {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.light_green_bg));
-            } else if (allOrderModel.getStatus()==5||allOrderModel.getStatus()==6||allOrderModel.getStatus()==8) {
+            } else if (allOrderModel.getStatus()==5||allOrderModel.getStatus()==6||allOrderModel.getStatus()==9) {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.malghi_bg));
             } else {
                 holder.cl_orderStatus.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.order_states_bg));

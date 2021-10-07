@@ -79,7 +79,7 @@ public class EmailFragment extends Fragment {
                 ((MainActivity)getActivity()).showDialog(false);
 
                 if (loginResponse != null) {
-                    if (loginResponse.getStatus() == 200) {
+                    if (loginResponse.getSuccess()) {
                         Toast.makeText(getActivity(), "تم تحديث البريد الالكتروني", Toast.LENGTH_SHORT).show();
                         mLoginResponse.getUser().setEmail(loginResponse.getUser().getEmail());
 

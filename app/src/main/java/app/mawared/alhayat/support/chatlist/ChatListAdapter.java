@@ -48,6 +48,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
 
         holder.order_no.setText(chats.get(position).getCreatedAt());
 
+        if (chats.get(position).lastMessage!=null)
         holder.last_msg.setText(chats.get(position).lastMessage.message);
 
       //  holder.unread_count.setText(chats.get(position).unread_count.toString());

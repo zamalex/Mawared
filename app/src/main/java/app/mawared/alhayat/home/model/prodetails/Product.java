@@ -25,6 +25,8 @@ public class Product {
     private Double mOfferPrice;
     @SerializedName("price")
     private Double mPrice;
+    @SerializedName("old_price")
+    private Double old_price;
     @SerializedName("quantity")
     private Long mQuantity;
     @SerializedName("sku")
@@ -138,4 +140,7 @@ public class Product {
         mVat = vat;
     }
 
+    public Double getOld_price() {
+        return old_price;
+    }
 }

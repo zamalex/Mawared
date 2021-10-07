@@ -14,11 +14,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.contactus.model.ContactUsResponse;
 import app.mawared.alhayat.helpers.FragmentStack;
 import app.mawared.alhayat.login.model.LoginResponse;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import io.paperdb.Paper;
 
 
@@ -31,7 +34,7 @@ public class ContactUsFragment extends Fragment {
     ConstraintLayout btn_sendMsg;
     ImageView iv_backCBtnFromContactUs;
     FragmentStack fragmentStack;
-    LoginResponse loginResponse = Paper.book().read("login", new LoginResponse());
+    VerifyLoginResponse loginResponse = Paper.book().read("login", null);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,24 +50,30 @@ public class ContactUsFragment extends Fragment {
         contactUsViewModel = new ViewModelProvider(this).get(ContactUsViewModel.class);
 
         if (loginResponse != null) {
-            if (loginResponse.getSuccess() != null)
-                if (loginResponse.getSuccess())
-                    phone_et.setText(loginResponse.getUser().getMobile());
+
+                if (loginResponse.isSuccess())
+                    phone_et.setText(loginResponse.getUser().getPhone());
         }
         btn_sendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!et_MessageTitle.getText().toString().isEmpty() && !et_MessageContent.getText().toString().isEmpty() && !phone_et.getText().toString().isEmpty()) {
                     ((MainActivity) getActivity()).showDialog(true);
-                    contactUsViewModel.contactUs(et_MessageTitle.getText().toString(), et_MessageContent.getText().toString(), phone_et.getText().toString(),et_MessageTitle.getText().toString())
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("title",et_MessageTitle.getText().toString());
+                    jsonObject.addProperty("info",et_MessageContent.getText().toString());
+                    jsonObject.addProperty("username",et_MessageTitle.getText().toString());
+                    jsonObject.addProperty("email","");
+                    jsonObject.addProperty("mobile",phone_et.getText().toString());
+                    contactUsViewModel.contactUs(jsonObject,"")
                             .observe(getActivity(), new Observer<ContactUsResponse>() {
                                 @Override
                                 public void onChanged(ContactUsResponse contactUsResponse) {
                                     ((MainActivity) getActivity()).showDialog(false);
 
                                     if (contactUsResponse != null) {
-                                        if (contactUsResponse.getStatus() == 200) {
-                                            Toast.makeText(getActivity(), contactUsResponse.getMessage().getDescription(), Toast.LENGTH_LONG).show();
+                                        if (contactUsResponse.getSuccess()) {
+                                            Toast.makeText(getActivity(), contactUsResponse.getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     } else
                                         Toast.makeText(getActivity(), "حدث خطأ", Toast.LENGTH_LONG).show();

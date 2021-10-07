@@ -20,6 +20,8 @@ public class Chat implements Serializable {
     private String mStatus;
     @SerializedName("title")
     private String mTitle;
+    @SerializedName("hide_rate")
+    private int hide_rate;
     @SerializedName("updated_at")
     private String mUpdatedAt;
     @SerializedName("user_one")
@@ -27,7 +29,7 @@ public class Chat implements Serializable {
     @SerializedName("user_two")
     private String mUserTwo;
     @SerializedName("last_message")
-    public LastMessage lastMessage;
+    public LastMessage lastMessage = new LastMessage();
 
     @SerializedName("unread_count")
     public Long unread_count=0l;
@@ -58,6 +60,10 @@ public class Chat implements Serializable {
 
     public Object getOrderId() {
         return mOrderId;
+    }
+
+    public int getHide_rate() {
+        return hide_rate;
     }
 
     public void setOrderId(Object orderId) {
@@ -107,6 +113,6 @@ public class Chat implements Serializable {
 
     public class LastMessage implements Serializable{
         @SerializedName("message")
-        public String message;
+        public String message="";
     }
 }

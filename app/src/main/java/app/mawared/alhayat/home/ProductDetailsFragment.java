@@ -1,5 +1,6 @@
 package app.mawared.alhayat.home;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appsflyer.AFInAppEventParameterName;
 import com.appsflyer.AppsFlyerLib;
@@ -34,9 +36,11 @@ import java.util.Objects;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.api.RetrofitClient;
+import app.mawared.alhayat.home.model.NotifyAvailable;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
 import app.mawared.alhayat.home.model.prodetails.Product;
 import app.mawared.alhayat.home.model.prodetails.ProductDetails;
+import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.mycart.CartViewModel;
 import app.mawared.alhayat.mycart.MyCartFragment;
 import io.paperdb.Paper;
@@ -46,7 +50,7 @@ import retrofit2.Response;
 
 
 public class ProductDetailsFragment extends Fragment {
-    TextView name, price, total_qty, offer_txt;
+    TextView name, price, total_qty, offer_txt,product_offer_price;
     ImageView img, offer_img;
     ImageButton add, increase, decrease;
     LinearLayout quantityLayout;
@@ -55,20 +59,24 @@ public class ProductDetailsFragment extends Fragment {
     String product_id = null;
 
     Button go_cart;
+    Button send_not;
 
     Product product = null;
     CartViewModel cartViewModel;
+    HomeViewModel homeViewModel;
 
     String card_id = null;
     String city_id = null;
 
     LatLng latLng;
     String lat="",lng="";
+    VerifyLoginResponse verifyLoginResponse = Paper.book().read("login",null);
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         cartViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(CartViewModel.class);
+        homeViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(HomeViewModel.class);
 
         latLng = Paper.book().read("latlng",null);
         lat="";
@@ -78,10 +86,14 @@ public class ProductDetailsFragment extends Fragment {
             lat = latLng.latitude+"";
             lng = latLng.longitude+"";
         }
+        if (verifyLoginResponse==null){
+            send_not.setVisibility(View.GONE);
+        }
         itemView = inflater.inflate(R.layout.fragment_product_details, container, false);
         initView();
 
         go_cart = itemView.findViewById(R.id.go_cart);
+        send_not = itemView.findViewById(R.id.send_not);
 
         itemView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +106,24 @@ public class ProductDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) Objects.requireNonNull(getActivity())).fragmentStack.push(new MyCartFragment());
+            }
+        });
+
+        send_not.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (product_id!=null){
+                    homeViewModel.notifyAvailable("Bearer "+verifyLoginResponse.getAccessToken(),product_id);
+                }
+            }
+        });
+
+        homeViewModel.notifyAvailable.observe(getViewLifecycleOwner(), new Observer<NotifyAvailable>() {
+            @Override
+            public void onChanged(NotifyAvailable notifyAvailable) {
+                if (notifyAvailable!=null){
+                    Toast.makeText(getActivity(), notifyAvailable.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -149,8 +179,10 @@ public class ProductDetailsFragment extends Fragment {
                     product = response.body().getProduct();
 
                     if (product != null) {
-
+                        if (!product.getAvailable()&&verifyLoginResponse!=null)
+                            send_not.setVisibility(View.VISIBLE);
                         Double p = Double.parseDouble(product.getPrice().toString()) + (Double.parseDouble(product.getVat().toString()) / 100 * Double.parseDouble(product.getPrice().toString()));
+                        Double pp = Double.parseDouble(product.getOld_price().toString());
 /*
                         if (product.getInCartQuantity()!=null)
                             if (product.getInCartQuantity()==0)
@@ -158,8 +190,13 @@ public class ProductDetailsFragment extends Fragment {
 */
 
                         price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
+                        product_offer_price.setPaintFlags(product_offer_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                        if (product.getOld_price()!=0)
+                            product_offer_price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(pp) + " " + "ر.س");
                         name.setText(product.getTitle());
                         total_qty.setText(product.getInCartQuantity() + "");
+
 
 
                         if (product.getInCartQuantity() == 0) {
@@ -204,6 +241,10 @@ public class ProductDetailsFragment extends Fragment {
                         add.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if (!product.getAvailable()) {
+                                    Toast.makeText(getActivity(), "المنتج غير متوفر حاليا", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 product.setInCartQuantity(product.getInCartQuantity() + 1);
                                 total_qty.setText(product.getInCartQuantity() + "");
                                 add.setVisibility(View.GONE);
@@ -215,6 +256,10 @@ public class ProductDetailsFragment extends Fragment {
                         increase.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if (!product.getAvailable()) {
+                                    Toast.makeText(getActivity(), "المنتج غير متوفر حاليا", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 product.setInCartQuantity(product.getInCartQuantity() + 1);
                                 total_qty.setText(product.getInCartQuantity() + "");
 
@@ -228,7 +273,6 @@ public class ProductDetailsFragment extends Fragment {
                         decrease.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
                                 product.setInCartQuantity(product.getInCartQuantity() + -1);
 
                                 if (product.getInCartQuantity() != 0) {
@@ -261,6 +305,7 @@ public class ProductDetailsFragment extends Fragment {
         name = itemView.findViewById(R.id.product_name);
         // name.setSelected(true);
         price = itemView.findViewById(R.id.product_price);
+        product_offer_price = itemView.findViewById(R.id.product_offer_price);
         img = itemView.findViewById(R.id.product_img);
         add = itemView.findViewById(R.id.add);
         quantityLayout = itemView.findViewById(R.id.quantity_layout);

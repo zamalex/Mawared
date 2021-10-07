@@ -452,8 +452,8 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(NotifyCountModel notifyCountModel) {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getUnread() > 0)
-                            navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        if (notifyCountModel.getCount() > 0)
+                            navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getCount()+""));
                         else
                             navigationView.removeBadge(R.id.support);
 

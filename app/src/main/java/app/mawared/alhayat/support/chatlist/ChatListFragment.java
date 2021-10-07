@@ -89,12 +89,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                 ((MainActivity) getActivity()).showDialog(false);
 
                 if (chatList != null) {
-                    if (chatList.getStatus() == 401) {
+                   /* if (chatList.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
 
-                    }
+                    }*/
                     if (chatList.getSuccess()) {
                         adapter.setMessages((ArrayList<Chat>) chatList.getData());
                         if (chatList.getData().size() > 0) {
@@ -153,8 +153,8 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
             public void onChanged(NotifyCountModel notifyCountModel) {
                 if (notifyCountModel != null) {
                     if (notifyCountModel.getSuccess()) {
-                        if (notifyCountModel.getData().getUnread() > 0 && getActivity() != null)
-                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getData().getUnread().toString()));
+                        if (notifyCountModel.getCount() > 0 && getActivity() != null)
+                            ((MainActivity) getActivity()).navigationView.getOrCreateBadge(R.id.support).setNumber(Integer.parseInt(notifyCountModel.getCount()+""));
                         else {
                             if (getActivity() != null)
                                 ((MainActivity) getActivity()).navigationView.removeBadge(R.id.support);

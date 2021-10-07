@@ -42,6 +42,7 @@ import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.notification.NotificationViewModel;
 import app.mawared.alhayat.notification.model.Notification;
+import app.mawared.alhayat.notification.newmodel.NewNotifications;
 import app.mawared.alhayat.registeration.terms.TermsBottomSheet;
 import app.mawared.alhayat.sendorder.SendOrderViewModel;
 import app.mawared.alhayat.sendorder.model.points.PointsModel;
@@ -152,7 +153,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
                 if (pointsModel != null) {
                     if (pointsModel.getSuccess()) {
                         if (pointsModel.getData().getExpireDate() > 0) {
-                            tv_profilePoints.setText(pointsModel.getData().getTotalPoints() + " نقطة ");
+                            tv_profilePoints.setText(pointsModel.getData().getTotalPoints() + " ريال ");
                         }
                     }
                 }
@@ -160,19 +161,19 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         });
 
         ((MainActivity) getActivity()).showDialog(true);
-        viewModel.getAllNotification(1).observe(getViewLifecycleOwner(), new Observer<Notification>() {
+        viewModel.getAllNotification(1).observe(getViewLifecycleOwner(), new Observer<NewNotifications>() {
             @Override
-            public void onChanged(Notification notification) {
+            public void onChanged(NewNotifications notification) {
                 ((MainActivity) getActivity()).showDialog(false);
                 if (notification != null) {
-                    if (notification.getStatus() == 401) {
+                    /*if (notification.getStatus() == 401) {
                         Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         return;
-                    }
-                    if (notification.getSuccess()) {
-                        if (notification.getNotifications_messages() != null) {
-                            settingsList.get(0).setNotificationCount(notification.getNotifications_messages().size() + "");
+                    }*/
+                    if (notification.isSuccess()) {
+                        if (notification.getData() != null) {
+                            settingsList.get(0).setNotificationCount(notification.getData().getUnread() + "");
                             settingsAdapter.notifyDataSetChanged();
                         }
                     }
