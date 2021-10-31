@@ -45,8 +45,28 @@ public class OrderDetailsViewModel extends ViewModel {
 
     MutableLiveData<ConfirmModel> cancelResponse = new MutableLiveData<>();
 
-    void cancelOrder(String jsonObject,String token){
-        RetrofitClient.getApiInterface().cancelOrder(jsonObject,token).enqueue(new Callback<ConfirmModel>() {
+    void cancelOrder(String jsonObject,String token,JsonObject body){
+        RetrofitClient.getApiInterface().cancelOrder(jsonObject,token,body).enqueue(new Callback<ConfirmModel>() {
+            @Override
+            public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
+                if (response.isSuccessful()){
+                    cancelResponse.setValue(response.body());
+
+                }else {
+                    cancelResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ConfirmModel> call, Throwable t) {
+                cancelResponse.setValue(null);
+
+            }
+        });
+    }
+
+    void returnOrder(String jsonObject,String token,JsonObject body){
+        RetrofitClient.getApiInterface().returnOrder(jsonObject,token,body).enqueue(new Callback<ConfirmModel>() {
             @Override
             public void onResponse(Call<ConfirmModel> call, Response<ConfirmModel> response) {
                 if (response.isSuccessful()){

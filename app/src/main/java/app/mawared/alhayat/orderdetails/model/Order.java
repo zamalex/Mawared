@@ -14,6 +14,11 @@ public class Order implements Parcelable
     @SerializedName("id")
     @Expose
     private int id;
+
+    @SerializedName("chat_id")
+    @Expose
+    public String chat_id;
+
     @SerializedName("formated_number")
     @Expose
     private int formatedNumber;
@@ -39,6 +44,9 @@ public class Order implements Parcelable
     @SerializedName("can_cancel")
     @Expose
     public boolean can_cancel;
+    @SerializedName("can_return")
+    @Expose
+    public boolean can_return;
     @SerializedName("payment_status")
     @Expose
     public boolean payment_status;

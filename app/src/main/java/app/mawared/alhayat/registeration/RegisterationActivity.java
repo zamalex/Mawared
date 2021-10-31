@@ -102,7 +102,7 @@ public class RegisterationActivity extends AppCompatActivity {
                         dialog.dismiss();
 
                         if (loginRegistration != null) {
-                            if (loginRegistration.getStatus() == 200) {
+                            if (loginRegistration.getSuccess()) {
                                 if (loginRegistration.getData().getExists()) {
                                     Toast.makeText(getApplicationContext(), "هذا الرقم مسجل مسبقا يمكنك الرجوع لتسجبل الدخول", Toast.LENGTH_LONG).show();
 

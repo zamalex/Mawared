@@ -13,6 +13,12 @@ public class DataItem{
 	@SerializedName("mobile")
 	private String mobile;
 
+	@SerializedName("title")
+	private String title;
+
+	@SerializedName("type")
+	private String type;
+
 	@SerializedName("city_id")
 	private int city_id;
 
@@ -42,6 +48,18 @@ public class DataItem{
 
 	public String getLng(){
 		return lng;
+	}
+
+	public String getTitle() {
+		if (title==null)
+			title="home";
+		return title;
+	}
+
+	public String getType() {
+		if (type==null)
+			type="personal";
+		return type;
 	}
 
 	public void setMobile(String mobile){

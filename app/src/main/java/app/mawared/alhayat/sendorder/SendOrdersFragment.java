@@ -1176,13 +1176,11 @@ public class SendOrdersFragment extends Fragment implements OnMapReadyCallback, 
                     Log.d("resooo", response.message());
                     if (getActivity()!=null)
                     activity.showDialog(false);
-                    if (response != null) {
-                        if (response.code() == 200) {
+                    if (response.body()!=null)
+                    Toast.makeText(activity, response.body().message, Toast.LENGTH_SHORT).show();
+                    if (response.code() == 200) {
 
-
-
-                            activity.fragmentStack.replace(new OrderDoneFragment());
-                        }
+                        activity.fragmentStack.replace(new OrderDoneFragment());
                     }
                 }
 

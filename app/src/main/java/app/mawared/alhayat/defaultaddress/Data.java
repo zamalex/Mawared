@@ -19,6 +19,12 @@ public class Data{
 	@SerializedName("lat")
 	private String lat;
 
+	@SerializedName("title")
+	private String title;
+
+	@SerializedName("type")
+	private String type;
+
 	@SerializedName("set_default")
 	private int setDefault;
 
@@ -59,4 +65,19 @@ public class Data{
 	public String getUsername(){
 		return username;
 	}
+
+
+	public String getTitle() {
+		if (title==null)
+			title="home";
+		return title;
+	}
+
+	public String getType() {
+		if (type==null)
+			type="personal";
+		return type;
+	}
+
+
 }

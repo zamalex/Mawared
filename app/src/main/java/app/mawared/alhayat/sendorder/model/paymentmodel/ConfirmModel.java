@@ -12,6 +12,8 @@ public class ConfirmModel {
     private Long mStatus;
     @SerializedName("success")
     private Boolean mSuccess;
+    @SerializedName("message")
+    public String message;
 
     public Data getData() {
         return mData;

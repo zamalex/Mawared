@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
     ChatListViewModel viewModel;
     ChatListAdapter adapter;
     HomeViewModel homeViewModel;
+    String previous_id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,6 +74,8 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
 
         adapter = new ChatListAdapter(this);
 
+        if (getArguments()!=null)
+            previous_id = getArguments().getString("id",null);
 
         chatsRecycler = v.findViewById(R.id.chat_list_rv);
         go_support = v.findViewById(R.id.go_support);
@@ -111,6 +115,22 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.ChatLi
                                     }
                                 }
                             }
+
+                         if (previous_id!=null){
+                             for (int i=0;i<chatList.getData().size();i++){
+
+                                 if (chatList.getData().get(i).getOrderId().toString().equals(previous_id)){
+                                     onChatClick(chatList.getData().get(i));
+
+                                     if (getArguments() != null) {
+                                         if (getArguments().getString("id") != null) {
+                                                     getArguments().remove("id");
+                                         }
+                                     }
+                                     break;
+                                 }
+                             }
+                         }
 
                         } else {
                             msg_txt.setVisibility(View.VISIBLE);

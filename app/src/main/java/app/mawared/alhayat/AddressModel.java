@@ -6,9 +6,24 @@ public class AddressModel {
     String address;
     String username;
     String type;
+    String title;
     boolean isAdded = false;
    public int city_id=0;
 
+    @Override
+    public String toString() {
+        return "AddressModel{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                ", mobile='" + mobile + '\'' +
+                ", address='" + address + '\'' +
+                ", username='" + username + '\'' +
+                ", type='" + type + '\'' +
+                ", title='" + title + '\'' +
+                ", isAdded=" + isAdded +
+                ", city_id=" + city_id +
+                '}';
+    }
 
     public double getLat() {
         return lat;
@@ -66,6 +81,10 @@ public class AddressModel {
         isAdded = added;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public AddressModel(double lat, double lng, String mobile, String address, String username, String type, boolean isAdded) {
         this.lat = lat;
         this.lng = lng;
@@ -76,7 +95,7 @@ public class AddressModel {
         this.type = type;
     }
 
-    public AddressModel(double lat, double lng, String mobile, String address, String username, String type, boolean isAdded,int city) {
+    public AddressModel(double lat, double lng, String mobile, String address, String username, String type, boolean isAdded,int city,String title) {
         this.lat = lat;
         this.lng = lng;
         this.mobile = mobile;
@@ -85,6 +104,8 @@ public class AddressModel {
         this.isAdded = isAdded;
         this.type = type;
         this.city_id=city;
+        this.title=title;
+
     }
 
 

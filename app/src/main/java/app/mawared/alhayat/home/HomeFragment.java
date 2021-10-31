@@ -110,11 +110,12 @@ import okhttp3.ResponseBody;
 public class HomeFragment extends Fragment implements HomeAdapter.addListener, CitiesAdapter.onCity, AddressAdapter.AddressInterface {
 
     View v;
-    RecyclerView recyclerView;
+    RecyclerView recyclerView,comboRecyclerview;
     HomeViewModel viewModel;
     CartViewModel cartViewModel;
     AddressViewModel addressViewModel;
     HomeAdapter adapter;
+    ComboAdapter comboAdapter;
     EditText spinner;
     ImageView go_cart;
     SliderView flipper_layout;
@@ -152,6 +153,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
     RecyclerView address_rv;
     SendOrderViewModel sendOrderViewModel;
+    LinearLayoutManager linearLayoutManager;
 
 
     @Override
@@ -209,7 +211,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
 
         adapter = new HomeAdapter(getActivity(), this);
-
+        comboAdapter = new ComboAdapter(getActivity(),this);
 
         citiesAdapter = new CitiesAdapter(this);
 
@@ -331,14 +333,21 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                 jsonObject.addProperty("username",addressModel.getUsername());
                 jsonObject.addProperty("set_default","1");
                 jsonObject.addProperty("type",addressModel.getType());
+                jsonObject.addProperty("title",addressModel.getTitle());
+
+
                 addressViewModel.addAddress(jsonObject);
             }
+
+            System.out.println(addressModel.toString());
+            Log.e("default is",addressModel.toString());
         }
         addressViewModel.addressResponse.observe(getViewLifecycleOwner(), new Observer<ResponseBody>() {
             @Override
             public void onChanged(ResponseBody responseBody) {
                 if (responseBody!=null&&addressModel!=null){
                     addressModel.setAdded(true);
+                    //Toast.makeText(getActivity(), addressModel.city_id+"", Toast.LENGTH_SHORT).show();
                     Paper.book().write("address",addressModel);
                     if (loginResponse!=null)
                     sendOrderViewModel.getAddresses("Bearer "+loginResponse.getAccessToken());
@@ -411,6 +420,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
         viewModel.getHomeSlider();
         recyclerView = v.findViewById(R.id.home_p_rv);
+        comboRecyclerview = v.findViewById(R.id.home_cp_rv);
         spinner = v.findViewById(R.id.city_spinner);
         spinner.setText("الكل");
         card_linear = v.findViewById(R.id.card_linear);
@@ -425,6 +435,13 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
         cities.add("الكل");
         cityIds.add("");
 
+        linearLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
+
+        comboRecyclerview.setLayoutManager(linearLayoutManager);
+        comboRecyclerview.setAdapter(comboAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(false);
+
         gridLayoutManager = new
 
                 GridLayoutManager(getActivity(), 2);
@@ -437,11 +454,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
             @Override
             public void onLoadMore() {
-              /*  if (pageNum >= 1) {
-                    pageNum++;
-                    viewModel.getHomeProducts(card_id,lat,lng,pageNum);
 
-                }*/
             }
         });
 
@@ -468,27 +481,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
             }
         });
 
-      /*  spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
-                                       int position, long id) {
-                ((MainActivity) getActivity()).showDialog(true);
-
-                if (position == 0)
-                    viewModel.getHomeProducts(card_id);
-                else
-                    viewModel.filterByCity(cityIds.get(position));
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-*/
 
 
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -503,6 +495,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
                             if (homeProductModel != null) {
                                 adapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
+                                comboAdapter.setProducts((ArrayList<Product>) homeProductModel.getProducts());
                             }
 
                         }
@@ -783,6 +776,25 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
 
                 if (addressModel.isSuccess()) {
                     addressAdapter.setAddresses((ArrayList<DataItem>) addressModel.getData().getData());
+                    AddressModel oldAddress = Paper.book().read("address",null);
+                    //Toast.makeText(getActivity(), "city id is "+oldAddress.city_id, Toast.LENGTH_SHORT).show();
+
+                    if (oldAddress!=null){
+                      if (addressModel!=null){
+                          if (addressModel.getData()!=null){
+                              if (addressModel.getData().getData()!=null&&oldAddress.city_id==0){
+                                  for (int i=0;i<addressModel.getData().getData().size();i++){
+                                      if (addressModel.getData().getData().get(i).getAddress().equals(oldAddress.getAddress())){
+                                          oldAddress.city_id = addressModel.getData().getData().get(i).getCity_id();
+                                          Paper.book().write("address",oldAddress);
+                                          break;
+
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                    }
                 } else if (addressModel.getStatus() == 401) {
                     Toast.makeText(getActivity(), "session expired login again", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -973,7 +985,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                                 addressViewModel.setDefaultAddress(body, loginResponse.getAccessToken());
 
                             Paper.book().write("latlng",new LatLng(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng())));
-                            Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),"personal",true,address.getCity_id()));
+                            Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),address.getType(),true,address.getCity_id(),address.getTitle()));
 
                             //  double lat, double lng, String mobile, String address, String username,String type, boolean isAdded)
 
@@ -1001,7 +1013,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                         addressViewModel.setDefaultAddress(body, loginResponse.getAccessToken());
 
                     Paper.book().write("latlng",new LatLng(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng())));
-                    Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),"personal",true,address.getCity_id()));
+                    Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),address.getType(),true,address.getCity_id(),address.getTitle()));
 
                     //  double lat, double lng, String mobile, String address, String username,String type, boolean isAdded)
 
@@ -1017,7 +1029,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.addListener, C
                     addressViewModel.setDefaultAddress(body, loginResponse.getAccessToken());
 
                 Paper.book().write("latlng",new LatLng(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng())));
-                Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),"personal",true,address.getCity_id()));
+                Paper.book().write("address",new AddressModel(Double.parseDouble(address.getLat()),Double.parseDouble(address.getLng()),address.getMobile(),address.getAddress(),address.getUsername(),address.toString(),true,address.getCity_id(),address.getTitle()));
 
                 //  double lat, double lng, String mobile, String address, String username,String type, boolean isAdded)
 

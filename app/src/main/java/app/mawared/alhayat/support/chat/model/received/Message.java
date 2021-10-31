@@ -8,6 +8,8 @@ public class Message {
 
     @SerializedName("conversation_id")
     private String mConversationId;
+    @SerializedName("humans_time")
+    public String humans_time;
     @SerializedName("created_at")
     private String mCreatedAt;
     @SerializedName("deleted_from_receiver")

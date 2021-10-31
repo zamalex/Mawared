@@ -3,6 +3,10 @@ package app.mawared.alhayat.home.model.prodetails;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
+import app.mawared.alhayat.home.model.subproducts.SubProductsItem;
+
 @SuppressWarnings("unused")
 public class Product {
 
@@ -19,9 +23,9 @@ public class Product {
     private String mImg;
     @SerializedName("in_cart_quantity")
     private Long mInCartQuantity;
-    @SerializedName("offer")
+    @SerializedName("offer_text")
     private String mOffer;
-    @SerializedName("offer_price")
+    @SerializedName("final_price")
     private Double mOfferPrice;
     @SerializedName("price")
     private Double mPrice;
@@ -33,8 +37,22 @@ public class Product {
     private String mSku;
     @SerializedName("title")
     private String mTitle;
+    @SerializedName("description")
+    public String description;
     @SerializedName("vat")
     private Double mVat;
+    @SerializedName("offer_expiry_date")
+    public String offer_expiry_date;
+    @SerializedName("offer_take")
+    int take;
+    @SerializedName("offer_get")
+    int get;
+    @SerializedName("sub_products")
+    private List<SubProductsItem> subProducts;
+
+    public List<SubProductsItem> getSubProducts() {
+        return subProducts;
+    }
 
     public boolean getAvailable() {
         return mAvailable;
@@ -85,9 +103,9 @@ public class Product {
     }
 
     public String getOffer() {
-        return mOffer;
+        String p = "\u002B";
+        return take+p+get+"";
     }
-
     public void setOffer(String offer) {
         mOffer = offer;
     }

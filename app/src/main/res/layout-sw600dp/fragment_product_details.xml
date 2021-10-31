@@ -193,6 +193,23 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/product_price" />
+                        <TextView
+                            android:id="@+id/product_offer_time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:fontFamily="@font/urwbold"
+                            android:text=""
+                            android:textColor="#D50000"
+                            android:textSize="20sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/product_offer_price" />
 
                         <TextView
                             android:id="@+id/product_name"
@@ -207,12 +224,11 @@
                             android:fontFamily="@font/urosemi"
 
                             android:textColor="#7B92A5"
-                            android:textSize="15sp"
-
+                            android:textSize="12sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/product_offer_price"
+                            app:layout_constraintTop_toBottomOf="@+id/product_offer_time"
                             app:layout_constraintVertical_bias="0.0"
 
                             />

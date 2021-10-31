@@ -22,12 +22,14 @@ public class Product implements Parcelable {
     private String mImg;
     @SerializedName("in_cart_quantity")
     private Long mInCartQuantity;
-    @SerializedName("offer")
+    @SerializedName("offer_text")
     private String mOffer;
-    @SerializedName("offer_price")
+    @SerializedName("final_price")
     private Double mOfferPrice;
     @SerializedName("price")
     private Double mPrice;
+    @SerializedName("offer_expiry_date")
+    public String offer_expiry_date;
     @SerializedName("price_with_vat")
     private Double mPriceWithVat;
     @SerializedName("quantity")
@@ -41,6 +43,12 @@ public class Product implements Parcelable {
 
     @SerializedName("city_id")
     private String city_id;
+    @SerializedName("offerDetails")
+    private OfferDetails offerDetails;
+    @SerializedName("offer_take")
+    int take;
+    @SerializedName("offer_get")
+    int get;
 
 
     protected Product(Parcel in) {
@@ -154,9 +162,6 @@ public class Product implements Parcelable {
         mInCartQuantity = inCartQuantity;
     }
 
-    public String getOffer() {
-        return mOffer;
-    }
 
     public void setOffer(String offer) {
         mOffer = offer;
@@ -226,6 +231,16 @@ public class Product implements Parcelable {
         this.city_id = city_id;
     }
 
+    public String getOffer() {
+        String p = "\u002B";
+        return take+p+get+"";
+    }
+    public String getOffer_expiry_date() {
+        return offer_expiry_date;
+    }
+
+
+
 
     @Override
     public int describeContents() {
@@ -290,5 +305,9 @@ public class Product implements Parcelable {
             parcel.writeLong(mVat);
         }
         parcel.writeString(city_id);
+    }
+
+    static class OfferDetails{
+
     }
 }

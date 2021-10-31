@@ -36,7 +36,7 @@ public class RegisterViewModel extends ViewModel {
         RetrofitClient.getApiInterface().completeNewAccount(registerBody,"Bearer "+token).enqueue(new Callback<OtpResponse>() {
             @Override
             public void onResponse(Call<OtpResponse> call, Response<OtpResponse> response) {
-                if(response.code() == 200) {
+                if(response.isSuccessful()) {
                     registerMutableLiveData.postValue(response.body());
                 }else registerMutableLiveData.postValue(null);
             }

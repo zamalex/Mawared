@@ -20,13 +20,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/atitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:fontFamily="@font/urwbold"
-        android:text="نبذه عن مياه موارد"
+        android:text=""
         android:textColor="#0D2142"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -55,6 +55,7 @@
             android:src="@drawable/loko" />
 
         <TextView
+            android:id="@+id/atext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -62,7 +63,6 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="@font/urosemi"
             android:gravity="center_horizontal"
-            android:text="من جبال الشديدة تأتيكم مياه موارد بجودتها المعروفة, لتكون خيارك الأول . بأسطول النقل السريع وطرق الدفع الآمنة والمتعددة وأحجامها المختلفة تصلك حتى باب منزلك بسعر تنافسي."
             android:textColor="#0D2142"
             android:textSize="18sp"
 

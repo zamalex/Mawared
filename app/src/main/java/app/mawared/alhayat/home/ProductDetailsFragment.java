@@ -7,7 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -35,11 +39,13 @@ import java.util.Objects;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.TimerModel;
 import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.home.model.NotifyAvailable;
 import app.mawared.alhayat.home.model.addmodel.AddCardModel;
 import app.mawared.alhayat.home.model.prodetails.Product;
 import app.mawared.alhayat.home.model.prodetails.ProductDetails;
+import app.mawared.alhayat.home.model.subproducts.SubProductsItem;
 import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import app.mawared.alhayat.mycart.CartViewModel;
 import app.mawared.alhayat.mycart.MyCartFragment;
@@ -50,7 +56,7 @@ import retrofit2.Response;
 
 
 public class ProductDetailsFragment extends Fragment {
-    TextView name, price, total_qty, offer_txt,product_offer_price;
+    TextView name, price, total_qty, offer_txt,product_offer_price,product_offer_time;
     ImageView img, offer_img;
     ImageButton add, increase, decrease;
     LinearLayout quantityLayout;
@@ -70,7 +76,9 @@ public class ProductDetailsFragment extends Fragment {
 
     LatLng latLng;
     String lat="",lng="";
+    CountDownTimer countDownTimer;
     VerifyLoginResponse verifyLoginResponse = Paper.book().read("login",null);
+    RecyclerView items_rv;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -93,7 +101,10 @@ public class ProductDetailsFragment extends Fragment {
         initView();
 
         go_cart = itemView.findViewById(R.id.go_cart);
+        items_rv = itemView.findViewById(R.id.items_rv);
+        items_rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         send_not = itemView.findViewById(R.id.send_not);
+        product_offer_time = itemView.findViewById(R.id.product_offer_time);
 
         itemView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +182,7 @@ public class ProductDetailsFragment extends Fragment {
                     }
                 });
 
+        ComboSubAdapter comboSubAdapter =new ComboSubAdapter();
         RetrofitClient.getApiInterface().getProDetails(product_id, card_id, city_id).enqueue(new Callback<ProductDetails>() {
             @Override
             public void onResponse(Call<ProductDetails> call, Response<ProductDetails> response) {
@@ -179,6 +191,8 @@ public class ProductDetailsFragment extends Fragment {
                     product = response.body().getProduct();
 
                     if (product != null) {
+                        items_rv.setAdapter(comboSubAdapter);
+                        comboSubAdapter.setProducts((ArrayList<SubProductsItem>) product.getSubProducts());
                         if (!product.getAvailable()&&verifyLoginResponse!=null)
                             send_not.setVisibility(View.VISIBLE);
                         Double p = Double.parseDouble(product.getPrice().toString()) + (Double.parseDouble(product.getVat().toString()) / 100 * Double.parseDouble(product.getPrice().toString()));
@@ -188,13 +202,41 @@ public class ProductDetailsFragment extends Fragment {
                             if (product.getInCartQuantity()==0)
                                 product.qty=Integer.parseInt(product.getIncart().toString());
 */
+                        if (product.offer_expiry_date!=null)
+                        {
+
+                            TimerModel timerModel = TimerModel.findDifference("2021-10-28 00:00:00",product.offer_expiry_date+" 23:59:59");
+                            if (timerModel!=null){
+                                if (timerModel.days==0){
+                                    if (countDownTimer!=null)
+                                        countDownTimer.cancel();
+                                    countDownTimer = new CountDownTimer(timerModel.milliseconds, 1000) {
+
+                                        public void onTick(long millisUntilFinished) {
+                                            product_offer_time.setText(String.format("%02d:%02d:%02d",
+                                                    millisUntilFinished/((1000 * 60 * 60)), ((millisUntilFinished/1000) % 3600) / 60, ((millisUntilFinished/1000) % 60)));
+
+                                        }
+
+                                        public void onFinish() {
+                                            product_offer_time.setText("00:00");
+
+                                        }
+                                    }.start();
+                                }else {
+                                    if (timerModel.days>=0)
+                                    product_offer_time.setText(timerModel.days+" ايام ");
+                                }
+
+                            }
+                        }
 
                         price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(p) + " " + "ر.س");
                         product_offer_price.setPaintFlags(product_offer_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
                         if (product.getOld_price()!=0)
                             product_offer_price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(pp) + " " + "ر.س");
-                        name.setText(product.getTitle());
+                        name.setText(product.getTitle()+"\n"+product.description);
                         total_qty.setText(product.getInCartQuantity() + "");
 
 
@@ -210,7 +252,7 @@ public class ProductDetailsFragment extends Fragment {
                         }
 
                         offer_txt.setText("");
-                        if (product.getHasOffer() || product.getOffer().isEmpty() || product.getOffer().replace(" ", "").equals("1+0")) {
+                        if (!product.getHasOffer() || product.getOffer().isEmpty() || product.getOffer().replace(" ", "").equals("1+0")) {
                             offer_txt.setVisibility(View.GONE);
                             offer_img.setVisibility(View.GONE);
 

@@ -90,7 +90,7 @@ public class ResetPassActivity extends AppCompatActivity {
                 if (resetModel!=null){
                     Toast.makeText(ResetPassActivity.this, resetModel.getMessage().getDescription(), Toast.LENGTH_SHORT).show();
 
-                    if (resetModel.getStatus()==200){
+                    if (resetModel.getSuccess()){
                        // startActivity(new Intent(ResetPassActivity.this, LoginActivity.class));
                        // ResetPassActivity.this.finish();
                         Paper.book().write("token", resetModel.getUser().getToken());

@@ -181,6 +181,23 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/product_price" />
 
+                    <TextView
+                        android:id="@+id/product_offer_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:fontFamily="@font/urwbold"
+                        android:textColor="#7B92A5"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/product_offer_price" />
+
                     <ImageView
                         android:id="@+id/product_img"
 
@@ -212,7 +229,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_offer_price"
+                        app:layout_constraintTop_toBottomOf="@+id/product_offer_time"
                         app:layout_constraintVertical_bias="0.0"
 
                         />
@@ -231,11 +248,21 @@
                         android:text="السعر شامل الضريبة"
                         android:textColor="#7B92A5"
                         android:textSize="11sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/product_name" />
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/items_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:scrollbars="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/sear"
+                        tools:listitem="@layout/item_sub_combo" />
                     <ImageView
                         android:id="@+id/off_img"
                         android:layout_width="wrap_content"

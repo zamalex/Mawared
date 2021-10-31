@@ -3,6 +3,10 @@ package app.mawared.alhayat.home.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
+import app.mawared.alhayat.home.model.subproducts.SubProductsItem;
+
 @SuppressWarnings("unused")
 public class Product {
 
@@ -15,7 +19,9 @@ public class Product {
     private Long mId;
     @SerializedName("img")
     private String mImg;
-    @SerializedName("offer")
+    @SerializedName("type")
+    public String type;
+    @SerializedName("offer_text")
     private String mOffer;
     @SerializedName("offer_price")
     private String mOfferPrice;
@@ -23,6 +29,8 @@ public class Product {
     private String mPrice;
     @SerializedName("old_price")
     private String old_price;
+    @SerializedName("offer_expiry_date")
+    public String offer_expiry_date;
     @SerializedName("quantity")
     private Long mQuantity;
 
@@ -42,6 +50,22 @@ public class Product {
     private Double Price_with_vat;
     @SerializedName("photo")
     private String photo;
+    @SerializedName("offerDetails")
+    private OfferDetails offerDetails;
+    @SerializedName("offer_take")
+    int take;
+    @SerializedName("offer_get")
+    int get;
+    @SerializedName("sub_products")
+    private List<SubProductsItem> subProducts;
+
+    public List<SubProductsItem> getSubProducts(){
+        return subProducts;
+    }
+
+    public String getOffer_expiry_date() {
+        return offer_expiry_date;
+    }
 
     public boolean getAvailable() {
         return mAvailable;
@@ -76,7 +100,8 @@ public class Product {
     }
 
     public String getOffer() {
-        return mOffer;
+        String p = "\u002B";
+        return take+p+get+"";
     }
 
     public void setOffer(String offer) {
@@ -165,5 +190,10 @@ public class Product {
 
     public void setCity_id(String city_id) {
         this.city_id = city_id;
+    }
+
+    static class OfferDetails{
+
+
     }
 }

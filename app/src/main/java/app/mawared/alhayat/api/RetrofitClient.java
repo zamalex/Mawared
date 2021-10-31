@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import app.mawared.alhayat.AddressModel;
+import app.mawared.alhayat.BuildConfig;
 import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
 import io.paperdb.Paper;
 import okhttp3.Headers;
@@ -36,24 +37,33 @@ public class RetrofitClient {
             @Override
             public Response intercept(@NotNull Chain chain) throws IOException {
                 Request original = chain.request();
+                String versionName = BuildConfig.VERSION_NAME;
+               // System.out.println("version name is "+versionName);
 
                 VerifyLoginResponse verifyLoginResponse = Paper.book().read("login", null);
                 String token = "";
                 String lat = "";
                 String lng = "";
+                String city_id = "";
                 if (verifyLoginResponse!=null)
                     token = verifyLoginResponse.getAccessToken();
                 AddressModel addressModel =  Paper.book().read("address", null);
                 if (addressModel!=null){
                     lat=addressModel.getLat()+"";
                     lng=addressModel.getLng()+"";
+                    city_id = addressModel.city_id+"";
                 }
 
-                Request.Builder requestBuilder = original.newBuilder().addHeader("Authorization","Bearer "+token).addHeader("lat",lat).addHeader("lng",lng);
+                Request.Builder requestBuilder = original.newBuilder().addHeader("Authorization","Bearer "+token).addHeader("lat",lat).addHeader("lng",lng).addHeader("city_id",city_id).addHeader("source","android").addHeader("os","android").addHeader("os_version","10").addHeader("app_version",versionName);
                 Map<String,String> heads = new HashMap<>();
                 heads.put("Authorization","Bearer "+token);
                 heads.put("lat",lat);
                 heads.put("lng",lng);
+              //  heads.put("city_id",city_id);
+                heads.put("source","android");
+                heads.put("os","android");
+                heads.put("app_version",versionName);
+                heads.put("os_version","10");
 
 
                 Headers headers =  Headers.of(heads);

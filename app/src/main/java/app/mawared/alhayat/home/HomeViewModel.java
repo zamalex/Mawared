@@ -58,7 +58,7 @@ public class HomeViewModel extends ViewModel {
         RetrofitClient.getApiInterface().getNotifyCount(token).enqueue(new Callback<NotifyCountModel>() {
             @Override
             public void onResponse(Call<NotifyCountModel> call, Response<NotifyCountModel> response) {
-                Log.d("rere22", response.body().getSuccess().toString());
+              //  Log.d("rere22", response.body().getSuccess().toString());
 
                 notifyCount.setValue(response.body());
             }

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
@@ -37,6 +38,7 @@ import java.util.List;
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
 import app.mawared.alhayat.about.AboutMawaredFragment;
+import app.mawared.alhayat.api.RetrofitClient;
 import app.mawared.alhayat.login.LoginActivity;
 import app.mawared.alhayat.login.model.LoginResponse;
 import app.mawared.alhayat.login.model.newlogin.VerifyLoginResponse;
@@ -50,6 +52,10 @@ import app.mawared.alhayat.update.email.EmailFragment;
 import app.mawared.alhayat.update.mobile.MobileFragment;
 import app.mawared.alhayat.update.name.NameFragment;
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SettingsFragment extends Fragment implements SettingsAdapter.SeetingsListener {
@@ -65,6 +71,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
     ReviewManager manager;
     ReviewInfo reviewInfo = null;
     String token = Paper.book().read("token", "none");
+    SwitchMaterial enable;
 
 
     @Override
@@ -89,6 +96,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
+        //enable = view.findViewById(R.id.enable);
         tv_collectPoints = view.findViewById(R.id.tv_collectPoints);
         tv_profilePoints = view.findViewById(R.id.tv_profilePoints);
         tv_collectPoints.setPaintFlags(tv_collectPoints.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -260,6 +268,7 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         Paper.book().delete("token");
         Paper.book().delete("login");
         Paper.book().delete("cid");
+        Paper.book().delete("enabled");
 
         SharedPreferences.Editor editor = pref.edit();
         editor.remove("ccc");
@@ -270,4 +279,6 @@ public class SettingsFragment extends Fragment implements SettingsAdapter.Seetin
         getActivity().finishAffinity();
         startActivity(new Intent(getActivity(), MainActivity.class));
     }
+
+
 }

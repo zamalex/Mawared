@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
                     if (defaultAddressResponse.isSuccess()){
                         if (defaultAddressResponse.getData()!=null){
                             Paper.book().write("latlng",new LatLng(Double.parseDouble(defaultAddressResponse.getData().getLat()),Double.parseDouble(defaultAddressResponse.getData().getLng())));
-                            Paper.book().write("address",new AddressModel(Double.parseDouble(defaultAddressResponse.getData().getLat()),Double.parseDouble(defaultAddressResponse.getData().getLng()),defaultAddressResponse.getData().getMobile(),defaultAddressResponse.getData().getAddress(),defaultAddressResponse.getData().getUsername(),"personal",true,defaultAddressResponse.getData().getCityId()));
+                            Paper.book().write("address",new AddressModel(Double.parseDouble(defaultAddressResponse.getData().getLat()),Double.parseDouble(defaultAddressResponse.getData().getLng()),defaultAddressResponse.getData().getMobile(),defaultAddressResponse.getData().getAddress(),defaultAddressResponse.getData().getUsername(),defaultAddressResponse.getData().getType(),true,defaultAddressResponse.getData().getCityId(),defaultAddressResponse.getData().getTitle()));
 
                         }
                     }

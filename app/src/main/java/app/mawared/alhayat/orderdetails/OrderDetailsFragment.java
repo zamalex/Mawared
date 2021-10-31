@@ -60,6 +60,7 @@ import app.mawared.alhayat.sendorder.model.PaymentModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.ConfirmModel;
 import app.mawared.alhayat.sendorder.model.paymentmodel.visa.VisaModel;
 import app.mawared.alhayat.support.SupportFragment;
+import app.mawared.alhayat.support.chatlist.ChatListFragment;
 import io.paperdb.Paper;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -76,7 +77,7 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
     OrderDetailsViewModel orderDetailsViewModel;
     RecyclerView rv_productDetails;
     OrderDetailsAdapter orderDetailsAdapter;
-    TextView tv_orderDetailsNumber, tv_orderDetailsStatus, tv_totalPrice;
+    TextView tv_orderDetailsNumber, tv_orderDetailsStatus, tv_totalPrice,reason_txt;
     ConstraintLayout cl_orderStatus;
     double totalPrice;
     ImageView go_support;
@@ -110,7 +111,7 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
 
     JsonObject jsonObject = new JsonObject();
 
-
+    boolean isCancel = true;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -208,6 +209,7 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
 
         reason_et = dialog.findViewById(R.id.reason_et);
         ccncl_btn = dialog.findViewById(R.id.ccncl_btn);
+        reason_txt = dialog.findViewById(R.id.reason_txt);
 
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
         rv_productDetails.setLayoutManager(gridLayoutManager);
@@ -278,7 +280,7 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
                     cancel_order.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (orderDetails.getOrder().can_cancel)
+                            if (orderDetails.getOrder().can_cancel||orderDetails.getOrder().can_return)
                                 dialog.show();
                             else
                                 Toast.makeText(getActivity(), "لا يمكن الغاء الطلب", Toast.LENGTH_SHORT).show();
@@ -289,7 +291,16 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
                         //if (orderDetails.getOrder().getStatus().equals("تم التسليم"))
                         rateDialog.show();
 
+                    if (orderDetails.getOrder().can_cancel){
+                        reason_txt.setText("سبب الغاء الطلب");
+                        isCancel= true;
 
+                    }
+                    if (orderDetails.getOrder().can_return){
+                        isCancel= false;
+                        reason_txt.setText("سبب استرجاع الطلب");
+
+                    }
                     orderDetailsAdapter = new OrderDetailsAdapter(orderDetails.getOrder().getProducts());
                     rv_productDetails.setAdapter(orderDetailsAdapter);
                     tv_orderDetailsNumber.setText("#تفاصيل طلب " + orderDetails.getOrder().getId());
@@ -331,6 +342,27 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
                     six.setText(orderDetails.getOrder().getPaymentMethod());
                     seven.setText(orderDetails.getOrder().getAddress());
 
+                    go_support.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (orderDetails.getOrder().chat_id!=null){
+                                Bundle bundle = new Bundle();
+                                bundle.putString("id",orderId+"");
+                                ChatListFragment chatListFragment = new ChatListFragment();
+                                chatListFragment.setArguments(bundle);
+                                activity.fragmentStack.push(chatListFragment);
+
+                            }
+                            else
+                                activity.fragmentStack.push(new SupportFragment());
+
+
+
+                            //
+                        }
+                    });
+
+
 
                 }
             }
@@ -346,12 +378,6 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
         });
 
 
-        go_support.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).fragmentStack.push(new SupportFragment());
-            }
-        });
 
 
         orderDetailsViewModel.cancelResponse.observe(getViewLifecycleOwner(), new Observer<ConfirmModel>() {
@@ -373,16 +399,19 @@ public class OrderDetailsFragment extends Fragment implements PaymentsAdapter.pa
             public void onClick(View v) {
                 dialog.dismiss();
                 if (reason_et.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "ادخل سبب الالغاء", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "ادخل السبب", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                ((MainActivity) getActivity()).showDialog(true);
+               activity.showDialog(true);
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("order_id", orderId);
                 jsonObject.addProperty("reason", reason_et.getText().toString());
 
-                orderDetailsViewModel.cancelOrder(orderId+"", "Bearer " + Paper.book().read("token", "none"));
+                if (isCancel)
+                orderDetailsViewModel.cancelOrder(orderId+"", "Bearer " + Paper.book().read("token", "none"),jsonObject);
+                else
+                    orderDetailsViewModel.returnOrder(orderId+"", "Bearer " + Paper.book().read("token", "none"),jsonObject);
 
             }
         });

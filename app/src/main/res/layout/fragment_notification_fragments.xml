@@ -29,6 +29,46 @@
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/iv_btnBack"
         app:layout_constraintTop_toTopOf="@+id/iv_btnBack" />
+    <LinearLayout
+        android:id="@+id/linearLayout9"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layoutDirection="rtl"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_NotificationAcTitle">
+        <TextView
+            android:id="@+id/selected_payment5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:fontFamily="@font/urwbold"
+            android:text="التنبيهات"
+            android:layout_weight="1"
+            android:textColor="#7B92A5"
+            android:textSize="15sp"
+            />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/enable"
+            android:gravity="left|center"
+            android:text=" "
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ggo"
+            />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_notifications"
@@ -36,12 +76,12 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_NotificationAcTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
 </androidx.constraintlayout.widget.ConstraintLayout>

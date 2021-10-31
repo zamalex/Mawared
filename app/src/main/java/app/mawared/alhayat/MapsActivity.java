@@ -28,6 +28,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -38,11 +39,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import app.mawared.alhayat.api.RetrofitClient;
+import app.mawared.alhayat.cities.cityid.CityByLatLong;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.paperdb.Paper;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -60,12 +66,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng preLoc;
     int id;
     String preAddress;
+    KProgressHUD dialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
+
+        dialog = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
 
         marker = findViewById(R.id.marker);
         address = findViewById(R.id.address);
@@ -147,13 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     //  Toast.makeText(getContext(), types_e[map_spinner.getSelectedItemPosition()], Toast.LENGTH_SHORT).show();
 
-                Paper.book().write("latlng",new LatLng(lat,lng));
-                Paper.book().write("address",new AddressModel(lat,lng,rec_phone.getText().toString(),address.getText().toString(),rec_name.getText().toString(),types_e[map_spinner.getSelectedItemPosition()],false));
-
-            //  double lat, double lng, String mobile, String address, String username,String type, boolean isAdded)
-
-                startActivity(new Intent(MapsActivity.this, MainActivity.class));
-                MapsActivity.this.finish();
+                getCityAddAddress();
             }
         });
     }
@@ -261,6 +271,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return "undefined";
 
+    }
+
+    public void showDialog(Boolean show) {
+        if (dialog == null) {
+            dialog = KProgressHUD.create(this)
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+
+                    .setCancellable(true)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f);
+        }
+        try {
+            if (show) {
+                if (!dialog.isShowing())
+                    dialog.show();
+            } else {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        }catch (NullPointerException ex){}
+    }
+
+    void getCityAddAddress(){
+        String[]  types_e = new String[]{"personal", "mosque", "other"};
+        showDialog(true);
+        RetrofitClient.getApiInterface().getCityId(lat+"",lng+"").enqueue(new Callback<CityByLatLong>() {
+            @Override
+            public void onResponse(Call<CityByLatLong> call, Response<CityByLatLong> response) {
+                        showDialog(false);
+                        if (response.isSuccessful()){
+                            CityByLatLong cityByLatLong = response.body();
+                            if (cityByLatLong!=null){
+                                if (cityByLatLong.isSuccess()){
+                                    Paper.book().write("latlng",new LatLng(lat,lng));
+                                    Paper.book().write("address",new AddressModel(lat,lng,rec_phone.getText().toString(),address.getText().toString(),rec_name.getText().toString(),types_e[map_spinner.getSelectedItemPosition()],false,cityByLatLong.getData().getCityId(),address_name.getText().toString()));
+
+                                    //  double lat, double lng, String mobile, String address, String username,String type, boolean isAdded)
+
+                                    startActivity(new Intent(MapsActivity.this, MainActivity.class));
+                                    MapsActivity.this.finish();
+                                    return;
+                                }
+                            }
+                        }
+                Toast.makeText(MapsActivity.this, "حدث خطا في تحديد المدينة", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(Call<CityByLatLong> call, Throwable t) {
+                Toast.makeText(MapsActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     void checkLocPermission() {

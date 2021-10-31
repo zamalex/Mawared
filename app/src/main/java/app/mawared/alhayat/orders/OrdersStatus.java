@@ -19,6 +19,7 @@ public  class OrdersStatus {
                 put(8, "تم التوصيل");
                 put(9, "تم الحذف");
                 put(10, "معلق");
+                put(11, "الاسترجاع");
             }});
 
     public static final int[] greens={0,1,3,4,8};

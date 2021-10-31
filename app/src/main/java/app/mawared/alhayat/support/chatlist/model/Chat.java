@@ -15,7 +15,7 @@ public class Chat implements Serializable {
     @SerializedName("id")
     private Long mId;
     @SerializedName("order_id")
-    private Object mOrderId;
+    private String mOrderId;
     @SerializedName("status")
     private String mStatus;
     @SerializedName("title")
@@ -58,7 +58,7 @@ public class Chat implements Serializable {
         mId = id;
     }
 
-    public Object getOrderId() {
+    public String getOrderId() {
         return mOrderId;
     }
 
@@ -66,7 +66,7 @@ public class Chat implements Serializable {
         return hide_rate;
     }
 
-    public void setOrderId(Object orderId) {
+    public void setOrderId(String orderId) {
         mOrderId = orderId;
     }
 

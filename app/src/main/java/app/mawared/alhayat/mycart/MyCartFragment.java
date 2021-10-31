@@ -85,7 +85,7 @@ public class MyCartFragment extends Fragment implements MyCartAdapter.sumListene
             lat = latLng.latitude+"";
             lng = latLng.longitude+"";
         }
-        adapter = new MyCartAdapter(this, this);
+        adapter = new MyCartAdapter(this, this,getActivity());
         dialog= new Dialog(getActivity());
 
         dialog.setContentView(R.layout.count_dialog);

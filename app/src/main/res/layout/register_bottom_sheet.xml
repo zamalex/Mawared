@@ -151,6 +151,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
+        android:visibility="invisible"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"

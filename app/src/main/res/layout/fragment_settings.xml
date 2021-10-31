@@ -143,7 +143,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="16dp"
-        android:text="سياسة و آلية احتساب النقاط"
+        android:text="سياسة الخصوصية"
         android:textColor="@color/lightgrey"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout7" />
@@ -170,5 +170,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view3" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout9" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout9"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layoutDirection="rtl"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_collectPoints">
+
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

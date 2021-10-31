@@ -55,7 +55,9 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
                       .observe(getActivity(), new Observer<Terms>() {
                           @Override
                           public void onChanged(Terms terms) {
-                              if (terms.getStatus() == 200) {
+                              if (terms==null)
+                                  return;
+                              if (terms.getSuccess()) {
                                   tv_termsTitle.setText(terms.getData().getTitle());
                                   String content = terms.getData().getContent();
                                   tv_termsContent.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY));
@@ -72,7 +74,7 @@ public class TermsBottomSheet extends BottomSheetDialogFragment {
                         @Override
                         public void onChanged(Terms terms) {
                             if (terms!=null)
-                            if (terms.getStatus() == 200) {
+                            if (terms.getSuccess()) {
                                 tv_termsTitle.setText(terms.getData().getTitle());
                                 String content = terms.getData().getContent();
                                 tv_termsContent.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY));

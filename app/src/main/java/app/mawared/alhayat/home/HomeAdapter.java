@@ -3,6 +3,7 @@ package app.mawared.alhayat.home;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import java.util.Locale;
 
 import app.mawared.alhayat.MainActivity;
 import app.mawared.alhayat.R;
+import app.mawared.alhayat.TimerModel;
 import app.mawared.alhayat.home.model.Product;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
@@ -46,6 +48,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_home, parent, false);
+
         return new HomeAdapter.Holder(itemView);
     }
 
@@ -66,9 +69,39 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         if (pp!=0)
             holder.offer_price.setText(new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US)).format(pp) + " " + "ر.س");
 
-
+        Log.e("offer is ",product.getOffer());
         holder.name.setText(product.getTitle());
         holder.total_qty.setText(product.qty + "");
+        if (product.getOffer_expiry_date()!=null) {
+            TimerModel timerModel = TimerModel.findDifference("2021-10-28 00:00:00",product.getOffer_expiry_date()+" 23:59:59");
+            if (timerModel!=null){
+                if (timerModel.days==0){
+
+                    if (holder.countDownTimer!=null)
+                        holder.countDownTimer.cancel();
+                    holder.countDownTimer = new CountDownTimer(timerModel.milliseconds, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                            holder.product_offer_time.setText(String.format("%02d:%02d:%02d",
+                                    millisUntilFinished/((1000 * 60 * 60)), ((millisUntilFinished/1000) % 3600) / 60, ((millisUntilFinished/1000) % 60)));
+
+                        }
+
+                        public void onFinish() {
+                            holder.product_offer_time.setText("00:00");
+
+                        }
+                    }.start();
+                }else {
+                    if (timerModel.days>=0)
+                    holder.product_offer_time.setText(timerModel.days+" ايام ");
+                }
+
+            }else
+                holder.product_offer_time.setText("");
+        }else
+            holder.product_offer_time.setText("");
+
 
         holder.total_qty.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +226,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
     }
 
     public void setProducts(ArrayList<Product> products) {
-        this.products=products;
+        ArrayList<Product> temp= new ArrayList<>();
+
+        for (int i=0;i<products.size();i++){
+            if (products.get(i).type.equals("single"))
+                temp.add(products.get(i));
+        }
+        this.products=temp;
         notifyDataSetChanged();
     }
 
@@ -204,8 +243,19 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
         return products.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     class Holder extends RecyclerView.ViewHolder {
-        TextView name, price, total_qty, offer_txt,offer_price;
+        CountDownTimer countDownTimer;
+        TextView name, price, total_qty, offer_txt,offer_price,product_offer_time;
         ImageView img, offer_img;
         ImageButton add, increase, decrease;
         LinearLayout quantityLayout;
@@ -225,6 +275,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.Holder> {
             offer_img = itemView.findViewById(R.id.off_img);
             offer_price = itemView.findViewById(R.id.product_offer_price);
             offer_txt = itemView.findViewById(R.id.txt_offer);
+            product_offer_time = itemView.findViewById(R.id.product_offer_time);
         }
     }
 

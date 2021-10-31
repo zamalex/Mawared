@@ -15,6 +15,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.JsonObject;
 import com.onesignal.OneSignal;
 import com.yariksoffice.lingver.Lingver;
@@ -47,7 +48,11 @@ public class MyApp extends android.app.Application {
         MapsInitializer.initialize(this);
 
 
-       // MapView mapView = new MapView(this);
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
+
+
+
+        // MapView mapView = new MapView(this);
       //  mapView.onCreate(null);
 
         AppsFlyerConversionListener conversionListener = new AppsFlyerConversionListener() {

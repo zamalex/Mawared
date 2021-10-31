@@ -5,9 +5,11 @@ import com.google.gson.JsonObject;
 
 import java.util.Map;
 
+import app.mawared.alhayat.about.aboutus.AboutUsModel;
 import app.mawared.alhayat.about.model.SocialsModel;
 import app.mawared.alhayat.activiation.model.ActivationiModel;
 import app.mawared.alhayat.cities.Cities;
+import app.mawared.alhayat.cities.cityid.CityByLatLong;
 import app.mawared.alhayat.contactus.model.ContactUsResponse;
 import app.mawared.alhayat.defaultaddress.DefaultAddressResponse;
 import app.mawared.alhayat.forgot.model.ForgotModel;
@@ -136,6 +138,11 @@ Call<HomeSliderModel> getHomeSlider();
     Call<DefaultAddressResponse> getDefaultAddress(@Header("Authorization") String topen);
 
 
+  //get city id
+    @GET("get-city-by-coordinates")
+    Call<CityByLatLong> getCityId(@Query("lat")String lat, @Query("long")String lng);
+
+
     //////////////////////////////////////////////////////////////////////////
 
    // @GET("products")
@@ -168,11 +175,14 @@ Call<HomeSliderModel> getHomeSlider();
     @POST("register/profile")
     Call<LoginResponse> registerNewAccount(@Body RegisterBody registerBody);
 
-    @GET("pages/points-terms")
+    @GET("pages/terms")
     Call<Terms> getTermsPoints(@Header("Authorization") String token);
 
-    @GET("privacy-terms")
+    @GET("privacy")
     Call<Terms> getPrivacyTerms();
+
+    @GET("pages/about-us")
+    Call<AboutUsModel> getAbout();
 
 
 
@@ -262,8 +272,11 @@ Call<HomeSliderModel> getHomeSlider();
 
 
 
-    @GET("orders/{id}/cancel")
-    Call<ConfirmModel> cancelOrder(@Path("id") String id, @Header("Authorization") String token);
+    @POST("orders/{id}/cancel")
+    Call<ConfirmModel> cancelOrder(@Path("id") String id, @Header("Authorization") String token,@Body JsonObject body);
+
+    @POST("orders/{id}/return")
+    Call<ConfirmModel> returnOrder(@Path("id") String id, @Header("Authorization") String token,@Body JsonObject body);
 
 
     @POST("send-mobile-code")
@@ -319,6 +332,10 @@ Call<HomeSliderModel> getHomeSlider();
 
     @GET("orders/has-new-updates")
     Call<CheckRate> checkRate(@Header("Authorization") String token);
+
+
+    @POST("settings/notifications")
+    Call<ResponseBody> controlNotification(@Body JsonObject body);
 
 }
 

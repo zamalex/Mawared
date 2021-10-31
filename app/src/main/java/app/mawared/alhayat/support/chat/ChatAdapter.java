@@ -76,7 +76,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
             holder.me.setText(msg.getMessage());
 
          //   holder.met.setText(newString2+"   "+newString);
-            holder.met.setText(msg.getCreatedAt());
+            holder.met.setText(msg.humans_time);
 
 
         } else {
@@ -87,7 +87,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.Holder> {
 
             holder.you.setText(msg.getMessage());
          //   holder.yout.setText(newString2+"   "+newString);
-            holder.yout.setText(msg.getCreatedAt());
+            holder.yout.setText(msg.humans_time);
 
 
         }

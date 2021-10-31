@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:layoutDescription="@xml/fragment_home_scene"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<androidx.core.widget.NestedScrollView
+
+    android:fillViewport="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EAEEF4"
-    app:layoutDescription="@xml/fragment_home_scene"
     tools:context=".home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -109,6 +119,20 @@
             app:layout_constraintStart_toStartOf="@+id/go_cart"
             app:layout_constraintTop_toTopOf="@+id/go_cart" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/urwbold"
+            android:text="العروض"
+            android:textColor="#0D2142"
+
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flipper_layout"
+            android:layout_marginLeft="16dp" />
+
         <com.smarteist.autoimageslider.SliderView
 
             android:id="@+id/flipper_layout"
@@ -139,21 +163,60 @@
 
 
     <!-- TODO: Update blank fragment layout -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/home_p_rv"
+
+
+    <RelativeLayout
+        android:id="@+id/rly"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView25">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_p_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="50dp" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_cp_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/card_linear"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cout" />
 
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/urwbold"
+        android:text="المنتجات"
+        android:textColor="#0D2142"
+
+        android:textSize="18sp"        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_cp_rv"
+        android:layout_marginLeft="16dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/card_linear"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
@@ -176,7 +239,7 @@
             android:gravity="right|bottom"
             android:text="عرض السلة"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            />
 
         <TextView
             android:id="@+id/linear_txt"
@@ -188,8 +251,7 @@
             android:gravity="left|bottom"
             android:text="0 ر.س"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+             />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

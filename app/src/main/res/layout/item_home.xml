@@ -141,6 +141,23 @@
                     app:layout_constraintTop_toBottomOf="@+id/product_price" />
 
                 <TextView
+                    android:id="@+id/product_offer_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:fontFamily="@font/urwbold"
+                    android:textColor="#7B92A5"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/product_offer_price" />
+
+                <TextView
                     android:id="@+id/sear"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -156,7 +173,7 @@
                     android:textSize="11sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/product_offer_price"
+                    app:layout_constraintTop_toBottomOf="@+id/product_offer_time"
                     />
 
                 <ImageView
